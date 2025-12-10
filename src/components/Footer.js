@@ -1,11 +1,12 @@
 import '../App.css';
+import FooterLogo from '../images/footer-logo.png'
 
 function Footer() {
   return (
     <footer className="footer">
       <div className="footer__inner">
         <div className="footer__brand">
-          <div className="footer__logo">Insulet</div>
+          <div className="footer__logo"><img src={FooterLogo} alt="Omnipod logo" className="footer__logo" /></div>
           <div className="footer__social">
             <button className="footer__social-btn" aria-label="Instagram">IG</button>
             <button className="footer__social-btn" aria-label="Facebook">FB</button>

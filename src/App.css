@@ -2,6 +2,9 @@
   --purple: #9166c9;
   --purple-strong: #7f4fb8;
   --shadow-soft: 0 14px 40px rgba(0, 0, 0, 0.12);
+  --orange: #f75e4b;
+  --lightorange:#ffeeec;
+  --lightpurple:#f7f3fc;
 }
 
 * {
@@ -104,6 +107,7 @@
 }
 
 .action-btn {
+  text-decoration: none;
   appearance: none;
   border: none;
   cursor: pointer;
@@ -128,6 +132,7 @@
 .hero_text{text-align: center; padding: 0 2%;}
 .hero_text h2{font-weight: 700; font-size:6rem;}
 .hero_text h2 span{color:var(--purple);}
+.hero_text.signup_text span{color: var(--orange);}
 
 .homeStep {
   width: 100%;
@@ -220,6 +225,7 @@
 }
 
 .cta-pill {
+  text-decoration: none;
   appearance: none;
   border: none;
   cursor: pointer;
@@ -333,8 +339,252 @@
   display: none;
 }
 
+/* Creator signup form */
+.creator-form {
+  width: 100%;
+  float: left;
+  padding: 48px 6% 80px;
+}
+
+.creator-form__inner {
+  max-width: 1200px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+.creator-form__note {
+  margin: 0;
+  color: #c62828;
+  font-weight: 600;
+  font-size: 0.95rem;
+}
+
+.creator-form__fields {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+.creator-form__row {
+  display: grid;
+  gap: 18px;
+}
+
+.creator-form__row--2 {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.creator-field label,
+.creator-field__legend {
+  font-weight: 700;
+  color: #242424;
+  display: block;
+  margin-bottom: 8px;
+}
+
+.creator-field__legend {
+  margin-bottom: 10px;
+}
+
+.required {
+  color: #c62828;
+  margin-right: 4px;
+}
+
+.creator-field__optional {
+  color: #777;
+  font-weight: 500;
+  margin-left: 6px;
+}
+
+.creator-input,
+.creator-phone__code {
+  width: 100%;
+  padding: 14px 16px;
+  border: 2px solid #cfcfcf;
+  border-radius: 12px;
+  font-size: 1rem;
+  font-family: inherit;
+  outline: none;
+  transition: border-color 120ms ease, box-shadow 120ms ease;
+  background: #fff;
+}
+
+.creator-input:focus,
+.creator-phone__code:focus {
+  border-color: var(--purple);
+  box-shadow: 0 0 0 3px rgba(145, 102, 201, 0.18);
+}
+
+.creator-phone {
+  display: grid;
+  grid-template-columns: 140px 1fr;
+  gap: 12px;
+  align-items: center;
+}
+
+.creator-phone__code {
+  background: #fcdede;
+}
+
+.creator-social-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.creator-social-row {
+  display: grid;
+  gap: 14px;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.creator-checks {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-top: 8px;
+}
+
+.creator-check {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  font-size: 0.97rem;
+  color: #1f1f1f;
+}
+
+.creator-check input {
+  margin-top: 3px;
+  width: 18px;
+  height: 18px;
+}
+
+.creator-policy {
+  color: #c62828;
+  text-decoration: underline;
+}
+
+.creator-password {
+  background: #f2f2f2;
+  padding: 40px 6% 52px;
+  width: 100%;
+  float: left;
+}
+
+.creator-password__inner {
+  max-width: 900px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  gap: 22px;
+}
+
+.creator-submit {
+  padding: 56px 6% 80px;
+  width: 100%;
+  float: left;
+  text-align: center;
+}
+
+.creator-submit__inner {
+  max-width: 760px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 18px;
+}
+
+
+/* Responsive tweaks for creator password/submit */
+@media (max-width: 1279px) {
+  .creator-password__inner {
+    max-width: 720px;
+  }
+}
+
+@media (max-width: 767px) {
+  .creator-password {
+    padding: 32px 6% 44px;
+  }
+
+  .creator-submit {
+    padding: 44px 6% 60px;
+  }
+
+  .creator-submit__inner {
+    gap: 14px;
+  }
+}
+
+.creator-password {
+  background: #f2f2f2;
+  padding: 40px 6% 52px;
+  width: 100%;
+  float: left;
+}
+
+.creator-password__inner {
+  max-width: 900px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  gap: 22px;
+}
+
+.creator-submit {
+  padding: 56px 6% 80px;
+  width: 100%;
+  float: left;
+  text-align: center;
+}
+
+.creator-submit__inner {
+  max-width: 760px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 18px;
+}
+
+.creator-submit__title {
+  display: block;
+  font-size: clamp(2.2rem, 4vw, 6rem);
+  font-weight: 800;
+  color: #0f0f0f;
+}
+
+.creator-submit__subtitle {
+  display: block;
+  font-size: clamp(2.1rem, 4vw, 6rem);
+  font-weight: 800;
+  color: #ed6a5a;
+}
+
+.creator-submit__btn {
+  background: #ed6a5a;
+  color: #fff;
+  border: none;
+  border-radius: 25px;
+  padding: 12px 40px;
+  font-weight: 700;
+  font-size: 1.4rem;
+  cursor: pointer;
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.12);
+  transition: transform 120ms ease, box-shadow 120ms ease;
+}
+
+.creator-submit__btn:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 14px 28px rgba(0, 0, 0, 0.16);
+}
+
 .footer {
-  background: #ebe4dc;
+  background: #f0eee9;
   width: 100%;
   float: left;
   padding: 32px 5% 44px;
@@ -561,4 +811,184 @@
 @media (max-width: 374px) { /* For 320px screen Very Small Mobile*/
 
 
+}
+
+.insulet-header {
+  background: var(--purple);
+  padding: 32px 5%;
+  color: #fff;
+}
+
+.insulet-header.creator-header{background: var(--orange);}
+
+.insulet-header__inner {
+  max-width: 1280px;
+  margin: 0 auto;
+  display: grid;
+  grid-template-columns: 1fr auto;
+  align-items: center;
+}
+
+.insulet-header__brand {
+  display: flex;
+  justify-content: center;
+}
+
+.insulet-header__logo {
+  height: 120px;
+  width: auto;
+}
+
+.insulet-header__tagline {
+  font-size: 0.85rem;
+  font-weight: 600;
+}
+
+.insulet-header__nav {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.insulet-header__link {
+  color: #fff;
+  text-decoration: none;
+  font-weight: 600;
+  font-size: 1rem;
+}
+
+
+.insulet-login-page {
+  background: #fff;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+.insulet-login {
+  padding: 50px 6% 50px;
+  flex: 1;
+}
+
+.creator__form.insulet-login .insulet-login__content{background: var(--lightorange);}
+
+.insulet-login__content {
+  max-width: 1280px;
+  margin: 0 auto;
+  display: grid;
+  grid-template-columns: 1.05fr 0.95fr;
+  gap: 48px;
+  align-items: center;
+  background: var(--lightpurple);
+  padding: 80px; border-radius: 25px;
+}
+
+
+.insulet-login__form h1 {
+  margin: 0 0 8px;
+  font-size: clamp(2.6rem, 4vw, 3.6rem);
+  color: #0c0c0c;
+}
+
+.insulet-login__form h2 {
+  margin: 0 0 32px;
+  font-size: clamp(2.2rem, 3vw, 3rem);
+  color: var(--purple);
+}
+
+.creator__form.insulet-login h2{color: var(--orange);}
+.creator__form.insulet-login .insulet-field label{color: var(--orange);}
+.creator__form.insulet-login .insulet-login-btn{background:var(--orange);}
+.insulet-field {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-bottom: 20px;
+}
+
+.insulet-field label {
+  font-weight: 700;
+  color: var(--purple);
+  font-size: 1rem;
+}
+
+.insulet-input {
+  padding: 14px 16px;
+  border-radius: 10px;
+  border: 2px solid #d0d0d0;
+  font-size: 1rem;
+  font-family: inherit;
+  outline: none;
+  transition: border-color 120ms ease, box-shadow 120ms ease;
+}
+
+.insulet-input:focus {
+  border-color: var(--purple);
+  box-shadow: 0 0 0 3px rgba(145, 102, 201, 0.2);
+}
+
+.insulet-forgot {
+  color: #111;
+  font-weight: 600;
+  text-decoration: underline;
+  font-size: 0.95rem;
+}
+
+.insulet-login-btn {
+  margin: 12px 0 8px;
+  padding: 12px 22px;
+  border-radius: 12px;
+  border: none;
+  background: var(--purple);
+  color: #fff;
+  font-weight: 700;
+  font-size: 1rem;
+  cursor: pointer;
+  box-shadow: 0 12px 24px rgba(0, 0, 0, 0.12);
+  transition: transform 120ms ease, box-shadow 120ms ease;
+}
+
+.insulet-login-btn:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 16px 32px rgba(0, 0, 0, 0.16);
+}
+
+.insulet-login__graphic {
+  display: flex;
+  justify-content: center;
+}
+
+.insulet-login__graphic img {
+  max-width: 360px;
+  width: 100%;
+  height: auto;
+}
+
+@media (max-width: 1023px) {
+  .insulet-login {
+    padding: 48px 6% 64px;
+  }
+
+  .insulet-login__content {
+    grid-template-columns: 1fr;
+    gap: 32px;
+  }
+
+  .insulet-login__graphic {
+    order: -1;
+  }
+}
+
+@media (max-width: 640px) {
+  .insulet-login {
+    padding: 40px 6% 56px;
+  }
+
+  .insulet-login__form h1 {
+    font-size: clamp(2.2rem, 7vw, 2.8rem);
+  }
+
+  .insulet-login__form h2 {
+    font-size: clamp(2rem, 6vw, 2.6rem);
+  }
 }

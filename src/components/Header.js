@@ -1,4 +1,5 @@
 import '../App.css';
+import { Link } from 'react-router-dom';
 import siteLogo from '../images/site-logo.png';
 
 function Header() {
@@ -9,9 +10,16 @@ function Header() {
       </div>
 
       <div className="hero__actions">
-        <button className="action-btn">Insulet Log In</button>
-        <button className="action-btn">Creator Log In</button>
-        <button className="action-btn action-btn--primary">Sign up</button>
+        <Link className="action-btn" to="/insulet-member-login">
+          Insulet Log In
+        </Link>
+        <Link className="action-btn" to="/omnipod-creator-login">
+          Creator Log In
+        </Link>
+        <Link className="action-btn action-btn--primary" to="/omnipod-creator-signup">
+          Sign up
+        </Link>
+        
       </div>
     </>
   );

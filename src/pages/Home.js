@@ -6,13 +6,14 @@ import stepImage2 from '../images/image2.png';
 import stepImage3 from '../images/image3.png';
 import Footer from '../components/Footer';
 import Header from '../components/Header';
+import { Link } from 'react-router-dom';
 
 function Home() {
   const [openIndex, setOpenIndex] = useState(null);
 
   const faqs = [
     {
-      question: 'Where will my content be used? test',
+      question: 'Where will my content be used?',
       answer: 'Approved content may appear on Omnipod marketing channels like social media, the website, and select partner placements.',
     },
     {
@@ -50,9 +51,7 @@ function Home() {
           <section className="hero__left">
             <h1>Omnipod <br />Creator <br />Marketplace</h1>
             <div className="hero__cta">
-              <a className="cta-btn" href="#get-started">
-                Get Started
-              </a>
+              <Link to="omnipod-creator-signup" className="cta-btn">Get Started</Link>
             </div>
           </section>
 
@@ -130,17 +129,21 @@ function Home() {
       <div className="cta-sections">
         <section className="cta-panel cta-panel--primary">
           <h3>Ready to share your content?</h3>
-          <button className="cta-pill cta-pill--light">Get Started Now</button>
+          <Link to="omnipod-creator-signup" className="cta-pill cta-pill--light">Get Started Now</Link>
         </section>
 
         <section className="cta-panel cta-panel--soft">
           <h3>Already signed-up?</h3>
-          <button className="cta-pill">Log In</button>
+          <Link className="cta-pill" to="/omnipod-creator-login">
+           Log In
+          </Link>
         </section>
 
         <section className="cta-panel">
           <h3>Insulet member?</h3>
-          <button className="cta-pill">Log In</button>
+          <Link className="cta-pill" to="/insulet-member-login">
+              Log In
+          </Link>
         </section>
       </div>
 
