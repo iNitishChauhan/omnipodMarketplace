@@ -12,7 +12,7 @@ function Home() {
 
   const faqs = [
     {
-      question: 'Where will my content be used?',
+      question: 'Where will my content be used? test',
       answer: 'Approved content may appear on Omnipod marketing channels like social media, the website, and select partner placements.',
     },
     {
