@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import '../App.css';
 import headerBg from '../images/header-bg2.jpg';
 import stepImage1 from '../images/image1.png';
@@ -10,7 +10,6 @@ import { Link } from 'react-router-dom';
 
 function Home() {
   const [openIndex, setOpenIndex] = useState(null);
-  const [heroTitle, setHeroTitle] = useState('Omnipod Creator Marketplace');
 
   const faqs = [
     {
@@ -43,26 +42,6 @@ function Home() {
     setOpenIndex((prev) => (prev === idx ? null : idx));
   };
 
-  useEffect(() => {
-    let isMounted = true;
-
-    fetch('https://omnipodmarketplace.minddigital.in/api/home')
-      .then((response) => response.json())
-      .then((payload) => {
-        const title = payload?.data?.title ?? payload?.title;
-        if (title && isMounted) {
-          setHeroTitle(title);
-        }
-      })
-      .catch(() => {});
-
-    return () => {
-      isMounted = false;
-    };
-  }, []);
-
-  const formattedTitle = heroTitle.replace(/<br\s*\/?>/gi, '\n');
-
   return (
     <div className="home_page">
       <div className="hero">
@@ -70,14 +49,7 @@ function Home() {
 
         <div className="hero__grid">
           <section className="hero__left">
-            <h1>
-              {formattedTitle.split('\n').map((line, index, arr) => (
-                <span key={`${line}-${index}`}>
-                  {line}
-                  {index < arr.length - 1 && <br />}
-                </span>
-              ))}
-            </h1>
+            <h1>Omnipod <br />Creator <br />Marketplace</h1>
             <div className="hero__cta">
               <Link to="omnipod-creator-signup" className="cta-btn">Get Started</Link>
             </div>
