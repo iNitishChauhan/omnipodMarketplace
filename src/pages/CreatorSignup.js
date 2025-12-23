@@ -1,9 +1,107 @@
-import '../App.css';
-import signupBg from '../images/signupbg.png';
-import Footer from '../components/Footer';
-import SignupHeader from '../components/SignupHeader';
+import { useState } from "react";
+import axios from "axios";
+import "../App.css";
+import signupBg from "../images/signupbg.png";
+import Footer from "../components/Footer";
+import SignupHeader from "../components/SignupHeader";
+
+
 
 function CreatorSignup() {
+
+  const [loading, setLoading] = useState(false);
+  const [message, setMessage] = useState("");
+
+  const [formData, setFormData] = useState({
+    firstName: "",
+    lastName: "",
+    email: "jane@domain.com",
+    phoneCode: "+44",
+    phone: "",
+    product: "",
+    instagram: "",
+    instagramHandle: "",
+    tiktok: "",
+    tiktokHandle: "",
+    youtube: "",
+    youtubeHandle: "",
+    agree1: false,
+    agree2: false,
+    agree3: false,
+    password: "",
+    confirmPassword: "",
+  });
+
+  const handleChange = (e) => {
+    const { name, value, type, checked } = e.target;
+    setFormData((prev) => ({
+      ...prev,
+      [name]: type === "checkbox" ? checked : value,
+    }));
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setMessage("");
+
+    // Validation
+    if (
+      !formData.firstName ||
+      !formData.lastName ||
+      !formData.email ||
+      !formData.password
+    ) {
+      setMessage("Please fill all required fields");
+      return;
+    }
+
+    if (formData.password !== formData.confirmPassword) {
+      setMessage("Passwords do not match");
+      return;
+    }
+
+    if (!formData.agree1 || !formData.agree2 || !formData.agree3) {
+      setMessage("Please accept all agreements");
+      return;
+    }
+
+    const payload = {
+      first_name: formData.firstName,
+      last_name: formData.lastName,
+      email: formData.email,
+      phone: `${formData.phoneCode}${formData.phone}`,
+      product: formData.product,
+      social_handles: {
+        instagram: formData.instagramHandle,
+        tiktok: formData.tiktokHandle,
+        youtube: formData.youtubeHandle,
+      },
+      password: formData.password,
+    };
+
+    try {
+      setLoading(true);
+
+      /* const res = await axios({
+        method: "post",
+        url: "https://omnipodmarketplace.minddigital.in/api/creator-signup",
+        data: payload,
+      }); */
+      const res = await axios.post("https://omnipodmarketplace.minddigital.in/api/creator-signup", payload, 
+      { headers: { "Content-Type": "application/json", }, });
+
+      setMessage("Signup successful 🎉");
+      console.log(res.data);
+
+    } catch (error) {
+      setMessage(
+        error.response?.data?.message || "Something went wrong"
+      );
+    } finally {
+      setLoading(false);
+    }
+  };
+
   return (
     <div className="home_page">
       <div className="hero">
@@ -33,48 +131,49 @@ function CreatorSignup() {
       <div className="hero_text signup_text">
         <h2>Sign up as an Omnipod <br /> Creator by <span>filling in the form <br />below</span></h2>
       </div>
-
-      <section className="creator-form">
-        <div className="creator-form__inner">
-          <p className="creator-form__note"><span className="required">*</span>Indicates required field</p>
-
-          <form className="creator-form__fields">
+      <form className="creator-form__fields" onSubmit={handleSubmit}>
+        <section className="creator-form">
+          <div className="creator-form__inner">
+            <p className="creator-form__note"><span className="required">*</span>Indicates required field</p>
             <div className="creator-form__row creator-form__row--2">
               <div className="creator-field">
                 <label htmlFor="firstName"><span className="required">*</span>First Name</label>
-                <input id="firstName" type="text" className="creator-input" />
+
+                <input className="creator-input" name="firstName" value={formData.firstName} onChange={handleChange} />
               </div>
               <div className="creator-field">
                 <label htmlFor="lastName"><span className="required">*</span>Last Name</label>
-                <input id="lastName" type="text" className="creator-input" />
+                <input className="creator-input" name="lastName" value={formData.lastName} onChange={handleChange} />
+
               </div>
             </div>
 
             <div className="creator-field">
               <label htmlFor="email"><span className="required">*</span>Email Address</label>
-              <input id="email" type="email" className="creator-input" defaultValue="jane@domain.com" />
+              <input name="email" value={formData.email} onChange={handleChange} className="creator-input" />
             </div>
 
             <div className="creator-form__row creator-form__row--2">
               <div className="creator-field">
                 <label htmlFor="phone">Phone Number <span className="creator-field__optional">(optional)</span></label>
                 <div className="creator-phone">
-                  <select className="creator-phone__code" aria-label="Country code">
+                  <select className="creator-phone__code" name="phoneCode" value={formData.phoneCode} onChange={handleChange}>
                     <option value="+44">+44</option>
                     <option value="+1">+1</option>
                     <option value="+91">+91</option>
                   </select>
-                  <input id="phone" type="tel" className="creator-input creator-phone__number" />
+                  <input name="phone" className="creator-input creator-phone__number" value={formData.phone} onChange={handleChange} />
                 </div>
               </div>
 
               <div className="creator-field">
                 <label htmlFor="product"><span className="required">*</span>Product</label>
-                <select id="product" className="creator-input">
-                  <option>Omnipod 5, Omnipod DASH, System etc</option>
-                  <option>Omnipod 5</option>
-                  <option>Omnipod DASH</option>
-                  <option>Other</option>
+
+                <select className="creator-input" name="product" value={formData.product} onChange={handleChange}>
+                  <option value="">Select Product</option>
+                  <option value="Omnipod 5">Omnipod 5</option>
+                  <option value="Omnipod DASH">Omnipod DASH</option>
+                  <option value="Other">Other</option>
                 </select>
               </div>
             </div>
@@ -83,62 +182,60 @@ function CreatorSignup() {
               <label className="creator-field__legend"><span className="required">*</span>Social Media Handles</label>
               <div className="creator-social-grid">
                 <div className="creator-social-row">
-                  <input type="text" className="creator-input" placeholder="Instagram" />
-                  <input type="text" className="creator-input" placeholder="Handle" />
-                </div>
-                <div className="creator-social-row">
-                  <input type="text" className="creator-input" placeholder="TikTok" />
-                  <input type="text" className="creator-input" placeholder="Handle" />
-                </div>
-                <div className="creator-social-row">
-                  <input type="text" className="creator-input" placeholder="Youtube" />
-                  <input type="text" className="creator-input" placeholder="Handle" />
+                  <input name="instagramHandle" className="creator-input" placeholder="Instagram Handle" onChange={handleChange} />
+                  <input name="tiktokHandle" className="creator-input" placeholder="TikTok Handle" onChange={handleChange} />
+                  <input name="youtubeHandle" className="creator-input" placeholder="YouTube Handle" onChange={handleChange} />
                 </div>
               </div>
             </div>
 
             <div className="creator-checks">
               <label className="creator-check">
-                <input type="checkbox" />
+                <input type="checkbox" name="agree1" onChange={handleChange} />
                 <span><span className="required">*</span>I agree that Insulet International reserves the right to edit content during approval stages</span>
               </label>
               <label className="creator-check">
-                <input type="checkbox" />
+                <input type="checkbox" name="agree2" onChange={handleChange} />
                 <span><span className="required">*</span>I understand that Insulet International will be in touch before any content is used/posted</span>
               </label>
               <label className="creator-check">
-                <input type="checkbox" />
+                <input type="checkbox" name="agree3" onChange={handleChange} />
                 <span>
                   <span className="required">*</span>I agree to Insulet International&apos;s <a className="creator-policy" href="#policy">social media policy</a>
                 </span>
               </label>
             </div>
-          </form>
-        </div>
-      </section>
 
-      <section className="creator-password">
-        <div className="creator-password__inner">
-          <div className="creator-field">
-            <label htmlFor="createPassword"><span className="required">*</span>Create Password</label>
-            <input id="createPassword" type="password" className="creator-input" />
           </div>
-          <div className="creator-field">
-            <label htmlFor="confirmPassword"><span className="required">*</span>Confirm Password</label>
-            <input id="confirmPassword" type="password" className="creator-input" />
+        </section>
+        <section className="creator-password">
+          <div className="creator-password__inner">
+            <div className="creator-field">
+              <label htmlFor="createPassword"><span className="required">*</span>Create Password</label>
+              <input type="password" name="password" className="creator-input" onChange={handleChange} />
+            </div>
+            <div className="creator-field">
+              <label htmlFor="confirmPassword"><span className="required">*</span>Confirm Password</label>
+              <input type="password" name="confirmPassword" onChange={handleChange} className="creator-input" />
+            </div>
           </div>
-        </div>
-      </section>
+        </section>
+        <section className="creator-submit">
+          <div className="creator-submit__inner">
+            {message && <p className="form-message">{message}</p>}
+            <h3>
+              <span className="creator-submit__title">Submit form</span>
+              <span className="creator-submit__subtitle">and sign up</span>
+            </h3>
+            <button type="submit" className="creator-submit__btn" disabled={loading}>
+              {loading ? "Submitting..." : "Submit"}
+            </button>
+          </div>
+        </section>
+      </form>
 
-      <section className="creator-submit">
-        <div className="creator-submit__inner">
-          <h3>
-            <span className="creator-submit__title">Submit form</span>
-            <span className="creator-submit__subtitle">and sign up</span>
-          </h3>
-          <button type="button" className="creator-submit__btn">Submit</button>
-        </div>
-      </section>
+
+
 
       <Footer />
     </div>
