@@ -1,8 +1,20 @@
 import '../App.css';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import siteLogo from '../images/site-logo.png';
+import { useDispatch, useSelector } from "react-redux";
+import { logout } from "../store/auth/authActions";
 
 function Header() {
+
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
+
+  const { isAuthenticated, user } = useSelector((state) => state.auth);
+  const logoutHandler = () => {
+    dispatch(logout());
+    navigate("omnipod-creator-login"); 
+  };
+
   return (
     <>
       <div className="hero__logo">
@@ -10,16 +22,30 @@ function Header() {
       </div>
 
       <div className="hero__actions">
-        <Link className="action-btn" to="/insulet-member-login">
+        {!isAuthenticated && (<Link className="action-btn" to="/insulet-member-login">
           Insulet Log In
-        </Link>
-        <Link className="action-btn" to="/omnipod-creator-login">
+        </Link>)}
+        {!isAuthenticated && (<Link className="action-btn" to="/omnipod-creator-login">
           Creator Log In
-        </Link>
-        <Link className="action-btn action-btn--primary" to="/omnipod-creator-signup">
-          Sign up
-        </Link>
-        
+        </Link>)}
+
+        {isAuthenticated && (
+          <div className="header-right">
+            <span className="user-name">
+              {user?.name || "User"}
+            </span>
+
+            <button onClick={logoutHandler} className="action-btn action-btn--primary" >
+              Logout
+            </button>
+          </div>
+        )}
+        {!isAuthenticated && (
+          <Link className="action-btn action-btn--primary" to="/omnipod-creator-signup">
+            Sign up
+          </Link>
+        )}
+
       </div>
     </>
   );

@@ -4,11 +4,14 @@ import "../App.css";
 import signupBg from "../images/signupbg.png";
 import Footer from "../components/Footer";
 import SignupHeader from "../components/SignupHeader";
-
+import { Link, useNavigate, Navigate } from 'react-router-dom';
+import {  useSelector } from "react-redux";
 
 
 function CreatorSignup() {
-
+  const navigate = useNavigate();
+    const { isAuthenticated } = useSelector((state) => state.auth);
+    
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState("");
 
@@ -19,11 +22,8 @@ function CreatorSignup() {
     phoneCode: "+44",
     phone: "",
     product: "",
-    instagram: "",
     instagramHandle: "",
-    tiktok: "",
     tiktokHandle: "",
-    youtube: "",
     youtubeHandle: "",
     agree1: false,
     agree2: false,
@@ -31,7 +31,9 @@ function CreatorSignup() {
     password: "",
     confirmPassword: "",
   });
-
+if (isAuthenticated) {
+    return <Navigate to="/" />;
+  }
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target;
     setFormData((prev) => ({
@@ -64,19 +66,18 @@ function CreatorSignup() {
       setMessage("Please accept all agreements");
       return;
     }
-
+    console.log(formData)
     const payload = {
       first_name: formData.firstName,
       last_name: formData.lastName,
       email: formData.email,
       phone: `${formData.phoneCode}${formData.phone}`,
       product: formData.product,
-      social_handles: {
-        instagram: formData.instagramHandle,
-        tiktok: formData.tiktokHandle,
-        youtube: formData.youtubeHandle,
-      },
+      instagram: formData.instagramHandle,
+      tiktok: formData.tiktokHandle,
+      youtube: formData.youtubeHandle,
       password: formData.password,
+      role: 'podder',
     };
 
     try {
@@ -87,8 +88,9 @@ function CreatorSignup() {
         url: "https://omnipodmarketplace.minddigital.in/api/creator-signup",
         data: payload,
       }); */
-      const res = await axios.post("https://omnipodmarketplace.minddigital.in/api/creator-signup", payload, 
-      { headers: { "Content-Type": "application/json", }, });
+      const res = await axios.post("https://omnipodmarketplace.minddigital.in/api/creator-signup", payload,
+
+        { headers: { "Content-Type": "application/json", }, });
 
       setMessage("Signup successful 🎉");
       console.log(res.data);
