@@ -4,12 +4,11 @@ import "../App.css";
 import signupBg from "../images/signupbg.png";
 import Footer from "../components/Footer";
 import SignupHeader from "../components/SignupHeader";
-import { Link, useNavigate, Navigate } from 'react-router-dom';
-import {  useSelector } from "react-redux";
+import { Navigate } from "react-router-dom";
+import { useSelector } from "react-redux";
 
 
 function CreatorSignup() {
-  const navigate = useNavigate();
     const { isAuthenticated } = useSelector((state) => state.auth);
     
   const [loading, setLoading] = useState(false);
