@@ -263,3 +263,377 @@
         margin-bottom:0;
     }
 }
+/* Dashboard */
+.dashboard {
+  background: #ffffff;
+  padding: 40px 5% 80px;
+}
+
+.dashboard__inner {
+  background: #fdebea;
+  border-radius: 36px;
+  padding: 48px;
+  display: grid;
+  grid-template-columns: 1.1fr 0.9fr;
+  gap: 40px;
+  max-width: 1280px;
+margin: 0 auto;
+}
+
+.dashboard__headline h1 {
+  margin: 0 0 20px;
+  font-size: clamp(2.6rem, 4vw, 4rem);
+  font-weight: 800;
+  color: #111;
+}
+
+.dashboard__name {
+  display: block;
+  margin-top: 12px;
+  color: #f36a5b;
+}
+
+.dashboard__search {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  background: #fff;
+  border-radius: 40px;
+  padding: 12px 18px;
+  border: 1px solid #e2e2e2;
+  max-width: 420px;
+  margin-bottom: 32px;
+  width: 100%;
+}
+
+.dashboard__search input {
+  border: none;
+  outline: none;
+  font-size: 1rem;
+  flex: 1;
+  font-family: inherit;
+}
+
+.dashboard__search-icon {
+  width: 22px;
+  height: 22px;
+  color: #7a3db8;
+  display: inline-flex;
+}
+
+.dashboard__search-icon svg {
+  width: 100%;
+  height: 100%;
+}
+
+.dashboard__menu {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+margin-top: 4rem;
+}
+
+.dashboard__menu-item {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  font-size: 1.25rem;
+  color: #222;
+}
+
+.dashboard__icon {
+  width: 64px;
+  height: 64px;
+  border-radius: 50%;
+  background: #f36a5b;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  color: #fff;
+}
+
+.dashboard__icon svg {
+  width: 34px;
+  height: 34px;
+}
+
+.dashboard__right {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+}
+
+.analytics-card {
+  background: #f36a5b;
+  border-radius: 28px;
+  padding: 32px;
+  color: #fff;
+  width: 100%;
+  max-width: 420px;
+  position: relative;
+}
+
+.analytics-card h2 {
+  margin: 0 0 6px;
+  font-size: 2rem;
+  color: #111;
+  font-weight: 800;
+  text-align: center;
+}
+
+.analytics-card h3 {
+  margin: 0 0 18px;
+  font-size: 2.2rem;
+  font-weight: 800;
+  text-align: center;
+}
+
+.analytics-card__panel {
+  background: #fff;
+  padding: 16px;
+  color: #333;
+}
+
+.analytics-card__days {
+  display: flex;
+  gap: 8px;
+  justify-content: center;
+  margin-bottom: 12px;
+}
+
+.analytics-card__days span {
+  padding: 6px 8px;
+  border-radius: 8px;
+  background: #f1f1f6;
+  font-size: 0.85rem;
+  color: #333;
+  min-width: 26px;
+  text-align: center;
+}
+
+.analytics-card__days .is-active {
+  background: #c24bff;
+  color: #fff;
+}
+
+.analytics-card__rows {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.analytics-row {
+  display: grid;
+  grid-template-columns: 40px 1fr 40px;
+  align-items: center;
+  gap: 10px;
+  font-size: 0.85rem;
+}
+
+.analytics-bar {
+  display: inline-block;
+  height: 8px;
+  border-radius: 12px;
+  background: linear-gradient(90deg, #e11b15, #d80000);
+}
+
+.analytics-card__btn {
+  display: block;
+  margin: 18px auto 0;
+  background: #fff;
+  color: #f36a5b;
+  border: none;
+  border-radius: 20px;
+  padding: 10px 22px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.analytics-card__avatar {
+  position: absolute;
+  right: -24px;
+  bottom: -28px;
+  width: 120px;
+  height: 150px;
+  overflow: hidden;
+  border-top-left-radius: 12px;
+    border-top-right-radius: 12px;
+    border-bottom-left-radius: 60px;
+    border-bottom-right-radius: 60px;
+        border: 2px solid white;
+}
+
+.analytics-card__avatar img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+@media (max-width: 1023px) {
+  .dashboard__inner {
+    grid-template-columns: 1fr;
+    padding: 36px;
+  }
+
+  .dashboard__right {
+    justify-content: flex-start;
+  }
+}
+
+@media (max-width: 767px) {
+  .dashboard {
+    padding: 32px 4% 60px;
+  }
+
+  .dashboard__inner {
+    padding: 28px;
+  }
+
+  .dashboard__menu-item {
+    font-size: 1.05rem;
+  }
+
+  .dashboard__icon {
+    width: 56px;
+    height: 56px;
+  }
+
+  .analytics-card__avatar {
+    right: -8px;
+    bottom: -12px;
+    width: 96px;
+    height: 96px;
+  }
+}
+
+.analytics-card__day-btn {
+  padding: 6px 8px;
+  border-radius: 8px;
+  background: #f1f1f6;
+  font-size: 0.85rem;
+  color: #333;
+  min-width: 26px;
+  text-align: center;
+  border: none;
+  cursor: pointer;
+  font-family: inherit;
+}
+
+.analytics-card__day-btn.is-active {
+  background: #c24bff;
+  color: #fff;
+}
+
+/* Inspiration section */
+.inspiration {
+padding: 20px 0% 80px;
+    text-align: center;
+    max-width: 1280px;
+    margin: 0 auto;
+}
+
+.inspiration__header h2 {
+  margin: 0 0 36px;
+  font-size: clamp(2.2rem, 4vw, 3.2rem);
+  font-weight: 800;
+  color: #111;
+}
+
+.inspiration__header h2 span {
+  display: block;
+  color: #f36a5b;
+}
+
+.inspiration__grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 26px;
+}
+
+.inspiration-card {
+  text-align: left; position: relative;    margin-bottom: 20px;
+}
+
+.inspiration-card__image {
+  border-radius: 18px;
+  overflow: hidden;
+  box-shadow: 0 12px 24px rgba(0, 0, 0, 0.12);
+}
+
+.inspiration-card__image img {
+  width: 100%;
+  height: 100%;
+  display: block;
+  object-fit: cover;
+}
+
+.inspiration-card__footer {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-top: 12px;
+}
+
+.inspiration-card__avatar {
+width: 76px;
+    height: 90px;
+  overflow: hidden;
+  border: 2px solid #fff;
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.15);
+  background: #fff;
+      border-top-left-radius: 12px;
+    border-top-right-radius: 12px;
+    border-bottom-left-radius: 60px;
+    border-bottom-right-radius: 60px;
+    border: 2px solid white;
+    position: absolute;
+    left: 15px;
+    z-index: 1;
+    bottom: -10px;
+}
+
+.inspiration-card__avatar img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.inspiration-card__name {
+  font-weight: 700;
+  font-size: 1rem;
+  color: #111;margin-left: 100px;
+}
+.inspiration__footer{display: flex;    margin-top: 20px;
+    flex-direction: column;}
+.inspiration__pager {
+  margin: 32px auto 24px;
+  display: inline-flex;
+  align-items: center;
+  gap: 14px;
+  font-size: 1rem;
+  color: #333;
+}
+
+.inspiration__pager-btn {
+  border: none;
+  background: #f6e5e3;
+  border-radius: 8px;
+  width: 32px;
+  height: 32px;
+  cursor: pointer;
+  font-weight: 700;
+}
+
+.inspiration__cta {
+  background: #f36a5b;
+  color: #fff;
+  border: none;
+  border-radius: 20px;
+  padding: 12px 28px;
+  font-weight: 700;
+  cursor: pointer;
+  box-shadow: 0 12px 24px rgba(0, 0, 0, 0.12);    max-width: 160px;
+    margin: 0 auto;
+}
