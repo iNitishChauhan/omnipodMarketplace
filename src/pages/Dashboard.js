@@ -2,6 +2,7 @@ import { useState } from 'react';
 import '../App.css';
 import CreatorHeader from '../components/CreatorHeader';
 import Footer from '../components/Footer';
+import UploadModal from '../components/UploadModal';
 import profileImage from '../images/creator-image.png';
 import inspirationImage1 from '../images/picture1.png';
 import inspirationImage2 from '../images/creator-image2.png';
@@ -113,6 +114,16 @@ function Dashboard() {
   ];
 
   const [activeDayIndex, setActiveDayIndex] = useState(0);
+  const [showUploadModal, setShowUploadModal] = useState(false);
+
+  const openUploadModal = () => setShowUploadModal(true);
+  const closeUploadModal = () => setShowUploadModal(false);
+  const handleUploadKeyDown = (event) => {
+    if (event.key === 'Enter' || event.key === ' ') {
+      event.preventDefault();
+      openUploadModal();
+    }
+  };
 
   return (
     <div className="home_page">
@@ -150,7 +161,7 @@ function Dashboard() {
                 </span>
                 <span>Content Guidelines</span>
               </div>
-              <div className="dashboard__menu-item">
+              <div className="dashboard__menu-item dashboard__menu-item--action" role="button" tabIndex={0} onClick={openUploadModal} onKeyDown={handleUploadKeyDown}>
                 <span className="dashboard__icon">
                   <svg viewBox="0 0 24 24" aria-hidden="true">
                     <circle cx="12" cy="12" r="9" fill="none" stroke="currentColor" strokeWidth="1.6" />
@@ -257,6 +268,8 @@ function Dashboard() {
         <button type="button" className="inspiration__cta">Explore more</button>
         </div>
       </section>
+
+      <UploadModal isOpen={showUploadModal} onClose={closeUploadModal} />
 
       <Footer />
     </div>
