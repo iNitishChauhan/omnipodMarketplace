@@ -5,6 +5,8 @@ import OmnipodCreatorLogin from './pages/OmnipodCreatorLogin';
 import CreatorSignup from './pages/CreatorSignup';
 import Dashboard from './pages/Dashboard';
 import ContentGuidelines from './pages/ContentGuidelines';
+import ForgotPassword from './pages/ForgotPassword'
+import ResetPassword from './pages/ResetPassword'
 
 
 function App() {
@@ -17,6 +19,8 @@ function App() {
         <Route path="/omnipod-creator-signup" element={<CreatorSignup />} />
         <Route path="/dashboard" element={<Dashboard />} />
         <Route path="/content-guidelines" element={<ContentGuidelines />} />
+        <Route path="/forgot-password" element={<ForgotPassword />} />
+        <Route path="/reset-password/:token" element={<ResetPassword />} />
       </Routes>
     </Router>
   );

@@ -9,6 +9,7 @@ import { useSelector } from "react-redux";
 
 
 function CreatorSignup() {
+ 
     const { isAuthenticated } = useSelector((state) => state.auth);
     
   const [loading, setLoading] = useState(false);
@@ -30,10 +31,14 @@ function CreatorSignup() {
     password: "",
     confirmPassword: "",
   });
-if (isAuthenticated) {
+  
+if (isAuthenticated===true) {
     return <Navigate to="/" />;
   }
+ 
+
   const handleChange = (e) => {
+   
     const { name, value, type, checked } = e.target;
     setFormData((prev) => ({
       ...prev,
@@ -42,6 +47,8 @@ if (isAuthenticated) {
   };
 
   const handleSubmit = async (e) => {
+
+
     e.preventDefault();
     setMessage("");
 

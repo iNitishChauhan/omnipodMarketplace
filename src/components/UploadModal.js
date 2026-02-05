@@ -1,63 +1,64 @@
-import { useEffect, useRef, useState } from 'react';
-import '../App.css';
-import uploadIcon1 from '../images/upload_icon1.png';
-import uploadIcon2 from '../images/upload_icon2.png';
-import docuSignLogo from '../images/docu_sign.png';
-import profileImage from '../images/creator-image.png';
+import { useEffect, useRef, useState } from "react";
+import { useSelector } from "react-redux";
+import axios from "axios";
+import "../App.css";
+import uploadIcon1 from "../images/upload_icon1.png";
+import uploadIcon2 from "../images/upload_icon2.png";
+import docuSignLogo from "../images/docu_sign.png";
+import profileImage from "../images/creator-image.png";
 
 function UploadModal({ isOpen, onClose }) {
+
   const fileInputRef = useRef(null);
+
+  // ✅ GET USER FROM REDUX
+  const { user } = useSelector((state) => state.auth);
+
   const [dragActive, setDragActive] = useState(false);
   const [selectedFile, setSelectedFile] = useState(null);
-  const [previewUrl, setPreviewUrl] = useState('');
+  const [previewUrl, setPreviewUrl] = useState("");
   const [isUploading, setIsUploading] = useState(false);
   const [progress, setProgress] = useState(0);
 
+  const [contentName, setContentName] = useState("");
+  const [theme, setTheme] = useState("");
+  const [apiError, setApiError] = useState("");
+  const [apiLoading, setApiLoading] = useState(false);
 
+  // ---------------- FILE HANDLING ----------------
   const handleFiles = (fileList) => {
     const file = Array.from(fileList || [])[0];
-    if (file) {
-      setSelectedFile(file);
-    }
+    if (file) setSelectedFile(file);
   };
 
-  const handleInputChange = (event) => {
-    handleFiles(event.target.files);
-  };
+  const handleInputChange = (e) => handleFiles(e.target.files);
+  const handleSelectClick = () => fileInputRef.current?.click();
 
-  const handleSelectClick = () => {
-    fileInputRef.current?.click();
-  };
-
-  const handleDragOver = (event) => {
-    event.preventDefault();
+  const handleDragOver = (e) => {
+    e.preventDefault();
     setDragActive(true);
   };
 
-  const handleDragLeave = () => {
+  const handleDragLeave = () => setDragActive(false);
+
+  const handleDrop = (e) => {
+    e.preventDefault();
     setDragActive(false);
+    handleFiles(e.dataTransfer.files);
   };
 
-  const handleDrop = (event) => {
-    event.preventDefault();
-    setDragActive(false);
-    handleFiles(event.dataTransfer.files);
-  };
-
+  // ---------------- PREVIEW ----------------
   useEffect(() => {
     if (!selectedFile) {
-      setPreviewUrl('');
+      setPreviewUrl("");
       return;
     }
-
     const url = URL.createObjectURL(selectedFile);
     setPreviewUrl(url);
-
-    return () => {
-      URL.revokeObjectURL(url);
-    };
+    return () => URL.revokeObjectURL(url);
   }, [selectedFile]);
 
+  // ---------------- FAKE PROGRESS ----------------
   useEffect(() => {
     if (!selectedFile) {
       setIsUploading(false);
@@ -72,9 +73,9 @@ function UploadModal({ isOpen, onClose }) {
 
     const interval = setInterval(() => {
       const elapsed = Date.now() - start;
-      const nextProgress = Math.min(100, Math.round((elapsed / duration) * 100));
-      setProgress(nextProgress);
-      if (nextProgress >= 100) {
+      const next = Math.min(100, Math.round((elapsed / duration) * 100));
+      setProgress(next);
+      if (next >= 100) {
         clearInterval(interval);
         setIsUploading(false);
       }
@@ -83,25 +84,88 @@ function UploadModal({ isOpen, onClose }) {
     return () => clearInterval(interval);
   }, [selectedFile]);
 
-  if (!isOpen) {
-    return null;
-  }
+  // ---------------- API UPLOAD ----------------
+  const handleSubmit = async () => {
+    
+    if (!selectedFile || !contentName) {
+      alert("File and title are required");
+      return;
+    }
+
+    try {
+      setApiLoading(true);
+      setApiError("");
+
+      const token = localStorage.getItem("token");
+
+      // ✅ USER ID (Redux first, fallback localStorage)
+      const userId = user?.id || localStorage.getItem("user_id");
+
+      if (!userId) {
+        setApiError("User not authenticated");
+        return;
+      }
+
+      const formData = new FormData();
+      formData.append("user_id", userId);
+      formData.append("title", contentName);
+      formData.append("file", selectedFile);
+      formData.append("content", "");
+      formData.append(
+        "media_type",
+        selectedFile.type.startsWith("video") ? "video" : "image"
+      );
+      formData.append("status", "draft");
+
+      const response = await axios.post(
+        "https://omnipodmarketplace.minddigital.in/api/media/upload",
+        formData,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "multipart/form-data",
+          },
+        }
+      );
+
+      console.log("Upload Success:", response.data);
+      alert("Media uploaded successfully");
+
+      // reset state
+      setSelectedFile(null);
+      setContentName("");
+      setTheme("");
+      onClose();
+       // ✅ RELOAD PAGE AFTER UPLOAD
+      window.location.reload();
+    } catch (error) {
+      setApiError(error.response?.data?.message || "Upload failed");
+    } finally {
+      setApiLoading(false);
+    }
+  };
+
+  if (!isOpen) return null;
 
   const showInitial = !selectedFile && !isUploading;
   const showProgress = isUploading;
   const showPreview = selectedFile && !isUploading;
-  const isVideo = selectedFile?.type?.startsWith('video');
+  const isVideo = selectedFile?.type?.startsWith("video");
 
   return (
-    <div className="upload-modal" role="dialog" aria-modal="true" aria-label="Upload content">
+    <div className="upload-modal" role="dialog" aria-modal="true">
       <div className="upload-modal__overlay" onClick={onClose} />
+
       <div
-        className={`upload-modal__content${dragActive ? ' is-dragging' : ''}`}
+        className={`upload-modal__content${dragActive ? " is-dragging" : ""}`}
         onDragOver={handleDragOver}
         onDragLeave={handleDragLeave}
         onDrop={handleDrop}
       >
-        <h3 className="upload-modal__title">Upload <span>Content</span></h3>
+        <h3 className="upload-modal__title">
+          Upload <span>Content</span>
+        </h3>
+
         <div className="upload-modal__divider" />
 
         {showInitial && (
@@ -110,16 +174,21 @@ function UploadModal({ isOpen, onClose }) {
               <img src={uploadIcon1} alt="Upload photos" />
               <img src={uploadIcon2} alt="Upload videos" />
             </div>
-            <p className="upload-modal__hint">Drag photos and videos here</p>
+            <p className="upload-modal__hint">
+              Drag photos and videos here
+            </p>
           </>
         )}
 
         {showProgress && (
           <div className="upload-modal__progress">
             <div className="upload-modal__progress-bar">
-              <span className="upload-modal__progress-fill" style={{ width: `${progress}%` }} />
+              <span
+                className="upload-modal__progress-fill"
+                style={{ width: `${progress}%` }}
+              />
             </div>
-            <p className="upload-modal__progress-text">Uploading... {progress}%</p>
+            <p>Uploading... {progress}%</p>
           </div>
         )}
 
@@ -129,37 +198,67 @@ function UploadModal({ isOpen, onClose }) {
               {isVideo ? (
                 <video src={previewUrl} controls />
               ) : (
-                <img src={previewUrl} alt={selectedFile?.name || 'Upload preview'} />
+                <img src={previewUrl} alt="Preview" />
               )}
             </div>
+
             <div className="upload-modal__form">
               <div className="upload-modal__user">
-                <img src={profileImage} alt="Russel M" />
-                <strong>Russel M</strong>
+                <img src={profileImage} alt="User" />
+                <strong>{user?.name || "Podder"}</strong>
               </div>
-              <label className="upload-modal__label" htmlFor="contentName">Insert Content Name</label>
-              <input id="contentName" type="text" className="upload-modal__text" placeholder="Insert Content Name" maxLength={100} />
-              <div className="upload-modal__count">0/100</div>
 
-              <select className="upload-modal__select" aria-label="Select Theme">
-                <option>Select Theme</option>
+              <label className="upload-modal__label">
+                Insert Content Name
+              </label>
+              <input
+                className="upload-modal__text"
+                type="text"
+                value={contentName}
+                onChange={(e) => setContentName(e.target.value)}
+                maxLength={100}
+                placeholder="Insert Content Name"
+              />
+<div class="upload-modal__count">0/100</div>
+              <select
+                className="upload-modal__select"
+                value={theme}
+                onChange={(e) => setTheme(e.target.value)}
+              >
+                <option value="">Select Theme</option>
+                <option value="fitness">Fitness</option>
+                <option value="health">Health</option>
               </select>
 
               <div className="upload-modal__checks">
                 <label className="upload-modal__check">
                   <input type="checkbox" />
-                  <span>I have read and understand the <a href="#guidelines">Content Guidelines</a></span>
+                  <span>
+                    I have read the{" "}
+                    <a href="#guidelines">Content Guidelines</a>
+                  </span>
                 </label>
-                <div className="upload-modal__docu">
-                  <label className="upload-modal__check">
+
+                <div className="upload-modal__check">
+                  <label>
                     <input type="checkbox" />
-                    <span>Sign <a href="#agreement">document agreement</a></span>
+                    <span>
+                      Sign <a href="#agreement">document agreement</a>
+                    </span>
                   </label>
                   <img src={docuSignLogo} alt="DocuSign" />
                 </div>
               </div>
 
-              <button type="button" className="upload-modal__submit">Submit</button>
+              {apiError && <p style={{ color: "red" }}>{apiError}</p>}
+
+              <button
+                className="upload-modal__submit"
+                onClick={handleSubmit}
+                disabled={apiLoading}
+              >
+                {apiLoading ? "Submitting..." : "Submit"}
+              </button>
             </div>
           </div>
         )}
@@ -171,13 +270,15 @@ function UploadModal({ isOpen, onClose }) {
               type="file"
               accept="image/*,video/*"
               onChange={handleInputChange}
-              className="upload-modal__input"
+              hidden
             />
-            <button type="button" className="upload-modal__btn" onClick={handleSelectClick} disabled={isUploading}>
+            <button onClick={handleSelectClick} className="upload-modal__btn">
               Select from computer
             </button>
             <br />
-            <button type="button" className="upload-modal__link">View current theme</button>
+            <button type="button" className="upload-modal__link">
+              View current theme
+            </button>
           </>
         )}
       </div>
