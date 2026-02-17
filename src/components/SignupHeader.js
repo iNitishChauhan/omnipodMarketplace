@@ -1,8 +1,9 @@
 import '../App.css';
-import { Link, useNavigate, Navigate } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import siteLogo from '../images/site-logo.png';
 import { useDispatch, useSelector } from "react-redux";
 import { logout } from "../store/auth/authActions";
+import { useNavigate } from 'react-router-dom';
 
 function SignupHeader() {
     const dispatch = useDispatch();

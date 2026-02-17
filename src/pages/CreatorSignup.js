@@ -38,8 +38,7 @@ function CreatorSignup() {
 if (isAuthenticated===true) {
     return <Navigate to="/" />;
   }
- 
-const handleImageChange = (e) => {
+  const handleImageChange = (e) => {
   const file = e.target.files[0];
 
   if (file) {
@@ -47,7 +46,6 @@ const handleImageChange = (e) => {
     setPreviewImage(URL.createObjectURL(file));
   }
 };
-
   const handleChange = (e) => {
    
     const { name, value, type, checked } = e.target;
