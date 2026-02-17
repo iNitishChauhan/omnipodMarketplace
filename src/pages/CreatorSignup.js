@@ -9,10 +9,14 @@ import { useSelector } from "react-redux";
 
 
 function CreatorSignup() {
+ 
     const { isAuthenticated } = useSelector((state) => state.auth);
     
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState("");
+  const [profileImage, setProfileImage] = useState(null);
+  const [previewImage, setPreviewImage] = useState(null);
+
 
   const [formData, setFormData] = useState({
     firstName: "",
@@ -30,10 +34,22 @@ function CreatorSignup() {
     password: "",
     confirmPassword: "",
   });
-if (isAuthenticated) {
+  
+if (isAuthenticated===true) {
     return <Navigate to="/" />;
   }
+ 
+const handleImageChange = (e) => {
+  const file = e.target.files[0];
+
+  if (file) {
+    setProfileImage(file);
+    setPreviewImage(URL.createObjectURL(file));
+  }
+};
+
   const handleChange = (e) => {
+   
     const { name, value, type, checked } = e.target;
     setFormData((prev) => ({
       ...prev,
@@ -42,6 +58,8 @@ if (isAuthenticated) {
   };
 
   const handleSubmit = async (e) => {
+
+
     e.preventDefault();
     setMessage("");
 
@@ -65,8 +83,8 @@ if (isAuthenticated) {
       setMessage("Please accept all agreements");
       return;
     }
-    console.log(formData)
-    const payload = {
+    //console.log(profileImage)
+     const payload = {
       first_name: formData.firstName,
       last_name: formData.lastName,
       email: formData.email,
@@ -77,7 +95,16 @@ if (isAuthenticated) {
       youtube: formData.youtubeHandle,
       password: formData.password,
       role: 'podder',
-    };
+    }; 
+    const formDataPayload = new FormData();
+
+// add all payload fields
+Object.keys(payload).forEach((key) => {
+  formDataPayload.append(key, payload[key]);
+});
+if (profileImage) {
+  formDataPayload.append("profile_image", profileImage);
+} 
 
     try {
       setLoading(true);
@@ -87,17 +114,29 @@ if (isAuthenticated) {
         url: "https://omnipodmarketplace.minddigital.in/api/creator-signup",
         data: payload,
       }); */
-      const res = await axios.post("https://omnipodmarketplace.minddigital.in/api/creator-signup", payload,
+     /*  const res = await axios.post("https://omnipodmarketplace.minddigital.in/api/creator-signup", payload,
 
-        { headers: { "Content-Type": "application/json", }, });
+      { headers: { "Content-Type": "application/json", }, });
 
-      setMessage("Signup successful 🎉");
+       */
+  const res = await axios.post(
+  "http://127.0.0.1:8000/api/creator-signup",
+  formDataPayload,
+  {
+    headers: {
+      "Content-Type": "multipart/form-data",
+    },
+  }
+); 
+setMessage("Signup successful 🎉");
+
       console.log(res.data);
 
     } catch (error) {
       setMessage(
         error.response?.data?.message || "Something went wrong"
       );
+      console.log(error.response?.data?.message);
     } finally {
       setLoading(false);
     }
@@ -189,6 +228,34 @@ if (isAuthenticated) {
                 </div>
               </div>
             </div>
+<div className="creator-field">
+  <label>
+    Profile Image <span className="creator-field__optional">(optional)</span>
+  </label>
+
+  <input
+    type="file"
+    accept="image/*"
+    onChange={handleImageChange}
+    className="creator-input"
+  />
+
+  {previewImage && (
+    <div style={{ marginTop: "10px" }}>
+      <img
+        src={previewImage}
+        alt="Profile Preview"
+        style={{
+          width: "120px",
+          height: "120px",
+          borderRadius: "50%",
+          objectFit: "cover",
+          border: "1px solid #ddd",
+        }}
+      />
+    </div>
+  )}
+</div>
 
             <div className="creator-checks">
               <label className="creator-check">
@@ -219,6 +286,7 @@ if (isAuthenticated) {
               <label htmlFor="confirmPassword"><span className="required">*</span>Confirm Password</label>
               <input type="password" name="confirmPassword" onChange={handleChange} className="creator-input" />
             </div>
+            
           </div>
         </section>
         <section className="creator-submit">

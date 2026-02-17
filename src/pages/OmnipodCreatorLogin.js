@@ -25,7 +25,7 @@ function OmnipodCreatorLogin() {
 
   // ✅ Redirect after login
   if (isAuthenticated) {
-    return <Navigate to="/" />;
+    return <Navigate to="/dashboard" />;
   }
 
   return (
@@ -68,7 +68,7 @@ function OmnipodCreatorLogin() {
             <input type="hidden" name="role" value={role} />
 
             <div className="insulet-field">
-              <a className="insulet-forgot" href="#forgot">
+              <a className="insulet-forgot" href="forgot-password">
                 Forgot Password?
               </a>
             </div>

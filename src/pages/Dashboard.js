@@ -1,12 +1,28 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import '../App.css';
 import CreatorHeader from '../components/CreatorHeader';
 import Footer from '../components/Footer';
+import UploadModal from '../components/UploadModal';
 import profileImage from '../images/creator-image.png';
 import inspirationImage1 from '../images/picture1.png';
 import inspirationImage2 from '../images/creator-image2.png';
-
+import { useDispatch, useSelector } from "react-redux";
+import { fetchUserMedia } from "../store/media/mediaActions";
+import { Navigate } from "react-router-dom";
 function Dashboard() {
+  const dispatch = useDispatch();
+
+  const { user, isAuthenticated } = useSelector((state) => state.auth);
+  const { media, loading, error } = useSelector((state) => state.media);
+
+//console.log(user);
+
+  useEffect(() => {
+    if (user?.id) {
+      dispatch(fetchUserMedia(user?.id));
+    }
+  }, [dispatch, user]);
+  
   const analyticsDays = [
     {
       label: 'M',
@@ -100,20 +116,46 @@ function Dashboard() {
       ],
     },
   ];
+   /* ---------------- PAGINATION STATE ---------------- */
+  const ITEMS_PER_PAGE = 8;
+  const [currentPage, setCurrentPage] = useState(1);
 
-  const contentCards = [
-    { name: 'David V', image: inspirationImage1, avatar: inspirationImage2 },
-    { name: 'Russel M', image: inspirationImage1, avatar: inspirationImage2 },
-    { name: 'Hannah McC', image: inspirationImage1, avatar: inspirationImage2 },
-    { name: 'Gracie M', image: inspirationImage1, avatar: inspirationImage2 },
-    { name: 'Temi O', image: inspirationImage1, avatar: inspirationImage2 },
-    { name: 'Iesa', image: inspirationImage1, avatar: inspirationImage2 },
-    { name: 'Dan', image: inspirationImage1, avatar: inspirationImage2 },
-    { name: 'Jule K', image: inspirationImage1, avatar: inspirationImage2 },
-  ];
+  const totalPages = Math.ceil(media.length / ITEMS_PER_PAGE);
+  const startIndex = (currentPage - 1) * ITEMS_PER_PAGE;
+  const endIndex = startIndex + ITEMS_PER_PAGE;
+  const paginatedMedia = media.slice(startIndex, endIndex);
+
+  const goToPrevPage = () => {
+    if (currentPage > 1) setCurrentPage((prev) => prev - 1);
+  };
+
+  const goToNextPage = () => {
+    if (currentPage < totalPages) setCurrentPage((prev) => prev + 1);
+  };
 
   const [activeDayIndex, setActiveDayIndex] = useState(0);
+  const [showUploadModal, setShowUploadModal] = useState(false);
+  const [redirect, setRedirect] = useState(false);
+   if (!isAuthenticated) {
+    return <Navigate to="/omnipod-creator-login" />;
+  }
 
+
+  const openUploadModal = () => setShowUploadModal(true);
+  const closeUploadModal = () => setShowUploadModal(false);
+  const handleUploadKeyDown = (event) => {
+    if (event.key === 'Enter' || event.key === ' ') {
+      event.preventDefault();
+      openUploadModal();
+    }
+  };
+
+  
+  if (redirect) {
+    return <Navigate to="/content-guidelines" />;
+  }
+   
+  
   return (
     <div className="home_page">
       <CreatorHeader />
@@ -124,7 +166,7 @@ function Dashboard() {
             <div className="dashboard__headline">
               <h1>
                 Welcome back,
-                <span className="dashboard__name">Russel</span>
+                <span className="dashboard__name">{user?.name}</span>
               </h1>
             </div>
 
@@ -139,7 +181,7 @@ function Dashboard() {
                 </span>
                 <span>View Profile</span>
               </div>
-              <div className="dashboard__menu-item">
+              <div className="dashboard__menu-item dashboard__menu-item--action">
                 <span className="dashboard__icon">
                   <svg viewBox="0 0 24 24" aria-hidden="true">
                     <rect x="4" y="4" width="16" height="12" rx="2" ry="2" fill="none" stroke="currentColor" strokeWidth="1.6" />
@@ -148,9 +190,10 @@ function Dashboard() {
                     <line x1="9" y1="11" x2="15" y2="11" stroke="currentColor" strokeWidth="1.6" />
                   </svg>
                 </span>
-                <span>Content Guidelines</span>
+                <span onClick={() => {setRedirect(true);}}>Content Guidelines</span>
+                
               </div>
-              <div className="dashboard__menu-item">
+              <div className="dashboard__menu-item dashboard__menu-item--action" role="button" tabIndex={0} onClick={openUploadModal} onKeyDown={handleUploadKeyDown}>
                 <span className="dashboard__icon">
                   <svg viewBox="0 0 24 24" aria-hidden="true">
                     <circle cx="12" cy="12" r="9" fill="none" stroke="currentColor" strokeWidth="1.6" />
@@ -187,7 +230,7 @@ function Dashboard() {
             </div>
             <div className="analytics-card">
               <h2>Analytics</h2>
-              <h3>Overview</h3>
+              <h3>Overview</h3> 
 
               <div className="analytics-card__panel">
                 <div className="analytics-card__days">
@@ -217,7 +260,7 @@ function Dashboard() {
               <button className="analytics-card__btn" type="button">Find out more</button>
 
               <div className="analytics-card__avatar">
-                <img src={profileImage} alt="Profile" />
+                <img src={`https://omnipodmarketplace.minddigital.in/${user?.profile_image}`} alt="Profile" />
               </div>
             </div>
           </div>
@@ -231,33 +274,80 @@ function Dashboard() {
             <span>inspiration</span>
           </h2>
         </div>
+        
+         <div className="inspiration__grid">
 
-        <div className="inspiration__grid">
-          {contentCards.map((card) => (
-            <div className="inspiration-card" key={card.name}>
-              <div className="inspiration-card__image">
-                <img src={card.image} alt={card.name} />
-              </div>
-              <div className="inspiration-card__footer">
-                <span className="inspiration-card__avatar">
-                  <img src={card.avatar} alt="" />
-                </span>
-                <span className="inspiration-card__name">{card.name}</span>
-              </div>
+      {loading && <p>Loading...</p>}
+      {error && <p style={{ color: "red" }}>{error}</p>}
+
+     {/*  <div className="grid"> */}
+ {paginatedMedia.map((item) => {
+  // check if file is video
+  const isVideo = /\.(mp4|webm|ogg)$/i.test(item.file_url);
+  return (
+    <div className="inspiration-card" key={item.id || item.title}>
+      <div className="inspiration-card__image">
+        {isVideo ? (
+          <video
+            src={item.file_url}
+            controls
+            preload="metadata"
+            style={{ width: "100%", height: "100%", objectFit: "cover" }}
+          />
+        ) : (
+          <img
+            src={item.file_url}
+            alt={item.title}
+          />
+        )}
+      </div>
+
+      <div className="inspiration-card__footer">
+        <span className="inspiration-card__avatar">
+          {/* avatar if needed */}
+        </span>
+        <span className="inspiration-card__name">{item.title}</span>
+      </div>
+    </div>
+  );
+})}
+
+ 
+   
+       
+        
+        </div>
+         {/* ---------------- PAGINATION UI ---------------- */}
+        {media.length > ITEMS_PER_PAGE && (
+          <div className="inspiration__footer">
+            <div className="inspiration__pager">
+              <button
+                type="button"
+                className="inspiration__pager-btn"
+                onClick={goToPrevPage}
+                disabled={currentPage === 1}
+              >
+                &lt;
+              </button>
+
+              <span>
+                <strong>{currentPage}</strong> of {totalPages}
+              </span>
+
+              <button
+                type="button"
+                className="inspiration__pager-btn"
+                onClick={goToNextPage}
+                disabled={currentPage === totalPages}
+              >
+                &gt;
+              </button>
             </div>
-          ))}
-        </div>
-          <div className='inspiration__footer'>
-        <div className="inspiration__pager">
-          <button type="button" className="inspiration__pager-btn" aria-label="Previous page">&lt;</button>
-          <span><strong>1</strong> of 33</span>
-          <button type="button" className="inspiration__pager-btn" aria-label="Next page">&gt;</button>
-        </div>
-
-        <button type="button" className="inspiration__cta">Explore more</button>
-        </div>
+             <button type="button" className="inspiration__cta">Explore more</button>
+          </div>
+        )}
       </section>
-
+ <UploadModal isOpen={showUploadModal} onClose={closeUploadModal} />
       <Footer />
     </div>
   );

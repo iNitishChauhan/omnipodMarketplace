@@ -6,6 +6,7 @@ import sp_image from '../images/pp_image1.png';
 import pp_image from '../images/pp_image2.jpg';
 
 function ContentGuidelines () {
+    
       return (
         <div className="cg_page">
             <div className="hero">
