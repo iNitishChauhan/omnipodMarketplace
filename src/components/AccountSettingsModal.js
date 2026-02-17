@@ -1,8 +1,43 @@
 import { useEffect, useRef, useState } from "react";
 import "../App.css";
-import profileImage from "../images/creator-image.png";
+import axios from "axios";
+import { useSelector } from "react-redux";
 
 function AccountSettingsModal({ isOpen, onClose }) {
+
+const { user, token } = useSelector((state) => state.auth);
+
+const [profileFile, setProfileFile] = useState(null);
+const [profilePreview, setProfilePreview] = useState("");
+
+useEffect(() => {
+  if (!isOpen || !user) return;
+
+  setFormData({
+    firstName: user.first_name || "",
+    lastName: user.last_name || "",
+    email: user.email || "",
+    phoneCode: "+44",
+    phone: user.phone ? user.phone.replace(/^\+\d+/, "") : "",
+    instagramHandle: user.instagram || "",
+    tiktokHandle: user.tiktok || "",
+    youtubeHandle: user.youtube || "",
+  });
+
+  if (user.product) {
+    setSelectedProducts(user.product.split(","));
+  }
+}, [isOpen, user]);
+
+const handleImageChange = (e) => {
+  const file = e.target.files[0];
+  if (!file) return;
+
+  setProfileFile(file);
+  setProfilePreview(URL.createObjectURL(file));
+};
+
+
   const productOptions = ["Omnipod 5", "Omnipod DASH", "Omnipod GO", "Omnipod View", "Other"];
   const [formData, setFormData] = useState({
     firstName: "",
@@ -62,6 +97,42 @@ function AccountSettingsModal({ isOpen, onClose }) {
     setFormData((prev) => ({ ...prev, [name]: value }));
     setErrors((prev) => ({ ...prev, [name]: "" }));
   };
+const handleSubmit = async (event) => {
+  event.preventDefault();
+  if (!validateForm()) return;
+
+  try {
+    const formPayload = new FormData();
+    formPayload.append("first_name", formData.firstName);
+    formPayload.append("last_name", formData.lastName);
+    formPayload.append("email", formData.email);
+    formPayload.append("phone", `${formData.phoneCode}${formData.phone}`);
+    formPayload.append("product", selectedProducts.join(","));
+    formPayload.append("instagram", formData.instagramHandle);
+    formPayload.append("tiktok", formData.tiktokHandle);
+    formPayload.append("youtube", formData.youtubeHandle);
+
+    if (profileFile) {
+      formPayload.append("profile_image", profileFile);
+    }
+    //try {
+  const url = `https://omnipodmarketplace.minddigital.in/api/profile/${user.id}/update-profile`;
+
+  const res = await axios.post(url, formPayload, {
+    headers: {
+      "Content-Type": "multipart/form-data",
+    },
+  });
+  localStorage.setItem("token", res.data.token);
+  localStorage.setItem("user", JSON.stringify(res.data.user));
+  //console.log("SUCCESS:", res.data);
+  
+} catch (error) {
+  console.log("ERROR FULL:", error);
+  console.log("ERROR RESPONSE:", error.response?.data);
+  console.log("ERROR STATUS:", error.response?.status);
+}
+};
 
   const validateForm = () => {
     const nextErrors = {};
@@ -88,7 +159,6 @@ function AccountSettingsModal({ isOpen, onClose }) {
     selectedProducts.length > 0 ? selectedProducts.join(", ") : "Select Product";
 
   if (!isOpen) return null;
-
   return (
     <div className="account-settings-modal" role="dialog" aria-modal="true">
       <div className="account-settings-modal__overlay" onClick={onClose} />
@@ -100,21 +170,27 @@ function AccountSettingsModal({ isOpen, onClose }) {
         <div className="account-settings-modal__divider" />
 
         <div className="account-settings-modal__profile">
-          <img src={profileImage} alt="Profile" />
+          <img src={`https://omnipodmarketplace.minddigital.in/${
+          profilePreview
+          ? profilePreview
+          : user?.profile_image
+          ? user.profile_image
+          : '' }`} alt="Profile" />
           <div className="account-settings-modal__profile-copy">
             <p>Update Profile Picture</p>
-            <input type="file" accept="image/*" />
+           <input type="file" accept="image/*" onChange={handleImageChange} />
           </div>
         </div>
 
-        <form
+       {/*  <form
           className="account-settings-modal__form"
           onSubmit={(event) => {
             event.preventDefault();
             if (!validateForm()) return;
             onClose();
           }}
-        >
+        > */}<form className="account-settings-modal__form" onSubmit={handleSubmit}>
+
           <div className="creator-form__row creator-form__row--2">
             <div className="creator-field">
               <label htmlFor="accountFirstName">

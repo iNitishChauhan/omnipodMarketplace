@@ -118,7 +118,7 @@ if (profileImage) {
 
        */
   const res = await axios.post(
-  "http://127.0.0.1:8000/api/creator-signup",
+  "https://omnipodmarketplace.minddigital.in/api/creator-signup",
   formDataPayload,
   {
     headers: {

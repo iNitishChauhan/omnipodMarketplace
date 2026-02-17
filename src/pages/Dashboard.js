@@ -362,7 +362,7 @@ function Dashboard() {
           </div>
         )}
       </section>
- <UploadModal isOpen={showUploadModal} onClose={closeUploadModal} />
+      <UploadModal isOpen={showUploadModal} onClose={closeUploadModal} />
       <AccountSettingsModal isOpen={showAccountModal} onClose={closeAccountModal} />
       <Footer />
     </div>
