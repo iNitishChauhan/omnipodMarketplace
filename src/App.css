@@ -913,3 +913,237 @@ width: 76px;
     grid-template-columns: 1fr;
   }
 }
+
+/* Account settings modal */
+.account-settings-modal {
+  position: fixed;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 65;
+}
+
+.account-settings-modal__overlay {
+  position: absolute;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.5);
+}
+
+.account-settings-modal__content {
+  position: relative;
+  z-index: 1;
+  background: #fff;
+  width: min(980px, 94%);
+  max-height: 90vh;
+  overflow-y: auto;
+  border-radius: 12px;
+  padding: 40px 34px 34px;
+  box-shadow: 0 26px 56px rgba(0, 0, 0, 0.24);
+}
+
+.account-settings-modal__title {
+  margin: 0;
+  text-align: center;
+  font-size: clamp(2rem, 4vw, 3.4rem);
+  font-weight: 800;
+  color: #111;
+}
+
+.account-settings-modal__title span {
+  color: #f36a5b;
+}
+
+.account-settings-modal__divider {
+  height: 1px;
+  width: 82%;
+  background: #f36a5b;
+  margin: 16px auto 30px;
+}
+
+.account-settings-modal__profile {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  width: min(720px, 100%);
+  margin: 0 auto 20px; justify-content: center;
+}
+
+.account-settings-modal__profile img {
+  width: 62px;
+  height: 74px;
+  object-fit: cover;
+  border-top-left-radius: 12px;
+  border-top-right-radius: 12px;
+  border-bottom-left-radius: 48px;
+  border-bottom-right-radius: 48px;
+}
+
+.account-settings-modal__profile-copy {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.account-settings-modal__profile-copy p {
+  margin: 0;
+  font-weight: 700;
+  color: #222;
+}
+
+.account-settings-modal__form {
+  width: min(860px, 100%);
+  margin: 0 auto;
+  display: flex;
+    flex-direction: column;
+    gap: 18px;
+}
+
+.account-settings-modal__form .creator-field label,
+.account-settings-modal__form .creator-field__legend {
+  font-size: 0.95rem;
+}
+
+.account-settings-modal__form .creator-input,
+.account-settings-modal__form .creator-phone__code {
+
+}
+
+.account-settings-modal__social-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.account-settings-modal__social-row {
+  display: grid;
+  grid-template-columns: 170px 1fr;
+  gap: 12px;
+}
+
+.account-settings-modal__platform {
+  font-weight: 500;
+}
+
+.account-settings-modal__multi-select {
+  min-height: 110px;
+  padding-top: 8px;
+  padding-bottom: 8px;
+}
+
+.account-settings-modal__product-dropdown {
+  position: relative;
+}
+
+.account-settings-modal__product-trigger {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  text-align: left;
+  cursor: pointer;
+}
+
+.account-settings-modal__product-trigger.is-open {
+  border-color: #f36a5b;
+}
+
+.account-settings-modal__product-value {
+  display: block;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.account-settings-modal__product-value.is-placeholder {
+  color: #6f6f6f;
+}
+
+.account-settings-modal__product-caret {
+  margin-left: 10px;
+  color: #444;
+  font-size: 0.9rem;
+}
+
+.account-settings-modal__product-menu {
+  position: absolute;
+  top: calc(100% + 6px);
+  left: 0;
+  right: 0;
+  z-index: 8;
+  background: #fff;
+  border: 1px solid #cfcfcf;
+  border-radius: 10px;
+  box-shadow: 0 14px 28px rgba(0, 0, 0, 0.12);
+  max-height: 190px;
+  overflow-y: auto;
+  padding: 8px 0;
+}
+
+.account-settings-modal__product-option {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 12px;
+  color: #222;
+  cursor: pointer;
+}
+
+.account-settings-modal__product-option:hover {
+  background: #f7f3fc;
+}
+
+.account-settings-modal__product-option input {
+  width: 16px;
+  height: 16px;
+}
+
+.account-settings-modal__helper {
+  display: block;
+  margin-top: 6px;
+  font-size: 0.8rem;
+  color: #6b6b6b;
+}
+
+.account-settings-modal__input-error {
+  border-color: #d93025 !important;
+}
+
+.account-settings-modal__error {
+  display: block;
+  margin-top: 6px;
+  font-size: 0.8rem;
+  color: #d93025;
+}
+
+.account-settings-modal__actions {
+  display: flex;
+  justify-content: center;
+  margin-top: 26px;
+}
+
+.account-settings-modal__save {
+  border: none;
+  border-radius: 12px;
+  background: #f36a5b;
+  color: #fff;
+  font-size: 1.1rem;
+  font-weight: 700;
+  padding: 10px 26px;
+  cursor: pointer;
+}
+
+@media (max-width: 767px) {
+  .account-settings-modal__content {
+    padding: 30px 18px 24px;
+  }
+
+  .account-settings-modal__profile {
+    align-items: flex-start;
+  }
+
+  .account-settings-modal__social-row {
+    grid-template-columns: 1fr;
+  }
+}

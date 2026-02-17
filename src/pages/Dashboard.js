@@ -3,6 +3,7 @@ import '../App.css';
 import CreatorHeader from '../components/CreatorHeader';
 import Footer from '../components/Footer';
 import UploadModal from '../components/UploadModal';
+import AccountSettingsModal from '../components/AccountSettingsModal';
 import profileImage from '../images/creator-image.png';
 import { useDispatch, useSelector } from "react-redux";
 import { fetchUserMedia } from "../store/media/mediaActions";
@@ -134,6 +135,7 @@ function Dashboard() {
 
   const [activeDayIndex, setActiveDayIndex] = useState(0);
   const [showUploadModal, setShowUploadModal] = useState(false);
+  const [showAccountModal, setShowAccountModal] = useState(false);
   const [redirect, setRedirect] = useState(false);
    if (!isAuthenticated) {
     return <Navigate to="/omnipod-creator-login" />;
@@ -142,10 +144,18 @@ function Dashboard() {
 
   const openUploadModal = () => setShowUploadModal(true);
   const closeUploadModal = () => setShowUploadModal(false);
+  const openAccountModal = () => setShowAccountModal(true);
+  const closeAccountModal = () => setShowAccountModal(false);
   const handleUploadKeyDown = (event) => {
     if (event.key === 'Enter' || event.key === ' ') {
       event.preventDefault();
       openUploadModal();
+    }
+  };
+  const handleAccountKeyDown = (event) => {
+    if (event.key === 'Enter' || event.key === ' ') {
+      event.preventDefault();
+      openAccountModal();
     }
   };
 
@@ -201,7 +211,13 @@ function Dashboard() {
                 </span>
                 <span>Upload Content</span>
               </div>
-              <div className="dashboard__menu-item">
+              <div
+                className="dashboard__menu-item dashboard__menu-item--action"
+                role="button"
+                tabIndex={0}
+                onClick={openAccountModal}
+                onKeyDown={handleAccountKeyDown}
+              >
                 <span className="dashboard__icon">
                   <svg viewBox="0 0 24 24" aria-hidden="true">
                     <line x1="6" y1="6" x2="18" y2="6" stroke="currentColor" strokeWidth="1.6" />
@@ -347,6 +363,7 @@ function Dashboard() {
         )}
       </section>
  <UploadModal isOpen={showUploadModal} onClose={closeUploadModal} />
+      <AccountSettingsModal isOpen={showAccountModal} onClose={closeAccountModal} />
       <Footer />
     </div>
   );
