@@ -4,10 +4,9 @@ import CreatorHeader from '../components/CreatorHeader';
 import Footer from '../components/Footer';
 import UploadModal from '../components/UploadModal';
 import AccountSettingsModal from '../components/AccountSettingsModal';
-import profileImage from '../images/creator-image.png';
 import { useDispatch, useSelector } from "react-redux";
 import { fetchUserMedia } from "../store/media/mediaActions";
-import { Navigate } from "react-router-dom";
+import {Link, Navigate } from "react-router-dom";
 function Dashboard() {
   const dispatch = useDispatch();
 
@@ -188,7 +187,7 @@ function Dashboard() {
                     <path d="M12 12a4 4 0 1 0-4-4 4 4 0 0 0 4 4Zm0 2c-4.4 0-8 2.2-8 5v1h16v-1c0-2.8-3.6-5-8-5Z" fill="none" stroke="currentColor" strokeWidth="1.6" />
                   </svg>
                 </span>
-                <span>View Profile</span>
+                <Link to="/profile"><span>View Profile</span></Link>
               </div>
               <div className="dashboard__menu-item dashboard__menu-item--action">
                 <span className="dashboard__icon">

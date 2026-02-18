@@ -5,7 +5,7 @@ import { useSelector } from "react-redux";
 
 function AccountSettingsModal({ isOpen, onClose }) {
 
-const { user, token } = useSelector((state) => state.auth);
+const { user } = useSelector((state) => state.auth);
 
 const [profileFile, setProfileFile] = useState(null);
 const [profilePreview, setProfilePreview] = useState("");

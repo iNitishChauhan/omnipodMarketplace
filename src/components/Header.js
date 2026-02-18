@@ -32,7 +32,9 @@ function Header() {
         {isAuthenticated && (
           <div className="header-right">
             <span className="user-name">
-              {user?.name || "User"}
+              <Link className="" to="/dashboard">
+                {user?.name || "User"}
+              </Link>
             </span>
 
             <button onClick={logoutHandler} className="action-btn action-btn--primary" >
