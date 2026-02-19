@@ -2,9 +2,11 @@ import { useEffect, useRef, useState } from "react";
 import "../App.css";
 import axios from "axios";
 import { useSelector } from "react-redux";
+import { useNavigate } from "react-router-dom";
+
 
 function AccountSettingsModal({ isOpen, onClose }) {
-
+const navigate = useNavigate();
 const { user, token } = useSelector((state) => state.auth);
 
 const [profileFile, setProfileFile] = useState(null);
@@ -126,7 +128,7 @@ const handleSubmit = async (event) => {
   localStorage.setItem("token", res.data.token);
   localStorage.setItem("user", JSON.stringify(res.data.user));
   //console.log("SUCCESS:", res.data);
-  
+  navigate("/");
 } catch (error) {
   console.log("ERROR FULL:", error);
   console.log("ERROR RESPONSE:", error.response?.data);
