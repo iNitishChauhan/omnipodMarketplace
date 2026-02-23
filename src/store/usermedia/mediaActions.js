@@ -1,12 +1,12 @@
 import axios from "axios";
-export const fetchMedia = () => async (dispatch, getState) => {
+export const fetchUserMedia = (userId) => async (dispatch, getState) => {
   try {
-    dispatch({ type: "MEDIA_REQUEST" });
+    dispatch({ type: "USERMEDIA_REQUEST" });
 
     const { token } = getState().auth;
 
     const res = await axios.get(
-      `https://omnipodmarketplace.minddigital.in/api/medias`,
+      `https://omnipodmarketplace.minddigital.in/api/media/user/${userId}`,
       {
         headers: {
           Authorization: `Bearer ${token}`,
@@ -15,12 +15,12 @@ export const fetchMedia = () => async (dispatch, getState) => {
     );
 //console.log(res.data.data)
     dispatch({
-      type: "MEDIA_SUCCESS",
+      type: "USERMEDIA_SUCCESS",
       payload: res.data.data,
     });
   } catch (error) {
     dispatch({
-      type: "MEDIA_FAIL",
+      type: "USERMEDIA_FAIL",
       payload:
         error.response?.data?.message || "Failed to load media",
     });
