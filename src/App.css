@@ -557,13 +557,15 @@ padding: 20px 0% 80px;
 }
 
 .inspiration-card {
-  text-align: left; position: relative;    margin-bottom: 20px; max-width: 220px;
+  text-align: left; position: relative;    margin-bottom: 50px; width: 220px;
+    height: 220px;
 }
 
 .inspiration-card__image {
   border-radius: 18px;
   overflow: hidden;
   box-shadow: 0 12px 24px rgba(0, 0, 0, 0.12);
+  height: 100%;
 }
 
 .inspiration-card__image img {
@@ -595,7 +597,7 @@ width: 76px;
     position: absolute;
     left: 15px;
     z-index: 1;
-    bottom: -10px;
+    bottom: -50px;
 }
 
 .inspiration-card__avatar img {
@@ -912,7 +914,9 @@ width: 76px;
   font-weight: 700;
   cursor: pointer;
 }
-
+@media (max-width: 1439px) {
+.inspiration{padding-left:20px; padding-right:20px;}
+}
 @media (max-width: 1023px) {
   .upload-modal__layout {
     grid-template-columns: 1fr;

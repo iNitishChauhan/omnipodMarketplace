@@ -34,7 +34,7 @@ const { isAuthenticated, user } = useSelector((state) => state.auth);
       )}
        {isAuthenticated && (
         <>
-        <nav class="insulet-header__nav"><a class="insulet-header__link" href="#creators">{user?.name || "User"}</a></nav>
+        <nav className="insulet-header__nav"><a className="insulet-header__link" href="#creators">{user?.name || "User"}</a></nav>
           <div className="header-right">
             <button onClick={logoutHandler} className="action-btn action-btn--primary" >
               Logout
