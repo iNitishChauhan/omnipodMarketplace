@@ -20,7 +20,7 @@ function CreatorProfile() {
 
 //console.log(media[0]);
 /* ---------------- PAGINATION STATE ---------------- */
-  const ITEMS_PER_PAGE = 2;
+  const ITEMS_PER_PAGE = 8;
   const [currentPage, setCurrentPage] = useState(1);
   const [statusFilter, setStatusFilter] = useState("all");
   const [dateFilter, setDateFilter] = useState("latest");
@@ -80,7 +80,7 @@ if (!isAuthenticated) {
   const firstName = user?.name?.trim()?.split(' ')[0] || 'Creator';
   const postCount = media.length;
   const pendingCount = media.filter(
-    (item) => String(item?.status || '').toLowerCase() === 'draft'
+    (item) => String(item?.status || '').toLowerCase() === 'pending'
   ).length;
   const rejectedCount = media.filter(
     (item) => String(item?.status || '').toLowerCase() === 'rejected'
@@ -156,13 +156,14 @@ if (!isAuthenticated) {
                       <span><img src={checkIcon} alt='Approved' /></span> Approved
                     </p>
                   )}
-          {item.status === 'darft' && (
+                  
+          {item.status === 'pending' && (
                     <p className="profile-card__status profile-card__status--pending">
                       Pending
                     </p>
                   )}
 
-                  {item.status === 'draft' && (
+                  {item.status === 'rejected' && (
                     <p className="profile-card__status profile-card__status--revision">
                       <span>×</span> Needs Revision
                     </p>
@@ -174,7 +175,7 @@ if (!isAuthenticated) {
                     </button>
                   )}
 
-                  {item.cta === 'revision' && (
+                  {item.status === 'rejected' && (
                     <div className="profile-card__revision-actions">
                       <button type="button" className="profile-card__btn profile-card__btn--analytics">
                         Find out more

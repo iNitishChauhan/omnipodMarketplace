@@ -6,7 +6,6 @@ import sp_image from '../images/pp_image1.png';
 import pp_image from '../images/pp_image2.jpg';
 
 function ContentGuidelines () {
-    
       return (
         <div className="cg_page">
             <div className="hero">
@@ -15,7 +14,6 @@ function ContentGuidelines () {
                 <section className="hero__left">
                     <h1>Content <br />Guidelines</h1>
                 </section>
-
                 <section className="hero__right" aria-hidden="true">
                     <div
                     className="hero__photo"
@@ -75,7 +73,6 @@ function ContentGuidelines () {
             <Footer />
         </div>
       );
-
 }
 
 export default ContentGuidelines;

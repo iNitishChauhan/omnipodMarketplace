@@ -115,7 +115,7 @@ function UploadModal({ isOpen, onClose }) {
         "media_type",
         selectedFile.type.startsWith("video") ? "video" : "image"
       );
-      formData.append("status", "draft");
+      formData.append("status", "pending");
 
       const response = await axios.post(
         "https://omnipodmarketplace.minddigital.in/api/media/upload",
