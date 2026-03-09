@@ -44,7 +44,7 @@ function ContentGuidelines () {
                 <div className='pp_section'>
                     <h3>Pod <span>placement</span></h3>
                     <div className='pp_inner'>
-                        <div class="pp_left">
+                        <div className="pp_left">
                             <ol>
                                 <li>Place Pod horizontally on back, abdomen,and buttocks</li>
                                 <li>Place Pod vertically on arm and leg</li>
@@ -52,7 +52,7 @@ function ContentGuidelines () {
                                 <li>Do not place Pod over a tattoo</li>
                             </ol>
                         </div>
-                        <div class="pp_image"><img src={sp_image} alt="Sensor placement"></img></div>
+                        <div className="pp_image"><img src={sp_image} alt="Sensor placement"></img></div>
                     </div>
                 </div>
             </div>
@@ -60,13 +60,13 @@ function ContentGuidelines () {
                 <div className='pp_section'>
                     <h3>Sensor <span>placement</span></h3>
                     <div className='pp_inner'>
-                        <div class="pp_left">
+                        <div className="pp_left">
                         <ol>
                             <li>Place sensor horizontally on abdomen</li>
                             <li>Sensor should be placed in close proximity to the Pod</li>
                         </ol>
                         </div>
-                        <div class="pp_image"><img src={pp_image} alt="Sensor placement"></img></div>
+                        <div className="pp_image"><img src={pp_image} alt="Sensor placement"></img></div>
                     </div>
                 </div>
             </div>

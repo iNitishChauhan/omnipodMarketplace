@@ -219,7 +219,7 @@ function UploadModal({ isOpen, onClose }) {
                 maxLength={100}
                 placeholder="Insert Content Name"
               />
-<div class="upload-modal__count">0/100</div>
+<div className="upload-modal__count">0/100</div>
               <select
                 className="upload-modal__select"
                 value={theme}
