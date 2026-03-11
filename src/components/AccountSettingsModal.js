@@ -3,6 +3,7 @@ import "../App.css";
 import axios from "axios";
 import { useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
+import { API_URL,BASEURL } from "./URLS";
 function AccountSettingsModal({ isOpen, onClose }) {
 const navigate = useNavigate();
 const { user, token } = useSelector((state) => state.auth);
@@ -114,7 +115,7 @@ const handleSubmit = async (event) => {
       formPayload.append("profile_image", profileFile);
     }
     //try {
-  const url = `https://omnipodmarketplace.minddigital.in/api/profile/${user.id}/update-profile`;
+  const url = `${API_URL}profile/${user.id}/update-profile`;
 
   const res = await axios.post(url, formPayload, {
     headers: {
@@ -169,7 +170,7 @@ const handleSubmit = async (event) => {
         <div className="account-settings-modal__divider" />
 
         <div className="account-settings-modal__profile">
-          <img src={`https://omnipodmarketplace.minddigital.in/${
+          <img src={`${BASEURL}/${
           profilePreview
           ? profilePreview
           : user?.profile_image

@@ -1,12 +1,13 @@
 import { useState, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { Navigate } from 'react-router-dom';
+import axios from "axios";
 import '../App.css';
 import CreatorHeader from '../components/CreatorHeader';
 import Footer from '../components/Footer';
 import checkIcon from '../images/check_icon.png';
 import { fetchUserMedia } from '../store/usermedia/mediaActions';
-import {BASEURL} from '../components/URLS';
+import {BASEURL, API_URL} from '../components/URLS';
 
 function CreatorProfile() {
   const dispatch = useDispatch();
@@ -17,6 +18,24 @@ function CreatorProfile() {
       dispatch(fetchUserMedia(user.id));
     }
   }, [dispatch, user]);
+
+
+const requestReview = async (id) => {
+  try {
+    const res = await axios.post(
+      `${API_URL}media/${id}/request-review`,
+    );
+
+    console.log(res.data);
+
+    // reload media
+    dispatch(fetchUserMedia(user.id));
+
+  } catch (error) {
+    console.log(error);
+  }
+};
+
 
 //console.log(media[0]);
 /* ---------------- PAGINATION STATE ---------------- */
@@ -180,7 +199,7 @@ if (!isAuthenticated) {
                       <button type="button" className="profile-card__btn profile-card__btn--analytics">
                         Find out more
                       </button>
-                      <button type="button" className="profile-card__btn profile-card__btn--light">
+                      <button type="button" onClick={() => requestReview(item.id)} className="profile-card__btn profile-card__btn--light">
                         Request review
                       </button>
                     </div>

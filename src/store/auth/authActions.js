@@ -5,13 +5,14 @@ import {
   LOGIN_FAIL,
   LOGOUT
 } from "./authTypes";
+import { API_URL } from "../../components/URLS";
 
 export const login = (email, password, role) => async (dispatch) => {
   dispatch({ type: LOGIN_REQUEST });
 
   try {
     const res = await axios.post(
-      "https://omnipodmarketplace.minddigital.in/api/login",
+      API_URL+"login",
       { email, password, role },
       { headers: { "Content-Type": "application/json" } }
     );

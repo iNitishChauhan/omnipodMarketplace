@@ -1,4 +1,5 @@
 import axios from "axios";
+import { API_URL } from "../../components/URLS";
 export const fetchMedia = () => async (dispatch, getState) => {
   try {
     dispatch({ type: "MEDIA_REQUEST" });
@@ -6,7 +7,7 @@ export const fetchMedia = () => async (dispatch, getState) => {
     const { token } = getState().auth;
 
     const res = await axios.get(
-      `https://omnipodmarketplace.minddigital.in/api/medias`,
+      `${API_URL}medias`,
       {
         headers: {
           Authorization: `Bearer ${token}`,

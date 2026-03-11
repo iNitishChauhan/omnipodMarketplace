@@ -5,6 +5,7 @@ import "../App.css";
 import CreatorHeader from "../components/CreatorHeader";
 import Footer from "../components/Footer";
 import creatorLoginImage from "../images/insulet2.png";
+import { API_URL } from "../components/URLS";
 function ResetPassword() {
   //const [params] = useSearchParams();
    const { token } = useParams();
@@ -21,7 +22,7 @@ function ResetPassword() {
 
     try {
       const res = await axios.post(
-        "https://omnipodmarketplace.minddigital.in/api/reset-password",
+        API_URL+"reset-password",
         {
           token,
           email,

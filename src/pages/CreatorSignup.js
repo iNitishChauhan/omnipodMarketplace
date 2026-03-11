@@ -6,6 +6,7 @@ import Footer from "../components/Footer";
 import SignupHeader from "../components/SignupHeader";
 import { Navigate } from "react-router-dom";
 import { useSelector } from "react-redux";
+import { API_URL } from "../components/URLS";
 
 
 function CreatorSignup() {
@@ -105,20 +106,9 @@ if (profileImage) {
 } 
 
     try {
-      setLoading(true);
-
-      /* const res = await axios({
-        method: "post",
-        url: "https://omnipodmarketplace.minddigital.in/api/creator-signup",
-        data: payload,
-      }); */
-     /*  const res = await axios.post("https://omnipodmarketplace.minddigital.in/api/creator-signup", payload,
-
-      { headers: { "Content-Type": "application/json", }, });
-
-       */
+      setLoading(true); 
   const res = await axios.post(
-  "https://omnipodmarketplace.minddigital.in/api/creator-signup",
+  API_URL+"creator-signup",
   formDataPayload,
   {
     headers: {

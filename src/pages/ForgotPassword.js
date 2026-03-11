@@ -4,6 +4,7 @@ import "../App.css";
 import CreatorHeader from "../components/CreatorHeader";
 import Footer from "../components/Footer";
 import creatorLoginImage from "../images/insulet2.png";
+import { API_URL } from "../components/URLS";
 function ForgotPassword() {
   const [email, setEmail] = useState("");
   const [message, setMessage] = useState("");
@@ -16,7 +17,7 @@ function ForgotPassword() {
 
     try {
       const res = await axios.post(
-        "https://omnipodmarketplace.minddigital.in/api/forgot-password",
+        API_URL+"forgot-password",
         { email }
       );
       setMessage(res.data.message);

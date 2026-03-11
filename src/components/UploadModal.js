@@ -6,6 +6,7 @@ import uploadIcon1 from "../images/upload_icon1.png";
 import uploadIcon2 from "../images/upload_icon2.png";
 import docuSignLogo from "../images/docu_sign.png";
 import profileImage from "../images/creator-image.png";
+import { API_URL } from "./URLS";
 
 function UploadModal({ isOpen, onClose }) {
 
@@ -118,7 +119,7 @@ function UploadModal({ isOpen, onClose }) {
       formData.append("status", "pending");
 
       const response = await axios.post(
-        "https://omnipodmarketplace.minddigital.in/api/media/upload",
+        API_URL+"media/upload",
         formData,
         {
           headers: {

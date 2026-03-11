@@ -7,12 +7,14 @@ import AccountSettingsModal from '../components/AccountSettingsModal';
 import { useDispatch, useSelector } from "react-redux";
 import { fetchMedia } from "../store/media/mediaActions";
 import {Link, Navigate } from "react-router-dom";
+import { BASEURL } from '../components/URLS';
 function Dashboard() {
   const dispatch = useDispatch();
 
   const { user, isAuthenticated } = useSelector((state) => state.auth);
   const { media, loading, error } = useSelector((state) => state.media);
   //console.log(media)
+  
   useEffect(() => {
       dispatch(fetchMedia());
   }, [dispatch]);
@@ -270,7 +272,7 @@ function Dashboard() {
               <button className="analytics-card__btn" type="button">Find out more</button>
 
               <div className="analytics-card__avatar">
-                <img src={`https://omnipodmarketplace.minddigital.in/${user?.profile_image}`} alt="Profile" />
+                <img src={`${BASEURL}/${user?.profile_image}`} alt="Profile" />
               </div>
             </div>
           </div>
