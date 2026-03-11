@@ -21,12 +21,20 @@ function CreatorProfile() {
 
 
 const requestReview = async (id) => {
+
+   const confirmBox = window.confirm(
+    "Are you sure you want to request review?"
+  );
+
+  if (!confirmBox) {
+    return; // stop if user clicks Cancel
+  }
   try {
     const res = await axios.post(
       `${API_URL}media/${id}/request-review`,
     );
 
-    console.log(res.data);
+    //onsole.log(res.data);
 
     // reload media
     dispatch(fetchUserMedia(user.id));
@@ -66,8 +74,11 @@ const filteredMedia = [...media]
     return item.status?.toLowerCase() === statusFilter;
   }) 
   .sort((a, b) => {
+    
     const dateA = parseDate(a.created_at).getTime();
     const dateB = parseDate(b.created_at).getTime();
+
+    //console.log("Compare", dateA);
 
     return dateFilter === "latest"
       ? dateB - dateA
@@ -128,14 +139,14 @@ if (!isAuthenticated) {
 
               <div className="profile-hero__filters">
                 <select value={statusFilter} onChange={(e) => setStatusFilter(e.target.value)} defaultValue="approval-status" aria-label="Approval Status">
-                  <option value="approval-status">Approval Status</option>
+                {/*   <option value="approval-status">Approval Status</option> */}
                   <option value="all">All</option>
                   <option value="published">Approved</option>
                   <option value="draft">Pending</option>
                   <option value="rejected">Rejected</option>
                 </select>
 
-                <select value={statusFilter} onChange={(e) => setDateFilter(e.target.value)} defaultValue="date-uploaded" aria-label="Date Uploaded">
+                <select value={dateFilter} onChange={(e) => setDateFilter(e.target.value)} defaultValue="date-uploaded" aria-label="Date Uploaded">
                   <option value="date-uploaded">Date Uploaded</option>
                   <option value="latest">Latest First</option>
                   <option value="oldest">Oldest First</option>
