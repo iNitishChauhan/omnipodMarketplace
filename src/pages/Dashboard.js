@@ -9,6 +9,7 @@ import { fetchMedia } from "../store/media/mediaActions";
 import {Link, Navigate } from "react-router-dom";
 import { BASEURL } from '../components/URLS';
 function Dashboard() {
+  localStorage.removeItem("mid")
   const dispatch = useDispatch();
 
   const { user, isAuthenticated } = useSelector((state) => state.auth);
