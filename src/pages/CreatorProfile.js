@@ -58,18 +58,15 @@ const requestReview = async (id) => {
   const [activeRevisionItem, setActiveRevisionItem] = useState(null);
   const [showUploadModal, setShowUploadModal] = useState(false);
   const closeUploadModal = () => setShowUploadModal(false);
+
   const openUploadModal = (mid) => {
+    //alert("hi")
     localStorage.setItem("mid", mid);
     setShowUploadModal(true);
     setShowRevisionModal(false);
     setActiveRevisionItem(null);
   }
 
-/*   const totalPages = Math.ceil(media.length / ITEMS_PER_PAGE);
-  const startIndex = (currentPage - 1) * ITEMS_PER_PAGE;
-  
-  const endIndex = startIndex + ITEMS_PER_PAGE;
-  const paginatedMedia = media.slice(startIndex, endIndex); */
 // 1️⃣ FILTER
 const parseDate = (dateStr) => {
   if (!dateStr) return new Date(0);
@@ -89,8 +86,6 @@ const filteredMedia = [...media]
     
     const dateA = parseDate(a.created_at).getTime();
     const dateB = parseDate(b.created_at).getTime();
-
-    //console.log("Compare", dateA);
 
     return dateFilter === "latest"
       ? dateB - dateA
@@ -190,12 +185,57 @@ if (!isAuthenticated) {
     <article key={item.id} className={`profile-card profile-card--${item.status}`}>
 
         {isVideo ? (
-          <video
+          
+          <>
+         <video
             src={item.file_url}
             controls
             preload="metadata"
             style={{ width: "100%", height: "100%", objectFit: "cover" }}
           />
+          {item.status === 'published' && (
+                    <p className="profile-card__status profile-card__status--approved">
+                      <span><img src={checkIcon} alt='Approved' /></span> Approved
+                    </p>
+                  )}
+                  
+          {item.status === 'pending' && (
+                    <p className="profile-card__status profile-card__status--pending">
+                      Pending
+                    </p>
+                  )}
+
+                  {item.status === 'rejected' && (
+                    <button
+                      type="button"
+                      className="profile-card__status profile-card__status--revision profile-card__status-btn"
+                      onClick={() => openRevisionModal(item)}
+                    >
+                      <span>×</span> Needs Revision
+                    </button>
+                  )}
+                  
+                  {item.status === 'analytics' && (
+                    <button type="button" className="profile-card__btn profile-card__btn--analytics">
+                      Analytics
+                    </button>
+                  )}
+
+                  {item.status === 'rejected' && (
+                    <div className="profile-card__revision-actions">
+                      <button
+                        type="button"
+                        className="profile-card__btn profile-card__btn--analytics"
+                        onClick={() => openRevisionModal(item)}
+                      >
+                        Find out more
+                      </button>
+                      <button type="button" onClick={() => requestReview(item.id)} className="profile-card__btn profile-card__btn--light">
+                        Request review
+                      </button>
+                    </div>
+                  )}
+                  </>
         ) : (
           <>
           <img
@@ -302,7 +342,7 @@ if (!isAuthenticated) {
                 { activeRevisionItem.reject_reason || 'Missing consent form for Hannah McC'}
               </p>
 
-              <button type="button" onClick={openUploadModal(activeRevisionItem.id)} className="revision-modal__btn revision-modal__btn--outline">
+              <button type="button" onClick={() => openUploadModal(activeRevisionItem.id)} className="revision-modal__btn revision-modal__btn--outline">
                 + Re-Upload
               </button>
               <button

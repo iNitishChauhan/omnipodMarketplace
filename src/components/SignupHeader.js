@@ -35,9 +35,11 @@ const { isAuthenticated, user } = useSelector((state) => state.auth);
        {isAuthenticated && (
         <>
         <nav className="insulet-header__nav">
-          <Link className="" to="/dashboard">
+          <span className="user-name">
+              <Link className="insulet-header__link" to="/dashboard">
                 {user?.name || "User"}
               </Link>
+            </span>
           {/* <a className="insulet-header__link" href="#creators">{user?.name || "User"}</a> */}
           </nav>
           <div className="header-right">
