@@ -120,6 +120,7 @@ if (profileImage) {
     },
   }
 ); 
+console.log(res)
 //alert("Signup successful 🎉");
 navigate("/omnipod-creator-login", {
   state: { message: "Signup successful 🎉. Please login." }
