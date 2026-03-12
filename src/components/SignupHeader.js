@@ -34,7 +34,12 @@ const { isAuthenticated, user } = useSelector((state) => state.auth);
       )}
        {isAuthenticated && (
         <>
-        <nav className="insulet-header__nav"><a className="insulet-header__link" href="#creators">{user?.name || "User"}</a></nav>
+        <nav className="insulet-header__nav">
+          <Link className="" to="/dashboard">
+                {user?.name || "User"}
+              </Link>
+          {/* <a className="insulet-header__link" href="#creators">{user?.name || "User"}</a> */}
+          </nav>
           <div className="header-right">
             <button onClick={logoutHandler} className="action-btn action-btn--primary" >
               Logout
@@ -42,7 +47,7 @@ const { isAuthenticated, user } = useSelector((state) => state.auth);
           </div>
           </>
         )}
-        <button className="action-btn action-btn--primary">Get Started</button>
+      {/*   <button className="action-btn action-btn--primary">Get Started</button> */}
       </div>
     </>
   );
