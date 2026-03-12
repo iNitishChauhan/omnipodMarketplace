@@ -1,6 +1,6 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { Navigate } from "react-router-dom";
+import { Navigate, useLocation } from "react-router-dom";
 import { login } from "../store/auth/authActions";
 
 import "../App.css";
@@ -9,6 +9,12 @@ import Footer from "../components/Footer";
 import creatorLoginImage from "../images/insulet2.png";
 
 function OmnipodCreatorLogin() {
+
+const location = useLocation();
+
+const [message, setMessage] = useState(
+  location.state?.message || ""
+);
   const dispatch = useDispatch();
 
   const { loading, error, isAuthenticated } = useSelector(
@@ -23,6 +29,15 @@ function OmnipodCreatorLogin() {
     dispatch(login(email, password, role)); // ✅ role passed
   };
 
+  useEffect(() => {
+  if (message) {
+    const timer = setTimeout(() => {
+      setMessage("");
+    }, 5000);
+
+    return () => clearTimeout(timer);
+  }
+}, [message]);
   // ✅ Redirect after login
   if (isAuthenticated) {
     return <Navigate to="/dashboard" />;
@@ -34,8 +49,12 @@ function OmnipodCreatorLogin() {
 
       <main className="insulet-login creator__form">
         <div className="insulet-login__content">
+          
           <div className="insulet-login__form">
-            <h1>Insulet Member</h1>
+            {message && (
+              <b className="success-msg">{message}</b>
+            )}
+            <h1>Omnipod Creator</h1>
             <h2>Log in</h2>
 
             {error && (

@@ -4,37 +4,37 @@ import "../App.css";
 import signupBg from "../images/signupbg.png";
 import Footer from "../components/Footer";
 import SignupHeader from "../components/SignupHeader";
-import { Navigate } from "react-router-dom";
+import { Navigate, useNavigate } from "react-router-dom";
 import { useSelector } from "react-redux";
 import { API_URL } from "../components/URLS";
 
 
 function CreatorSignup() {
- 
-    const { isAuthenticated } = useSelector((state) => state.auth);
+ const navigate = useNavigate();
+  const { isAuthenticated } = useSelector((state) => state.auth);
     
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState("");
   const [profileImage, setProfileImage] = useState(null);
   const [previewImage, setPreviewImage] = useState(null);
 
-
-  const [formData, setFormData] = useState({
-    firstName: "",
-    lastName: "",
-    email: "jane@domain.com",
-    phoneCode: "+44",
-    phone: "",
-    product: "",
-    instagramHandle: "",
-    tiktokHandle: "",
-    youtubeHandle: "",
-    agree1: false,
-    agree2: false,
-    agree3: false,
-    password: "",
-    confirmPassword: "",
-  });
+const defaultFormState = {
+  firstName: "",
+  lastName: "",
+  email: "",
+  phoneCode: "+44",
+  phone: "",
+  product: "",
+  instagramHandle: "",
+  tiktokHandle: "",
+  youtubeHandle: "",
+  agree1: false,
+  agree2: false,
+  agree3: false,
+  password: "",
+  confirmPassword: "",
+};
+  const [formData, setFormData] = useState(defaultFormState);
   
 if (isAuthenticated===true) {
     return <Navigate to="/" />;
@@ -72,6 +72,10 @@ if (isAuthenticated===true) {
       setMessage("Please fill all required fields");
       return;
     }
+    if (!profileImage) {
+    setMessage("Profile image is required");
+    return;
+  }
 
     if (formData.password !== formData.confirmPassword) {
       setMessage("Passwords do not match");
@@ -116,9 +120,10 @@ if (profileImage) {
     },
   }
 ); 
-setMessage("Signup successful 🎉");
-
-      console.log(res.data);
+//alert("Signup successful 🎉");
+navigate("/omnipod-creator-login", {
+  state: { message: "Signup successful 🎉. Please login." }
+});
 
     } catch (error) {
       setMessage(
@@ -218,7 +223,7 @@ setMessage("Signup successful 🎉");
             </div>
 <div className="creator-field">
   <label>
-    Profile Image <span className="creator-field__optional">(optional)</span>
+   <span className="required">*</span>Profile Image
   </label>
 
   <input
@@ -279,7 +284,7 @@ setMessage("Signup successful 🎉");
         </section>
         <section className="creator-submit">
           <div className="creator-submit__inner">
-            {message && <p className="form-message">{message}</p>}
+            {message && <b className="form-message">{message}</b>}
             <h3>
               <span className="creator-submit__title">Submit form</span>
               <span className="creator-submit__subtitle">and sign up</span>

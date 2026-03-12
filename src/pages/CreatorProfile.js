@@ -215,7 +215,7 @@ if (!isAuthenticated) {
                     </button>
                   )}
                   
-                  {item.status === 'analytics' && (
+                  {item.status === 'published' && (
                     <button type="button" className="profile-card__btn profile-card__btn--analytics">
                       Analytics
                     </button>
@@ -264,7 +264,7 @@ if (!isAuthenticated) {
                     </button>
                   )}
                   
-                  {item.status === 'analytics' && (
+                  {item.status === 'published' && (
                     <button type="button" className="profile-card__btn profile-card__btn--analytics">
                       Analytics
                     </button>
