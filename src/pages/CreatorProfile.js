@@ -37,13 +37,13 @@ const requestReview = async (id) => {
       `${API_URL}media/${id}/request-review`,
     );
 
-    //onsole.log(res.data);
+    console.log(res.data);
 
     // reload media
     dispatch(fetchUserMedia(user.id));
 
   } catch (error) {
-    //console.log(error);
+    console.log(error);
   }
 };
 
