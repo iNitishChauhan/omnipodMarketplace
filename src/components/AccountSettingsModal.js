@@ -10,7 +10,7 @@ const { user } = useSelector((state) => state.auth);
 
 const [profileFile, setProfileFile] = useState(null);
 const [profilePreview, setProfilePreview] = useState("");
-
+const [submitting, setSubmitting] = useState(false);
 useEffect(() => {
   if (!isOpen || !user) return;
 
@@ -101,6 +101,7 @@ const handleSubmit = async (event) => {
   if (!validateForm()) return;
 
   try {
+    setSubmitting(true);
     const formPayload = new FormData();
     formPayload.append("first_name", formData.firstName);
     formPayload.append("last_name", formData.lastName);
@@ -126,12 +127,15 @@ const handleSubmit = async (event) => {
   localStorage.setItem("user", JSON.stringify(res.data.user));
   //console.log("SUCCESS:", res.data);
   //navigate("/");
+  
   navigate(0); // reload page
 } catch (error) {
   console.log("ERROR FULL:", error);
   console.log("ERROR RESPONSE:", error.response?.data);
   console.log("ERROR STATUS:", error.response?.status);
-}
+} finally {
+    setSubmitting(false);
+  }
 };
 
   const validateForm = () => {
@@ -386,8 +390,8 @@ const handleSubmit = async (event) => {
           </div>
 
           <div className="account-settings-modal__actions">
-            <button type="submit" className="account-settings-modal__save">
-              Save and close
+            <button type="submit" className="account-settings-modal__save" disabled={submitting}>
+             {submitting ? "Submitting..." : "Save and close"}
             </button>
           </div>
         </form>
