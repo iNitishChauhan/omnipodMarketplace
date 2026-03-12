@@ -1,7 +1,9 @@
 import { useState, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { Navigate } from 'react-router-dom';
-import axios from "axios";
+import { Navigate, useNavigate } from 'react-router-dom';
+import axios from 'axios';
+import UploadModal from '../components/UploadModal';
+
 import '../App.css';
 import CreatorHeader from '../components/CreatorHeader';
 import Footer from '../components/Footer';
@@ -10,6 +12,7 @@ import { fetchUserMedia } from '../store/usermedia/mediaActions';
 import {BASEURL, API_URL} from '../components/URLS';
 
 function CreatorProfile() {
+  const navigate = useNavigate();
   const dispatch = useDispatch();
   const { user, isAuthenticated } = useSelector((state) => state.auth);
   const { media, loading, error } = useSelector((state) => state.userMedia);
@@ -40,7 +43,7 @@ const requestReview = async (id) => {
     dispatch(fetchUserMedia(user.id));
 
   } catch (error) {
-    console.log(error);
+    //console.log(error);
   }
 };
 
@@ -51,7 +54,16 @@ const requestReview = async (id) => {
   const [currentPage, setCurrentPage] = useState(1);
   const [statusFilter, setStatusFilter] = useState("all");
   const [dateFilter, setDateFilter] = useState("latest");
-
+  const [showRevisionModal, setShowRevisionModal] = useState(false);
+  const [activeRevisionItem, setActiveRevisionItem] = useState(null);
+  const [showUploadModal, setShowUploadModal] = useState(false);
+  const closeUploadModal = () => setShowUploadModal(false);
+  const openUploadModal = (mid) => {
+    localStorage.setItem("mid", mid);
+    setShowUploadModal(true);
+    setShowRevisionModal(false);
+    setActiveRevisionItem(null);
+  }
 
 /*   const totalPages = Math.ceil(media.length / ITEMS_PER_PAGE);
   const startIndex = (currentPage - 1) * ITEMS_PER_PAGE;
@@ -106,6 +118,15 @@ if (!isAuthenticated) {
     if (currentPage < totalPages) setCurrentPage((prev) => prev + 1);
   };
 
+  const openRevisionModal = (item) => {
+    setActiveRevisionItem(item);
+    setShowRevisionModal(true);
+  };
+
+  const closeRevisionModal = () => {
+    setShowRevisionModal(false);
+    setActiveRevisionItem(null);
+  };
 
   const firstName = user?.name?.trim()?.split(' ')[0] || 'Creator';
   const postCount = media.length;
@@ -147,8 +168,8 @@ if (!isAuthenticated) {
                 </select>
 
                 <select value={dateFilter} onChange={(e) => setDateFilter(e.target.value)} defaultValue="date-uploaded" aria-label="Date Uploaded">
-                  <option value="date-uploaded">Date Uploaded</option>
-                  <option value="latest">Latest First</option>
+{/*                   <option value="date-uploaded">Date Uploaded</option>
+ */}                  <option value="latest">Latest First</option>
                   <option value="oldest">Oldest First</option>
                 </select>
               </div>
@@ -194,9 +215,13 @@ if (!isAuthenticated) {
                   )}
 
                   {item.status === 'rejected' && (
-                    <p className="profile-card__status profile-card__status--revision">
+                    <button
+                      type="button"
+                      className="profile-card__status profile-card__status--revision profile-card__status-btn"
+                      onClick={() => openRevisionModal(item)}
+                    >
                       <span>×</span> Needs Revision
-                    </p>
+                    </button>
                   )}
                   
                   {item.status === 'analytics' && (
@@ -207,7 +232,11 @@ if (!isAuthenticated) {
 
                   {item.status === 'rejected' && (
                     <div className="profile-card__revision-actions">
-                      <button type="button" className="profile-card__btn profile-card__btn--analytics">
+                      <button
+                        type="button"
+                        className="profile-card__btn profile-card__btn--analytics"
+                        onClick={() => openRevisionModal(item)}
+                      >
                         Find out more
                       </button>
                       <button type="button" onClick={() => requestReview(item.id)} className="profile-card__btn profile-card__btn--light">
@@ -250,6 +279,44 @@ if (!isAuthenticated) {
           </section>
         </div>
       </main>
+
+      {showRevisionModal && activeRevisionItem && (
+        <div className="revision-modal" role="dialog" aria-modal="true" aria-label="Needs Revision details">
+          <div className="revision-modal__overlay" onClick={closeRevisionModal} />
+
+          <div className="revision-modal__content">
+            <div className="revision-modal__media">
+              <img src={activeRevisionItem.file_url} alt={activeRevisionItem.title || 'Revision content'} />
+            </div>
+
+            <div className="revision-modal__details">
+              <h3>
+                Content <span>Needs Revision</span>
+              </h3>
+
+              <p>
+                <strong>Image:</strong> {activeRevisionItem.title || 'Russel and Hannah 1'}
+              </p>
+              <p>
+                <strong>Reason:</strong>
+                { activeRevisionItem.reject_reason || 'Missing consent form for Hannah McC'}
+              </p>
+
+              <button type="button" onClick={openUploadModal(activeRevisionItem.id)} className="revision-modal__btn revision-modal__btn--outline">
+                + Re-Upload
+              </button>
+              <button
+                type="button"
+                className="revision-modal__btn revision-modal__btn--solid"
+                onClick={() => navigate('/content-guidelines')}
+              >
+                View Content Guidelines
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+       <UploadModal isOpen={showUploadModal} onClose={closeUploadModal}/>
       <Footer />
     </div>
   );

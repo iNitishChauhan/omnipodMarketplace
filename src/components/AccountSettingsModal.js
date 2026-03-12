@@ -6,7 +6,7 @@ import { useNavigate } from "react-router-dom";
 import { API_URL,BASEURL } from "./URLS";
 function AccountSettingsModal({ isOpen, onClose }) {
 const navigate = useNavigate();
-const { user, token } = useSelector((state) => state.auth);
+const { user } = useSelector((state) => state.auth);
 
 const [profileFile, setProfileFile] = useState(null);
 const [profilePreview, setProfilePreview] = useState("");

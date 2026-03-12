@@ -10,6 +10,7 @@ import { API_URL } from "./URLS";
 
 function UploadModal({ isOpen, onClose }) {
 
+
   const fileInputRef = useRef(null);
 
   // ✅ GET USER FROM REDUX
@@ -25,6 +26,23 @@ function UploadModal({ isOpen, onClose }) {
   const [theme, setTheme] = useState("");
   const [apiError, setApiError] = useState("");
   const [apiLoading, setApiLoading] = useState(false);
+
+
+  const getMediaDetail = async () => {
+  try {
+    let mid = localStorage.getItem("mid");
+    const res = await axios.get(`${API_URL}media/${mid}`);
+    setContentName(res.data.media.title);
+  } catch (err) {
+    console.log(err);
+  }
+};
+
+useEffect(() => {
+  if (isOpen) {
+    getMediaDetail();
+  }
+}, [isOpen]);
 
   // ---------------- FILE HANDLING ----------------
   const handleFiles = (fileList) => {
@@ -50,6 +68,7 @@ function UploadModal({ isOpen, onClose }) {
 
   // ---------------- PREVIEW ----------------
   useEffect(() => {
+    
     if (!selectedFile) {
       setPreviewUrl("");
       return;
@@ -108,6 +127,10 @@ function UploadModal({ isOpen, onClose }) {
       }
 
       const formData = new FormData();
+      if(localStorage.getItem("mid")){
+        formData.append("mid", localStorage.getItem("mid"));
+        localStorage.removeItem("mid")
+      }
       formData.append("user_id", userId);
       formData.append("title", contentName);
       formData.append("file", selectedFile);
@@ -145,6 +168,8 @@ function UploadModal({ isOpen, onClose }) {
       setApiLoading(false);
     }
   };
+
+
 
   if (!isOpen) return null;
 

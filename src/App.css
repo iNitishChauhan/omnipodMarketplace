@@ -1312,6 +1312,13 @@ width: 76px;
   color: #ff4f3a;
 }
 
+.profile-card__status-btn {
+  background: transparent;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+}
+
 .profile-card__status--revision span {
   border: 2px solid #ff4f3a;
 }
@@ -1390,6 +1397,92 @@ width: 76px;
   font-weight: 400;
 }
 
+.revision-modal {
+  position: fixed;
+  inset: 0;
+  z-index: 70;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.revision-modal__overlay {
+  position: absolute;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.5);
+}
+
+.revision-modal__content {
+  position: relative;
+  z-index: 1;
+  width: min(1060px, 94%);
+  background: #efefef;
+  border-radius: 8px;
+  overflow: hidden;
+  display: grid;
+  grid-template-columns: 1fr 0.78fr;
+}
+
+.revision-modal__media img {
+  width: 100%;
+  height: 100%;
+  min-height: 580px;
+  object-fit: cover;
+  display: block;
+}
+
+.revision-modal__details {
+  padding: 52px 52px 44px;
+}
+
+.revision-modal__details h3 {
+  margin: 0 0 34px;
+  color: #111;
+  font-size: 2.4rem;
+  line-height: 1.08;
+  font-weight: 700;
+}
+
+.revision-modal__details h3 span {
+  display: block;
+  margin-top: 6px;
+  color: var(--orange);
+}
+
+.revision-modal__details p {
+  margin: 0 0 24px;
+  color: #222;
+  font-size: 1.1rem;
+  line-height: 1.32;
+}
+
+.revision-modal__details p strong {
+  font-weight: 500;
+}
+
+.revision-modal__btn {
+  border-radius: 12px;
+  padding: 10px 22px;
+  font-size: 1rem;
+  font-weight: 700;
+  font-family: inherit;
+  cursor: pointer;
+  margin-right: 12px;
+}
+
+.revision-modal__btn--outline {
+  border: 2px solid var(--orange);
+  background: #fff;
+  color: var(--orange);
+}
+
+.revision-modal__btn--solid {
+  border: none;
+  margin-top: 10px;
+  background: var(--orange);
+  color: #fff;
+}
+
 @media (max-width: 1023px) {
   .profile-hero {
     grid-template-columns: 120px 1fr;
@@ -1418,6 +1511,31 @@ width: 76px;
   .profile-card__btn--analytics {
     font-size: 1rem;
     min-width: 160px;
+  }
+
+  .revision-modal__content {
+    grid-template-columns: 1fr;
+    max-height: 92vh;
+    overflow-y: auto;
+  }
+
+  .revision-modal__media img {
+    min-height: 320px;
+    max-height: 380px;
+  }
+
+  .revision-modal__details {
+    padding: 24px 24px 30px;
+  }
+
+  .revision-modal__details h3 {
+    font-size: 2rem;
+    margin-bottom: 18px;
+  }
+
+  .revision-modal__details p {
+    font-size: 1rem;
+    margin-bottom: 14px;
   }
 }
 
@@ -1452,5 +1570,14 @@ width: 76px;
 
   .profile-card {
     min-height: 340px;
+  }
+
+  .revision-modal__btn {
+    width: 100%;
+    margin: 0 0 10px;
+  }
+
+  .revision-modal__btn--solid {
+    margin-top: 0;
   }
 }
