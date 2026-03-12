@@ -128,13 +128,14 @@ const handleSubmit = async (event) => {
   //console.log("SUCCESS:", res.data);
   //navigate("/");
   
-  navigate(0); // reload page
+  
 } catch (error) {
   console.log("ERROR FULL:", error);
   console.log("ERROR RESPONSE:", error.response?.data);
   console.log("ERROR STATUS:", error.response?.status);
 } finally {
     setSubmitting(false);
+    navigate(0); // reload page
   }
 };
 
