@@ -6,6 +6,7 @@ import stepImage2 from '../images/image2.png';
 import stepImage3 from '../images/image3.png';
 import Footer from '../components/Footer';
 import Header from '../components/Header';
+import {  useSelector } from "react-redux";
 import { Link } from 'react-router-dom';
 
 function Home() {
@@ -42,6 +43,8 @@ function Home() {
     setOpenIndex((prev) => (prev === idx ? null : idx));
   };
 
+  const { isAuthenticated } = useSelector((state) => state.auth);
+
   return (
     <div className="home_page">
       <div className="hero">
@@ -51,7 +54,14 @@ function Home() {
           <section className="hero__left">
             <h1>Omnipod <br />Creator <br />Marketplace</h1>
             <div className="hero__cta">
-              <Link to="omnipod-creator-signup" className="cta-btn">Get Started</Link>
+              
+              {isAuthenticated && (
+                <Link to="dashboard" className="cta-btn">Dashboard</Link>
+              )}
+              {!isAuthenticated && (
+                <Link to="omnipod-creator-signup" className="cta-btn">Get Started</Link>
+              )}
+              
             </div>
           </section>
 
@@ -125,7 +135,7 @@ function Home() {
           </div>
         </div>
       </div>
-
+{!isAuthenticated && (
       <div className="cta-sections">
         <section className="cta-panel cta-panel--primary">
           <h3>Ready to share your content?</h3>
@@ -146,7 +156,7 @@ function Home() {
           </Link>
         </section>
       </div>
-
+)}
       <section className="faq">
         <div className="faq__wrapper">
           <h3 className="faq__title">Any questions?</h3>

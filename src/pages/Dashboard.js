@@ -115,7 +115,7 @@ function Dashboard() {
   ];
 
     /* ---------------- PAGINATION STATE ---------------- */
-  const ITEMS_PER_PAGE = 8;
+  const ITEMS_PER_PAGE = 10;
   const [currentPage, setCurrentPage] = useState(1);
 
   const totalPages = Math.ceil(media.length / ITEMS_PER_PAGE);
@@ -134,16 +134,23 @@ function Dashboard() {
   const [activeDayIndex, setActiveDayIndex] = useState(0);
   const [showUploadModal, setShowUploadModal] = useState(false);
   const [showAccountModal, setShowAccountModal] = useState(false);
+  const [mediaPreview, setMediaPreview] = useState(null);
   const [redirect, setRedirect] = useState(false);
-   if (!isAuthenticated) {
-    return <Navigate to="/omnipod-creator-login" />;
-  }
 
 
   const openUploadModal = () => setShowUploadModal(true);
   const closeUploadModal = () => setShowUploadModal(false);
   const openAccountModal = () => setShowAccountModal(true);
   const closeAccountModal = () => setShowAccountModal(false);
+  const openMediaPreview = (item) => {
+    const isVideo = /\.(mp4|webm|ogg)$/i.test(item.file_url);
+    setMediaPreview({
+      type: isVideo ? 'video' : 'image',
+      url: item.file_url,
+      title: item.title || 'Media preview',
+    });
+  };
+  const closeMediaPreview = () => setMediaPreview(null);
   const handleUploadKeyDown = (event) => {
     if (event.key === 'Enter' || event.key === ' ') {
       event.preventDefault();
@@ -156,6 +163,20 @@ function Dashboard() {
       openAccountModal();
     }
   };
+  useEffect(() => {
+    if (!mediaPreview) return undefined;
+    const handleEscape = (event) => {
+      if (event.key === 'Escape') {
+        closeMediaPreview();
+      }
+    };
+    window.addEventListener('keydown', handleEscape);
+    return () => window.removeEventListener('keydown', handleEscape);
+  }, [mediaPreview]);
+
+  if (!isAuthenticated) {
+    return <Navigate to="/omnipod-creator-login" />;
+  }
 
   
   if (redirect) {
@@ -301,19 +322,27 @@ function Dashboard() {
   return (
     <div className="inspiration-card" key={item.id || item.title}>
       <div className="inspiration-card__image">
-        {isVideo ? (
-          <video
-            src={item.file_url}
-            controls
-            preload="metadata"
-            style={{ width: "100%", height: "100%", objectFit: "cover" }}
-          />
-        ) : (
-          <img
-            src={item.file_url}
-            alt={item.title}
-          />
-        )}
+        <button
+          type="button"
+          className="inspiration-card__media-trigger"
+          onClick={() => openMediaPreview(item)}
+          aria-label={`Open ${isVideo ? 'video' : 'image'} preview`}
+        >
+          {isVideo ? (
+            <video
+              src={item.file_url}
+              muted
+              playsInline
+              preload="metadata"
+              style={{ width: "100%", height: "100%", objectFit: "cover" }}
+            />
+          ) : (
+            <img
+              src={item.file_url}
+              alt={item.title}
+            />
+          )}
+        </button>
       </div>
 
       <div className="inspiration-card__footer">
@@ -370,6 +399,37 @@ function Dashboard() {
           </div>
         )}
       </section>
+      {mediaPreview && (
+        <div className="dashboard-media-preview" role="dialog" aria-modal="true">
+          <div className="dashboard-media-preview__overlay" onClick={closeMediaPreview} />
+          <div className="dashboard-media-preview__content">
+            <button
+              type="button"
+              className="dashboard-media-preview__close"
+              onClick={closeMediaPreview}
+              aria-label="Close preview"
+            >
+              ×
+            </button>
+            {mediaPreview.type === 'video' ? (
+              <video
+                className="dashboard-media-preview__media"
+                src={mediaPreview.url}
+                autoPlay
+                muted
+                controls
+                playsInline
+              />
+            ) : (
+              <img
+                className="dashboard-media-preview__media"
+                src={mediaPreview.url}
+                alt={mediaPreview.title}
+              />
+            )}
+          </div>
+        </div>
+      )}
       <UploadModal isOpen={showUploadModal} onClose={closeUploadModal} />
       <AccountSettingsModal isOpen={showAccountModal} onClose={closeAccountModal} />
       <Footer />
