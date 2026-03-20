@@ -12,7 +12,7 @@ export const login = (email, password, role) => async (dispatch) => {
 
   try {
     const res = await axios.post(
-      API_URL+"login",
+      API_URL + "login",
       { email, password, role },
       { headers: { "Content-Type": "application/json" } }
     );
@@ -34,11 +34,30 @@ export const login = (email, password, role) => async (dispatch) => {
 };
 
 
-export const logout = () => (dispatch) => {
-  // ✅ clear persistent data
-  localStorage.removeItem("token");
-  localStorage.removeItem("user");
-  localStorage.removeItem("role");
-
-  dispatch({ type: LOGOUT });
+export const logout = () => async (dispatch) => {
+  try {
+    const token = localStorage.getItem("token");
+    const user = JSON.parse(localStorage.getItem("user"));
+    // ✅ clear storage
+    localStorage.removeItem("token");
+    localStorage.removeItem("user");
+    localStorage.removeItem("role");
+    dispatch({ type: LOGOUT });
+    if (token && user) {
+      await axios.post(
+        API_URL + "logout",
+        {
+          user_id: user.id, // ✅ send user id
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json",
+          },
+        }
+      );
+    }
+  } catch (error) {
+    console.log("Logout API error:", error);
+  }
 };

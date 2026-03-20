@@ -9,7 +9,7 @@ import CreatorHeader from '../components/CreatorHeader';
 import Footer from '../components/Footer';
 import checkIcon from '../images/check_icon.png';
 import { fetchUserMedia } from '../store/usermedia/mediaActions';
-import {BASEURL, API_URL} from '../components/URLS';
+import { BASEURL, API_URL } from '../components/URLS';
 
 function CreatorProfile() {
   const navigate = useNavigate();
@@ -23,33 +23,33 @@ function CreatorProfile() {
   }, [dispatch, user]);
 
 
-const requestReview = async (id) => {
+  const requestReview = async (id) => {
 
-   const confirmBox = window.confirm(
-    "Are you sure you want to request review?"
-  );
-
-  if (!confirmBox) {
-    return; // stop if user clicks Cancel
-  }
-  try {
-    const res = await axios.post(
-      `${API_URL}media/${id}/request-review`,
+    const confirmBox = window.confirm(
+      "Are you sure you want to request review?"
     );
 
-    console.log(res.data);
+    if (!confirmBox) {
+      return; // stop if user clicks Cancel
+    }
+    try {
+      const res = await axios.post(
+        `${API_URL}media/${id}/request-review`,
+      );
 
-    // reload media
-    dispatch(fetchUserMedia(user.id));
+      console.log(res.data);
 
-  } catch (error) {
-    console.log(error);
-  }
-};
+      // reload media
+      dispatch(fetchUserMedia(user.id));
+
+    } catch (error) {
+      console.log(error);
+    }
+  };
 
 
-//console.log(media[0]);
-/* ---------------- PAGINATION STATE ---------------- */
+  //console.log(media[0]);
+  /* ---------------- PAGINATION STATE ---------------- */
   const ITEMS_PER_PAGE = 8;
   const [currentPage, setCurrentPage] = useState(1);
   const [statusFilter, setStatusFilter] = useState("all");
@@ -60,49 +60,83 @@ const requestReview = async (id) => {
   const closeUploadModal = () => setShowUploadModal(false);
 
   const openUploadModal = (mid) => {
-    //alert("hi")
     localStorage.setItem("mid", mid);
     setShowUploadModal(true);
     setShowRevisionModal(false);
     setActiveRevisionItem(null);
   }
 
-// 1️⃣ FILTER
-const parseDate = (dateStr) => {
-  if (!dateStr) return new Date(0);
-  return new Date(
-    typeof dateStr === "string"
-      ? dateStr.replace(" ", "T")
-      : dateStr
-  );
-};
+  const handleDeleteImage = async (id) => {
+    const confirmDelete = window.confirm(
+      "Are you sure you want to request to delete this file?"
+    );
 
-const filteredMedia = [...media]
-  .filter((item) => {
-    if (statusFilter === "all") return true;
-    return item.status?.toLowerCase() === statusFilter;
-  }) 
-  .sort((a, b) => {
-    
-    const dateA = parseDate(a.created_at).getTime();
-    const dateB = parseDate(b.created_at).getTime();
+    if (!confirmDelete) return;
 
-    return dateFilter === "latest"
-      ? dateB - dateA
-      : dateA - dateB;
-  });
+    try {
+      const token = localStorage.getItem("token");
+      const user = JSON.parse(localStorage.getItem("user"));
 
-// 3️⃣ PAGINATION (AFTER filter + sort)
-const totalPages = Math.ceil(filteredMedia.length / ITEMS_PER_PAGE);
-const startIndex = (currentPage - 1) * ITEMS_PER_PAGE;
-const endIndex = startIndex + ITEMS_PER_PAGE;
-const paginatedMedia = filteredMedia.slice(startIndex, endIndex);
-useEffect(() => {
-  setCurrentPage(1);
-   //console.log("dateFilter:", dateFilter);
-}, [statusFilter, dateFilter]);
+      await axios.post(
+        `${API_URL}media/delete-request`,
+        {
+          user_id: user.id,
+          media_id: id,
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json",
+          },
+        }
+      );
 
-if (!isAuthenticated) {
+      alert("Delete request sent");
+
+      navigate(0);
+
+    } catch (error) {
+      console.log(error);
+      alert("Error deleting image");
+    }
+  };
+
+  // 1️⃣ FILTER
+  const parseDate = (dateStr) => {
+    if (!dateStr) return new Date(0);
+    return new Date(
+      typeof dateStr === "string"
+        ? dateStr.replace(" ", "T")
+        : dateStr
+    );
+  };
+
+  const filteredMedia = [...media]
+    .filter((item) => {
+      if (statusFilter === "all") return true;
+      return item.status?.toLowerCase() === statusFilter;
+    })
+    .sort((a, b) => {
+
+      const dateA = parseDate(a.created_at).getTime();
+      const dateB = parseDate(b.created_at).getTime();
+
+      return dateFilter === "latest"
+        ? dateB - dateA
+        : dateA - dateB;
+    });
+
+  // 3️⃣ PAGINATION (AFTER filter + sort)
+  const totalPages = Math.ceil(filteredMedia.length / ITEMS_PER_PAGE);
+  const startIndex = (currentPage - 1) * ITEMS_PER_PAGE;
+  const endIndex = startIndex + ITEMS_PER_PAGE;
+  const paginatedMedia = filteredMedia.slice(startIndex, endIndex);
+  useEffect(() => {
+    setCurrentPage(1);
+    //console.log("dateFilter:", dateFilter);
+  }, [statusFilter, dateFilter]);
+
+  if (!isAuthenticated) {
     return <Navigate to="/omnipod-creator-login" />;
   }
   const goToPrevPage = () => {
@@ -155,7 +189,7 @@ if (!isAuthenticated) {
 
               <div className="profile-hero__filters">
                 <select value={statusFilter} onChange={(e) => setStatusFilter(e.target.value)} defaultValue="approval-status" aria-label="Approval Status">
-                {/*   <option value="approval-status">Approval Status</option> */}
+                  {/*   <option value="approval-status">Approval Status</option> */}
                   <option value="all">All</option>
                   <option value="published">Approved</option>
                   <option value="draft">Pending</option>
@@ -163,7 +197,7 @@ if (!isAuthenticated) {
                 </select>
 
                 <select value={dateFilter} onChange={(e) => setDateFilter(e.target.value)} defaultValue="date-uploaded" aria-label="Date Uploaded">
-{/*                   <option value="date-uploaded">Date Uploaded</option>
+                  {/*                   <option value="date-uploaded">Date Uploaded</option>
  */}                  <option value="latest">Latest First</option>
                   <option value="oldest">Oldest First</option>
                 </select>
@@ -173,149 +207,169 @@ if (!isAuthenticated) {
 
           <section className="profile-gallery" aria-label="Profile media">
             <div className="profile-gallery__grid">
-      {loading && <p>Loading...</p>}
-      {error && <p style={{ color: "red" }}>{error}</p>}
+              {loading && <p>Loading...</p>}
+              {error && <p style={{ color: "red" }}>{error}</p>}
 
-     {/*  <div className="grid"> */}
- {paginatedMedia.map((item) => {
-  // check if file is video
-  //console.log(item.status);
-  const isVideo = /\.(mp4|webm|ogg)$/i.test(item.file_url);
-  return (
-    <article key={item.id} className={`profile-card profile-card--${item.status}`}>
+              {/*  <div className="grid"> */}
+              {paginatedMedia.map((item) => {
+                // check if file is video
+                //console.log(item.status);
+                const isVideo = /\.(mp4|webm|ogg)$/i.test(item.file_url);
+                return (
+                  <article key={item.id} className={`profile-card profile-card--${item.status}`}>
 
-        {isVideo ? (
-          
-          <>
-         <video
-            src={item.file_url}
-            controls
-            preload="metadata"
-            style={{ width: "100%", height: "100%", objectFit: "cover" }}
-          />
-          {item.status === 'published' && (
-                    <p className="profile-card__status profile-card__status--approved">
-                      <span><img src={checkIcon} alt='Approved' /></span> Approved
-                    </p>
-                  )}
-                  
-          {item.status === 'pending' && (
-                    <p className="profile-card__status profile-card__status--pending">
-                      Pending
-                    </p>
-                  )}
+                    {isVideo ? (
 
-                  {item.status === 'rejected' && (
-                    <button
-                      type="button"
-                      className="profile-card__status profile-card__status--revision profile-card__status-btn"
-                      onClick={() => openRevisionModal(item)}
-                    >
-                      <span>×</span> Needs Revision
-                    </button>
-                  )}
-                  
-                  {item.status === 'published' && (
-                    <button type="button" className="profile-card__btn profile-card__btn--analytics">
-                      Analytics
-                    </button>
-                  )}
+                      <>
+                        {(item?.delete_request === "no" || item?.delete_request === "reject") && (
+                          <button
+                            type="button"
+                            className="profile-card__delete-btn"
+                            onClick={() => handleDeleteImage(item.id)}
+                          >
+                            ×
+                          </button>
+                        )}
+                        <video
+                          src={item.file_url}
+                          controls
+                          preload="metadata"
+                          style={{ width: "100%", height: "100%", objectFit: "cover" }}
+                        />
+                        {item.status === 'published' && (
+                          <p className="profile-card__status profile-card__status--approved">
+                            <span><img src={checkIcon} alt='Approved' /></span> Approved
+                          </p>
+                        )}
 
-                  {item.status === 'rejected' && (
-                    <div className="profile-card__revision-actions">
-                      <button
-                        type="button"
-                        className="profile-card__btn profile-card__btn--analytics"
-                        onClick={() => openRevisionModal(item)}
-                      >
-                        Find out more
-                      </button>
-                      <button type="button" onClick={() => requestReview(item.id)} className="profile-card__btn profile-card__btn--light">
-                        Request review
-                      </button>
-                    </div>
-                  )}
-                  </>
-        ) : (
-          <>
-          <img
-            src={item.file_url}
-            alt={item.title}
-          />
-          {item.status === 'published' && (
-                    <p className="profile-card__status profile-card__status--approved">
-                      <span><img src={checkIcon} alt='Approved' /></span> Approved
-                    </p>
-                  )}
-                  
-          {item.status === 'pending' && (
-                    <p className="profile-card__status profile-card__status--pending">
-                      Pending
-                    </p>
-                  )}
+                        {item.status === 'pending' && (
+                          <p className="profile-card__status profile-card__status--pending">
+                            Pending
+                          </p>
+                        )}
 
-                  {item.status === 'rejected' && (
-                    <button
-                      type="button"
-                      className="profile-card__status profile-card__status--revision profile-card__status-btn"
-                      onClick={() => openRevisionModal(item)}
-                    >
-                      <span>×</span> Needs Revision
-                    </button>
-                  )}
-                  
-                  {item.status === 'published' && (
-                    <button type="button" className="profile-card__btn profile-card__btn--analytics">
-                      Analytics
-                    </button>
-                  )}
+                        {item.status === 'rejected' && (
+                          <button
+                            type="button"
+                            className="profile-card__status profile-card__status--revision profile-card__status-btn"
+                            onClick={() => openRevisionModal(item)}
+                          >
+                            <span>×</span> Needs Revision
+                          </button>
+                        )}
 
-                  {item.status === 'rejected' && (
-                    <div className="profile-card__revision-actions">
-                      <button
-                        type="button"
-                        className="profile-card__btn profile-card__btn--analytics"
-                        onClick={() => openRevisionModal(item)}
-                      >
-                        Find out more
-                      </button>
-                      <button type="button" onClick={() => requestReview(item.id)} className="profile-card__btn profile-card__btn--light">
-                        Request review
-                      </button>
-                    </div>
-                  )}
-                  </>
-          
-        )}
-   
-    </article>
-  );
-})}
+                        {item.status === 'published' && (
+                          <button type="button" className="profile-card__btn profile-card__btn--analytics">
+                            Analytics
+                          </button>
+                        )}
+
+                        {item.status === 'rejected' && (
+                          <div className="profile-card__revision-actions">
+                            <button
+                              type="button"
+                              className="profile-card__btn profile-card__btn--analytics"
+                              onClick={() => openRevisionModal(item)}
+                            >
+                              Find out more
+                            </button>
+                            <button type="button" onClick={() => requestReview(item.id)} className="profile-card__btn profile-card__btn--light">
+                              Request review
+                            </button>
+                          </div>
+                        )}
+                      </>
+                    ) : (
+                      <>
+
+                        <img
+                          src={item.file_url}
+                          alt={item.title}
+                        />
+                        {/* DELETE BUTTON */}
+                        {(item?.delete_request === "no" || item?.delete_request === "reject") && (
+                          <button
+                            type="button"
+                            className="profile-card__delete-btn"
+                            onClick={() => handleDeleteImage(item.id)}
+                          >
+                            ×
+                          </button>
+                        )}
+                        {item.status === 'published' && (
+                          <p className="profile-card__status profile-card__status--approved">
+                            <span><img src={checkIcon} alt='Approved' /></span> Approved
+                          </p>
+                        )}
+
+                        {item.status === 'pending' && (
+                          <p className="profile-card__status profile-card__status--pending">
+                            Pending
+                          </p>
+                        )}
+
+                        {item.status === 'rejected' && (
+                          <button
+                            type="button"
+                            className="profile-card__status profile-card__status--revision profile-card__status-btn"
+                            onClick={() => openRevisionModal(item)}
+                          >
+                            <span>×</span> Needs Revision
+                          </button>
+                        )}
+
+                        {item.status === 'published' && (
+                          <button type="button" className="profile-card__btn profile-card__btn--analytics">
+                            Analytics
+                          </button>
+                        )}
+
+                        {item.status === 'rejected' && (
+                          <div className="profile-card__revision-actions">
+                            <button
+                              type="button"
+                              className="profile-card__btn profile-card__btn--analytics"
+                              onClick={() => openRevisionModal(item)}
+                            >
+                              Find out more
+                            </button>
+                            <button type="button" onClick={() => requestReview(item.id)} className="profile-card__btn profile-card__btn--light">
+                              Request review
+                            </button>
+                          </div>
+                        )}
+                      </>
+
+                    )}
+
+                  </article>
+                );
+              })}
             </div>
-{filteredMedia.length > ITEMS_PER_PAGE && (
-          <div className="profile-gallery__pager">
-              <button
-                type="button" aria-label="Previous page"
-                className="inspiration__pager-btn"
-                onClick={goToPrevPage}
-                disabled={currentPage === 1}
-              >
-                &lt;
-              </button>
-              <span>
-                <strong>{currentPage}</strong> of {totalPages}
-              </span>
+            {filteredMedia.length > ITEMS_PER_PAGE && (
+              <div className="profile-gallery__pager">
+                <button
+                  type="button" aria-label="Previous page"
+                  className="inspiration__pager-btn"
+                  onClick={goToPrevPage}
+                  disabled={currentPage === 1}
+                >
+                  &lt;
+                </button>
+                <span>
+                  <strong>{currentPage}</strong> of {totalPages}
+                </span>
 
-              <button
-                type="button"
-                className="inspiration__pager-btn"
-                onClick={goToNextPage}
-                disabled={currentPage === totalPages}
-              >
-                &gt;
-              </button>
-            </div>
-             )}
+                <button
+                  type="button"
+                  className="inspiration__pager-btn"
+                  onClick={goToNextPage}
+                  disabled={currentPage === totalPages}
+                >
+                  &gt;
+                </button>
+              </div>
+            )}
           </section>
         </div>
       </main>
@@ -339,7 +393,7 @@ if (!isAuthenticated) {
               </p>
               <p>
                 <strong>Reason:</strong>
-                { activeRevisionItem.reject_reason || 'Missing consent form for Hannah McC'}
+                {activeRevisionItem.reject_reason || 'Missing consent form for Hannah McC'}
               </p>
 
               <button type="button" onClick={() => openUploadModal(activeRevisionItem.id)} className="revision-modal__btn revision-modal__btn--outline">
@@ -356,7 +410,7 @@ if (!isAuthenticated) {
           </div>
         </div>
       )}
-       <UploadModal isOpen={showUploadModal} onClose={closeUploadModal}/>
+      <UploadModal isOpen={showUploadModal} onClose={closeUploadModal} />
       <Footer />
     </div>
   );

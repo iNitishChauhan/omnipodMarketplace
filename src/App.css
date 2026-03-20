@@ -142,6 +142,51 @@
 .pp_bg{width:100%; float:left;}
 .cg_page .hero__left{background: var(--orange);}
 
+
+.account-settings-modal__header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.delete-account-btn {
+  background: #ff4d4f;
+  color: #fff;
+  border: none;
+  padding: 6px 12px;
+  font-size: 13px;
+  cursor: pointer;
+  border-radius: 4px;
+}
+
+.delete-account-btn:hover {
+  background: #d9363e;
+}
+
+.profile-card__image-wrap {
+  position: relative;
+}
+
+.profile-card__delete-btn {
+  position: absolute;
+  top: 6px;
+  right: 6px;
+  width: 26px;
+  height: 26px;
+  border: none;
+  border-radius: 50%;
+  background: red;
+  color: #fff;
+  font-size: 16px;
+  cursor: pointer;
+  line-height: 26px;
+}
+
+.profile-card__delete-btn:hover {
+  background: darkred;
+}
+
+
 @media (max-width: 1599px) { /* for 1280px screen */
 .step__image-wrap img{width: 100%;min-width: 360px;}
 .step__copy p{font-size: 2.5rem;}

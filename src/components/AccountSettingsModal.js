@@ -3,40 +3,43 @@ import "../App.css";
 import axios from "axios";
 import { useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
-import { API_URL,BASEURL } from "./URLS";
+import { API_URL, BASEURL } from "./URLS";
 function AccountSettingsModal({ isOpen, onClose }) {
-const navigate = useNavigate();
-const { user } = useSelector((state) => state.auth);
+  const navigate = useNavigate();
+  const { user } = useSelector((state) => state.auth);
 
-const [profileFile, setProfileFile] = useState(null);
-const [profilePreview, setProfilePreview] = useState("");
-const [submitting, setSubmitting] = useState(false);
-useEffect(() => {
-  if (!isOpen || !user) return;
+  const [profileFile, setProfileFile] = useState(null);
+  const [profilePreview, setProfilePreview] = useState("");
+  const [submitting, setSubmitting] = useState(false);
+  useEffect(() => {
+    if (!isOpen || !user) return;
 
-  setFormData({
-    firstName: user.first_name || "",
-    lastName: user.last_name || "",
-    email: user.email || "",
-    phoneCode: "+44",
-    phone: user.phone ? user.phone.replace(/^\+\d+/, "") : "",
-    instagramHandle: user.instagram || "",
-    tiktokHandle: user.tiktok || "",
-    youtubeHandle: user.youtube || "",
-  });
+    setFormData({
+      firstName: user.first_name || "",
+      lastName: user.last_name || "",
+      email: user.email || "",
+      phoneCode: "+44",
+      phone: user.phone ? user.phone.replace(/^\+\d+/, "") : "",
+      instagramHandle: user.instagram || "",
+      tiktokHandle: user.tiktok || "",
+      youtubeHandle: user.youtube || "",
+      agree1: user.agree1 || "",
+      agree2: user.agree2 || "",
+      agree3: user.agree3 || "",
+    });
 
-  if (user.product) {
-    setSelectedProducts(user.product.split(","));
-  }
-}, [isOpen, user]);
+    if (user.product) {
+      setSelectedProducts(user.product.split(","));
+    }
+  }, [isOpen, user]);
 
-const handleImageChange = (e) => {
-  const file = e.target.files[0];
-  if (!file) return;
+  const handleImageChange = (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
 
-  setProfileFile(file);
-  setProfilePreview(URL.createObjectURL(file));
-};
+    setProfileFile(file);
+    setProfilePreview(URL.createObjectURL(file));
+  };
   const productOptions = ["Omnipod 5", "Omnipod DASH", "Omnipod GO", "Omnipod View", "Other"];
   const [formData, setFormData] = useState({
     firstName: "",
@@ -44,6 +47,9 @@ const handleImageChange = (e) => {
     email: "",
     phoneCode: "+44",
     phone: "",
+    agree1: false,
+    agree2: false,
+    agree3: false,
     instagramHandle: "",
     tiktokHandle: "",
     youtubeHandle: "",
@@ -91,53 +97,115 @@ const handleImageChange = (e) => {
       prev.includes(value) ? prev.filter((item) => item !== value) : [...prev, value]
     );
   };
+  /*  const handleChange = (event) => {
+     const { name, value } = event.target;
+     setFormData((prev) => ({ ...prev, [name]: value }));
+     setErrors((prev) => ({ ...prev, [name]: "" }));
+       const { name, value, type, checked } = e.target;
+   }; */
   const handleChange = (event) => {
-    const { name, value } = event.target;
-    setFormData((prev) => ({ ...prev, [name]: value }));
-    setErrors((prev) => ({ ...prev, [name]: "" }));
+    const { name, value, type, checked } = event.target;
+
+    setFormData((prev) => ({
+      ...prev,
+      [name]: type === "checkbox" ? checked : value,
+    }));
+
+    setErrors((prev) => ({
+      ...prev,
+      [name]: "",
+    }));
   };
-const handleSubmit = async (event) => {
-  event.preventDefault();
-  if (!validateForm()) return;
 
-  try {
-    setSubmitting(true);
-    const formPayload = new FormData();
-    formPayload.append("first_name", formData.firstName);
-    formPayload.append("last_name", formData.lastName);
-    formPayload.append("email", formData.email);
-    formPayload.append("phone", `${formData.phoneCode}${formData.phone}`);
-    formPayload.append("product", selectedProducts.join(","));
-    formPayload.append("instagram", formData.instagramHandle);
-    formPayload.append("tiktok", formData.tiktokHandle);
-    formPayload.append("youtube", formData.youtubeHandle);
+  const handleDeleteRequest = async () => {
+    const confirmDelete = window.confirm(
+      "Are you sure you want to request to delete account?"
+    );
 
-    if (profileFile) {
-      formPayload.append("profile_image", profileFile);
+    if (!confirmDelete) return;
+
+    try {
+      const url = `${API_URL}profile/${user.id}/delete-request`;
+      const res = await axios.post(url);
+      localStorage.setItem("token", res.data.token);
+      localStorage.setItem("user", JSON.stringify(res.data.user));
+      alert(res.data.message);
+
+    } catch (error) {
+      console.log(error);
+      alert("Error sending delete request");
+    } finally {
+      navigate(0);
     }
-    //try {
-  const url = `${API_URL}profile/${user.id}/update-profile`;
+  };
 
-  const res = await axios.post(url, formPayload, {
-    headers: {
-      "Content-Type": "multipart/form-data",
-    },
-  });
-  localStorage.setItem("token", res.data.token);
-  localStorage.setItem("user", JSON.stringify(res.data.user));
-  //console.log("SUCCESS:", res.data);
-  //navigate("/");
-  
-  
-} catch (error) {
-  console.log("ERROR FULL:", error);
-  console.log("ERROR RESPONSE:", error.response?.data);
-  console.log("ERROR STATUS:", error.response?.status);
-} finally {
-    setSubmitting(false);
-    navigate(0); // reload page
-  }
-};
+  const handleWithdrawalRequest = async () => {
+    const confirmDelete = window.confirm(
+      "Are you sure you want to withdrawal account deletion request?"
+    );
+
+    if (!confirmDelete) return;
+
+    try {
+      const url = `${API_URL}profile/${user.id}/withdrawal-request`;
+      const res = await axios.post(url);
+      localStorage.setItem("token", res.data.token);
+      localStorage.setItem("user", JSON.stringify(res.data.user));
+      alert(res.data.message);
+
+    } catch (error) {
+      console.log(error);
+      alert("Error sending delete request");
+    } finally {
+      navigate(0);
+    }
+  };
+  const handleSubmit = async (event) => {
+    event.preventDefault();
+    if (!validateForm()) return;
+
+    try {
+      setSubmitting(true);
+      const formPayload = new FormData();
+
+      formPayload.append("first_name", formData.firstName);
+      formPayload.append("last_name", formData.lastName);
+      formPayload.append("email", formData.email);
+      formPayload.append("phone", `${formData.phoneCode}${formData.phone}`);
+      formPayload.append("product", selectedProducts.join(","));
+      formPayload.append("agree1", Number(formData.agree1));
+      formPayload.append("agree2", Number(formData.agree2));
+      formPayload.append("agree3", Number(formData.agree3));
+      formPayload.append("instagram", formData.instagramHandle);
+      formPayload.append("tiktok", formData.tiktokHandle);
+      formPayload.append("youtube", formData.youtubeHandle);
+
+      if (profileFile) {
+        formPayload.append("profile_image", profileFile);
+      }
+      //try {
+      const url = `${API_URL}profile/${user.id}/update-profile`;
+
+      const res = await axios.post(url, formPayload, {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+      });
+      localStorage.setItem("token", res.data.token);
+      localStorage.setItem("user", JSON.stringify(res.data.user));
+      //console.log("SUCCESS:", res.data);
+      //navigate("/");
+
+
+    } catch (error) {
+      console.log("ERROR FULL:", error);
+      console.log("ERROR RESPONSE:", error.response?.data);
+      console.log("ERROR STATUS:", error.response?.status);
+    } finally {
+      setSubmitting(false);
+      navigate(0); // reload page
+    }
+  };
 
   const validateForm = () => {
     const nextErrors = {};
@@ -169,25 +237,59 @@ const handleSubmit = async (event) => {
       <div className="account-settings-modal__overlay" onClick={onClose} />
 
       <div className="account-settings-modal__content">
+        {/*  <button
+          type="button"
+          className="delete-account-btn"
+          onClick={handleDeleteRequest}
+        >
+          Delete Account
+        </button> */}
+        {/*   {user?.deletion_request === "no" && (
+  <button
+    type="button"
+    className="delete-account-btn"
+    onClick={handleDeleteRequest}
+  >
+    Delete Account
+  </button>
+)} */}
+
+        {user?.deletion_request === "requested" ? (
+          <button
+            type="button"
+            className="delete-account-btn"
+            onClick={handleWithdrawalRequest}
+          >
+            Withdrawal Request
+          </button>
+        ) : (
+          <button
+            type="button"
+            className="delete-account-btn"
+            onClick={handleDeleteRequest}
+          >
+            Delete Account
+          </button>
+        )}
         <h3 className="account-settings-modal__title">
           Account <span>Settings</span>
         </h3>
+
         <div className="account-settings-modal__divider" />
 
         <div className="account-settings-modal__profile">
-          <img src={`${BASEURL}/${
-          profilePreview
-          ? profilePreview
-          : user?.profile_image
-          ? user.profile_image
-          : '' }`} alt="Profile" />
+          <img src={`${BASEURL}/${profilePreview
+            ? profilePreview
+            : user?.profile_image
+              ? user.profile_image
+              : ''}`} alt="Profile" />
           <div className="account-settings-modal__profile-copy">
             <p>Update Profile Picture</p>
-           <input type="file" accept="image/*" onChange={handleImageChange} />
+            <input type="file" accept="image/*" onChange={handleImageChange} />
           </div>
         </div>
 
-       {/*  <form
+        {/*  <form
           className="account-settings-modal__form"
           onSubmit={(event) => {
             event.preventDefault();
@@ -280,21 +382,19 @@ const handleSubmit = async (event) => {
                 <button
                   id="accountProduct"
                   type="button"
-                  className={`creator-input account-settings-modal__product-trigger${
-                    isProductOpen ? " is-open" : ""
-                  }${errors.accountProduct ? " account-settings-modal__input-error" : ""}`}
+                  className={`creator-input account-settings-modal__product-trigger${isProductOpen ? " is-open" : ""
+                    }${errors.accountProduct ? " account-settings-modal__input-error" : ""}`}
                   onClick={() => setIsProductOpen((prev) => !prev)}
                   aria-haspopup="listbox"
                   aria-expanded={isProductOpen}
                 >
                   <span
-                    className={`account-settings-modal__product-value${
-                      selectedProducts.length === 0 ? " is-placeholder" : ""
-                    }`}
+                    className={`account-settings-modal__product-value${selectedProducts.length === 0 ? " is-placeholder" : ""
+                      }`}
                   >
                     {selectedProductLabel}
                   </span>
-            
+
                 </button>
 
                 {isProductOpen && (
@@ -389,10 +489,25 @@ const handleSubmit = async (event) => {
               )}
             </div>
           </div>
-
+          <div className="creator-checks">
+            <label className="creator-check">
+              <input type="checkbox" name="agree1" onChange={handleChange} checked={Number(formData.agree1)} />
+              <span><span className="required">*</span>I agree that Insulet International reserves the right to edit content during approval stages</span>
+            </label>
+            <label className="creator-check">
+              <input type="checkbox" name="agree2" onChange={handleChange} checked={Number(formData.agree2)} />
+              <span><span className="required">*</span>I understand that Insulet International will be in touch before any content is used/posted</span>
+            </label>
+            <label className="creator-check">
+              <input type="checkbox" name="agree3" onChange={handleChange} checked={Number(formData.agree3)} />
+              <span>
+                <span className="required">*</span>I agree to Insulet International&apos;s <a className="creator-policy" href="#policy">social media policy</a>
+              </span>
+            </label>
+          </div>
           <div className="account-settings-modal__actions">
             <button type="submit" className="account-settings-modal__save" disabled={submitting}>
-             {submitting ? "Submitting..." : "Save and close"}
+              {submitting ? "Submitting..." : "Save and close"}
             </button>
           </div>
         </form>

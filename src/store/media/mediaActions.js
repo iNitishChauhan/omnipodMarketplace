@@ -14,7 +14,7 @@ export const fetchMedia = () => async (dispatch, getState) => {
         },
       }
     );
-//console.log(res.data.data)
+    //console.log(res.data.data)
     dispatch({
       type: "MEDIA_SUCCESS",
       payload: res.data.data,

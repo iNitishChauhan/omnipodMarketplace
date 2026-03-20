@@ -81,7 +81,7 @@ if (isAuthenticated===true) {
       setMessage("Passwords do not match");
       return;
     }
-
+console.log(formData.agree1)
     if (!formData.agree1 || !formData.agree2 || !formData.agree3) {
       setMessage("Please accept all agreements");
       return;
@@ -93,6 +93,9 @@ if (isAuthenticated===true) {
       email: formData.email,
       phone: `${formData.phoneCode}${formData.phone}`,
       product: formData.product,
+      agree1: formData.agree1,
+      agree2: formData.agree2,
+      agree3: formData.agree3,
       instagram: formData.instagramHandle,
       tiktok: formData.tiktokHandle,
       youtube: formData.youtubeHandle,
@@ -110,7 +113,7 @@ if (profileImage) {
 } 
 
     try {
-      setLoading(true); 
+  setLoading(true); 
   const res = await axios.post(
   API_URL+"creator-signup",
   formDataPayload,

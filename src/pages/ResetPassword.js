@@ -19,20 +19,21 @@ function ResetPassword() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-
+//console.log(API_URL+"reset-password");
     try {
-      const res = await axios.post(
-        API_URL+"reset-password",
+      
+        const res = await axios.post(
+        API_URL + "reset-password",
         {
           token,
           email,
           password,
-          password_confirmation: confirmPassword
+          password_confirmation: confirmPassword,
         }
       );
       setMessage(res.data.message);
     } catch (err) {
-      //console.log(err);
+      //console.log(err)
       setError("Invalid or expired token");
     }
   };

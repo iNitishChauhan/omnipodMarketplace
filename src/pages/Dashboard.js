@@ -14,6 +14,17 @@ function Dashboard() {
 
   const { user, isAuthenticated } = useSelector((state) => state.auth);
   const { media, loading, error } = useSelector((state) => state.media);
+
+ /*  const res = await axios.get(
+    API_URL + "/user-data/"+user.id,
+    {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    }
+  );
+
+  console.log(res.data.user); */
   //console.log(media)
   
   useEffect(() => {
