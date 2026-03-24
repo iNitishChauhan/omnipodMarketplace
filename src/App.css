@@ -567,6 +567,7 @@ padding: 20px 0% 80px;
   box-shadow: 0 12px 24px rgba(0, 0, 0, 0.12);
   height: 100%;
 }
+.inspiration-card__image:hover{box-shadow: 0 12px 24px #0000006b;}
 
 .inspiration-card__media-trigger {
   width: 100%;
