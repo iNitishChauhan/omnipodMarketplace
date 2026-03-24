@@ -5,12 +5,27 @@ import { useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { API_URL, BASEURL } from "./URLS";
 function AccountSettingsModal({ isOpen, onClose }) {
+
+  const token = localStorage.getItem("token");
+
   const navigate = useNavigate();
   const { user } = useSelector((state) => state.auth);
 
   const [profileFile, setProfileFile] = useState(null);
   const [profilePreview, setProfilePreview] = useState("");
   const [submitting, setSubmitting] = useState(false);
+  const [userstatus, setUserstatus] = useState();
+
+  const getUserData = async (user_id) => {
+    try {
+      const res = await axios.get(API_URL + "user-data/" + user_id,);
+      setUserstatus(res.data.user.deletion_request);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+  getUserData(user.id)
+
   useEffect(() => {
     if (!isOpen || !user) return;
 
@@ -97,12 +112,7 @@ function AccountSettingsModal({ isOpen, onClose }) {
       prev.includes(value) ? prev.filter((item) => item !== value) : [...prev, value]
     );
   };
-  /*  const handleChange = (event) => {
-     const { name, value } = event.target;
-     setFormData((prev) => ({ ...prev, [name]: value }));
-     setErrors((prev) => ({ ...prev, [name]: "" }));
-       const { name, value, type, checked } = e.target;
-   }; */
+  
   const handleChange = (event) => {
     const { name, value, type, checked } = event.target;
 
@@ -235,42 +245,27 @@ function AccountSettingsModal({ isOpen, onClose }) {
   return (
     <div className="account-settings-modal" role="dialog" aria-modal="true">
       <div className="account-settings-modal__overlay" onClick={onClose} />
-
       <div className="account-settings-modal__content">
-        {/*  <button
-          type="button"
-          className="delete-account-btn"
-          onClick={handleDeleteRequest}
-        >
-          Delete Account
-        </button> */}
-        {/*   {user?.deletion_request === "no" && (
-  <button
-    type="button"
-    className="delete-account-btn"
-    onClick={handleDeleteRequest}
-  >
-    Delete Account
-  </button>
-)} */}
-
-        {user?.deletion_request === "requested" ? (
-          <button
-            type="button"
-            className="delete-account-btn"
-            onClick={handleWithdrawalRequest}
-          >
-            Withdrawal Request
-          </button>
-        ) : (
-          <button
-            type="button"
-            className="delete-account-btn"
-            onClick={handleDeleteRequest}
-          >
-            Delete Account
-          </button>
+        {userstatus !== "approved" && (
+          userstatus === "requested" ? (
+            <button
+              type="button"
+              className="delete-account-btn"
+              onClick={handleWithdrawalRequest}
+            >
+              Withdrawal Request
+            </button>
+          ) : (
+            <button
+              type="button"
+              className="delete-account-btn"
+              onClick={handleDeleteRequest}
+            >
+              Delete Account
+            </button>
+          )
         )}
+
         <h3 className="account-settings-modal__title">
           Account <span>Settings</span>
         </h3>
@@ -289,15 +284,7 @@ function AccountSettingsModal({ isOpen, onClose }) {
           </div>
         </div>
 
-        {/*  <form
-          className="account-settings-modal__form"
-          onSubmit={(event) => {
-            event.preventDefault();
-            if (!validateForm()) return;
-            onClose();
-          }}
-        > */}<form className="account-settings-modal__form" onSubmit={handleSubmit}>
-
+       <form className="account-settings-modal__form" onSubmit={handleSubmit}>
           <div className="creator-form__row creator-form__row--2">
             <div className="creator-field">
               <label htmlFor="accountFirstName">

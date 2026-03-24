@@ -406,7 +406,7 @@ function Dashboard() {
                 &gt;
               </button>
             </div>
-             <button type="button" className="inspiration__cta">Explore more</button>
+             {/* <button type="button" className="inspiration__cta">Explore more</button> */}
           </div>
         )}
       </section>

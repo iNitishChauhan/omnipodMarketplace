@@ -4,7 +4,7 @@ import "../App.css";
 import signupBg from "../images/signupbg.png";
 import Footer from "../components/Footer";
 import SignupHeader from "../components/SignupHeader";
-import { Navigate, useNavigate } from "react-router-dom";
+import { Link, Navigate, useNavigate } from "react-router-dom";
 import { useSelector } from "react-redux";
 import { API_URL } from "../components/URLS";
 
@@ -266,7 +266,7 @@ navigate("/omnipod-creator-login", {
               <label className="creator-check">
                 <input type="checkbox" name="agree3" onChange={handleChange} />
                 <span>
-                  <span className="required">*</span>I agree to Insulet International&apos;s <a className="creator-policy" href="#policy">social media policy</a>
+                  <span className="required">*</span>I agree to Insulet International&apos;s <Link className="creator-policy" to="/social-media-policy">social media policy</Link>
                 </span>
               </label>
             </div>

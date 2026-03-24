@@ -47,9 +47,20 @@ function CreatorProfile() {
     }
   };
 
+  const [showAnalyticsModal, setShowAnalyticsModal] = useState(false);
+  const [activeAnalyticsItem, setActiveAnalyticsItem] = useState(null);
+  const openAnalyticsModal = (item) => {
+    setActiveAnalyticsItem(item);
+    setShowAnalyticsModal(true);
+  };
 
+  const closeAnalyticsModal = () => {
+    setShowAnalyticsModal(false);
+    setActiveAnalyticsItem(null);
+  };
   //console.log(media[0]);
   /* ---------------- PAGINATION STATE ---------------- */
+
   const ITEMS_PER_PAGE = 8;
   const [currentPage, setCurrentPage] = useState(1);
   const [statusFilter, setStatusFilter] = useState("all");
@@ -259,7 +270,12 @@ function CreatorProfile() {
                         )}
 
                         {item.status === 'published' && (
-                          <button type="button" className="profile-card__btn profile-card__btn--analytics">
+
+                          <button
+                            type="button"
+                            className="profile-card__btn profile-card__btn--analytics"
+                            onClick={() => openAnalyticsModal(item)}
+                          >
                             Analytics
                           </button>
                         )}
@@ -319,7 +335,11 @@ function CreatorProfile() {
                         )}
 
                         {item.status === 'published' && (
-                          <button type="button" className="profile-card__btn profile-card__btn--analytics">
+                          <button
+                            type="button"
+                            className="profile-card__btn profile-card__btn--analytics"
+                            onClick={() => openAnalyticsModal(item)}
+                          >
                             Analytics
                           </button>
                         )}
@@ -411,6 +431,61 @@ function CreatorProfile() {
         </div>
       )}
       <UploadModal isOpen={showUploadModal} onClose={closeUploadModal} />
+
+      {showAnalyticsModal && activeAnalyticsItem && (
+        <div className="revision-modal" role="dialog">
+          <div
+            className="revision-modal__overlay"
+            onClick={closeAnalyticsModal}
+          />
+
+          <div className="revision-modal__content">
+
+            <div className="revision-modal__media">
+              <img
+                src={activeAnalyticsItem.file_url}
+                alt=""
+              />
+            </div>
+            <div className="revision-modal__details">
+              <h3>
+                Media <span>Analytics</span>
+              </h3>
+              <p>
+                <strong>Title:</strong>{" "}
+                {activeAnalyticsItem.title}
+              </p>
+              <p>
+                <strong>Reach:</strong>{" "}
+                {activeAnalyticsItem.reach || 0}
+              </p>
+              <p>
+                <strong>Likes:</strong>{" "}
+                {activeAnalyticsItem.likes || 0}
+              </p>
+              <p>
+                <strong>Comments:</strong>{" "}
+                {activeAnalyticsItem.comments || 0}
+              </p>
+              <p>
+                <strong>Reposts:</strong>{" "}
+                {activeAnalyticsItem.reposts || 0}
+              </p>
+              <p>
+                <strong>Shares:</strong>{" "}
+                {activeAnalyticsItem.shares || 0}
+              </p>
+              <button
+                type="button"
+                className="revision-modal__btn revision-modal__btn--solid"
+                onClick={closeAnalyticsModal}
+              >
+                Close
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
       <Footer />
     </div>
   );
