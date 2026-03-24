@@ -5,9 +5,6 @@ import { useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { API_URL, BASEURL } from "./URLS";
 function AccountSettingsModal({ isOpen, onClose }) {
-
-  const token = localStorage.getItem("token");
-
   const navigate = useNavigate();
   const { user } = useSelector((state) => state.auth);
 
