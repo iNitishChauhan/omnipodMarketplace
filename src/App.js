@@ -6,6 +6,7 @@ import CreatorSignup from './pages/CreatorSignup';
 import Dashboard from './pages/Dashboard';
 import CreatorProfile from './pages/CreatorProfile';
 import ContentGuidelines from './pages/ContentGuidelines';
+import SocialMediaPolicy from './pages/SocialMediaPolicy';
 import ForgotPassword from './pages/ForgotPassword'
 import ResetPassword from './pages/ResetPassword'
 
@@ -21,6 +22,7 @@ function App() {
         <Route path="/dashboard" element={<Dashboard />} />
         <Route path="/profile" element={<CreatorProfile />} />
         <Route path="/content-guidelines" element={<ContentGuidelines />} />
+        <Route path="/social-media-policy" element={<SocialMediaPolicy />} />
         <Route path="/forgot-password" element={<ForgotPassword />} />
         <Route path="/reset-password/:token" element={<ResetPassword />} />
       </Routes>
