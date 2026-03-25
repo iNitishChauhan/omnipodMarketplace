@@ -480,7 +480,7 @@ function CreatorProfile() {
                 className="revision-modal__btn revision-modal__btn--solid"
                 onClick={closeAnalyticsModal}
               >
-                Close
+                X
               </button>
             </div>
           </div>
