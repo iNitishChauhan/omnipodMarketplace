@@ -26,7 +26,8 @@ function UploadModal({ isOpen, onClose }) {
   const [theme, setTheme] = useState("");
   const [apiError, setApiError] = useState("");
   const [apiLoading, setApiLoading] = useState(false);
-
+const [agreeGuidelines, setAgreeGuidelines] = useState(false);
+const [agreeDocument, setAgreeDocument] = useState(false);
 
   const getMediaDetail = async () => {
   try {
@@ -111,7 +112,11 @@ useEffect(() => {
       alert("File and title are required");
       return;
     }
-
+ // ✅ NEW VALIDATION
+  if (!agreeGuidelines || !agreeDocument) {
+    alert("Please accept both agreements");
+    return;
+  }
     try {
       setApiLoading(true);
       setApiError("");
@@ -258,16 +263,23 @@ useEffect(() => {
 
               <div className="upload-modal__checks">
                 <label className="upload-modal__check">
-                  <input type="checkbox" />
-                  <span>
-                    I have read the{" "}
+                  <input
+    type="checkbox"
+    checked={agreeGuidelines}
+    onChange={(e) => setAgreeGuidelines(e.target.checked)}
+  />
+                  <span> I have read the{" "}
                     <a href="#guidelines">Content Guidelines</a>
                   </span>
                 </label>
 
                 <div className="upload-modal__check">
                   <label>
-                    <input type="checkbox" />
+                    <input
+    type="checkbox"
+    checked={agreeGuidelines}
+    onChange={(e) => setAgreeGuidelines(e.target.checked)}
+  />
                     <span>
                       Sign <a href="#agreement">document agreement</a>
                     </span>
