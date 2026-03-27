@@ -277,8 +277,8 @@ useEffect(() => {
                   <label>
                     <input
     type="checkbox"
-    checked={agreeGuidelines}
-    onChange={(e) => setAgreeGuidelines(e.target.checked)}
+    checked={agreeDocument}
+    onChange={(e) => setAgreeDocument(e.target.checked)}
   />
                     <span>
                       Sign <a href="#agreement">document agreement</a>
