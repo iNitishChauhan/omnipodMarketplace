@@ -10,45 +10,45 @@ import { API_URL } from "../components/URLS";
 
 
 function CreatorSignup() {
- const navigate = useNavigate();
+
+  const navigate = useNavigate();
   const { isAuthenticated } = useSelector((state) => state.auth);
-    
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState("");
   const [profileImage, setProfileImage] = useState(null);
   const [previewImage, setPreviewImage] = useState(null);
 
-const defaultFormState = {
-  firstName: "",
-  lastName: "",
-  email: "",
-  phoneCode: "+44",
-  phone: "",
-  product: "",
-  instagramHandle: "",
-  tiktokHandle: "",
-  youtubeHandle: "",
-  agree1: false,
-  agree2: false,
-  agree3: false,
-  password: "",
-  confirmPassword: "",
-};
+  const defaultFormState = {
+    firstName: "",
+    lastName: "",
+    email: "",
+    phoneCode: "+44",
+    phone: "",
+    product: "",
+    instagramHandle: "",
+    tiktokHandle: "",
+    youtubeHandle: "",
+    agree1: false,
+    agree2: false,
+    agree3: false,
+    password: "",
+    confirmPassword: "",
+  };
   const [formData, setFormData] = useState(defaultFormState);
-  
-if (isAuthenticated===true) {
+
+  if (isAuthenticated === true) {
     return <Navigate to="/" />;
   }
   const handleImageChange = (e) => {
-  const file = e.target.files[0];
+    const file = e.target.files[0];
 
-  if (file) {
-    setProfileImage(file);
-    setPreviewImage(URL.createObjectURL(file));
-  }
-};
+    if (file) {
+      setProfileImage(file);
+      setPreviewImage(URL.createObjectURL(file));
+    }
+  };
   const handleChange = (e) => {
-   
+
     const { name, value, type, checked } = e.target;
     setFormData((prev) => ({
       ...prev,
@@ -73,21 +73,21 @@ if (isAuthenticated===true) {
       return;
     }
     if (!profileImage) {
-    setMessage("Profile image is required");
-    return;
-  }
+      setMessage("Profile image is required");
+      return;
+    }
 
     if (formData.password !== formData.confirmPassword) {
       setMessage("Passwords do not match");
       return;
     }
-console.log(formData.agree1)
+    //console.log(formData.agree1)
     if (!formData.agree1 || !formData.agree2 || !formData.agree3) {
       setMessage("Please accept all agreements");
       return;
     }
     //console.log(profileImage)
-     const payload = {
+    const payload = {
       first_name: formData.firstName,
       last_name: formData.lastName,
       email: formData.email,
@@ -101,33 +101,33 @@ console.log(formData.agree1)
       youtube: formData.youtubeHandle,
       password: formData.password,
       role: 'podder',
-    }; 
+    };
     const formDataPayload = new FormData();
 
-// add all payload fields
-Object.keys(payload).forEach((key) => {
-  formDataPayload.append(key, payload[key]);
-});
-if (profileImage) {
-  formDataPayload.append("profile_image", profileImage);
-} 
+    // add all payload fields
+    Object.keys(payload).forEach((key) => {
+      formDataPayload.append(key, payload[key]);
+    });
+    if (profileImage) {
+      formDataPayload.append("profile_image", profileImage);
+    }
 
     try {
-  setLoading(true); 
-  const res = await axios.post(
-  API_URL+"creator-signup",
-  formDataPayload,
-  {
-    headers: {
-      "Content-Type": "multipart/form-data",
-    },
-  }
-); 
-console.log(res)
-//alert("Signup successful 🎉");
-navigate("/omnipod-creator-login", {
-  state: { message: "Signup successful 🎉. Please login." }
-});
+      setLoading(true);
+      const res = await axios.post(
+        API_URL + "creator-signup",
+        formDataPayload,
+        {
+          headers: {
+            "Content-Type": "multipart/form-data",
+          },
+        }
+      );
+      console.log(res)
+      //alert("Signup successful 🎉");
+      navigate("/omnipod-creator-login", {
+        state: { message: "Signup successful 🎉. Please login." }
+      });
 
     } catch (error) {
       setMessage(
@@ -225,34 +225,34 @@ navigate("/omnipod-creator-login", {
                 </div>
               </div>
             </div>
-<div className="creator-field">
-  <label>
-   <span className="required">*</span>Profile Image
-  </label>
+            <div className="creator-field">
+              <label>
+                <span className="required">*</span>Profile Image
+              </label>
 
-  <input
-    type="file"
-    accept="image/*"
-    onChange={handleImageChange}
-    className="creator-input"
-  />
+              <input
+                type="file"
+                accept="image/*"
+                onChange={handleImageChange}
+                className="creator-input"
+              />
 
-  {previewImage && (
-    <div style={{ marginTop: "10px" }}>
-      <img
-        src={previewImage}
-        alt="Profile Preview"
-        style={{
-          width: "120px",
-          height: "120px",
-          borderRadius: "50%",
-          objectFit: "cover",
-          border: "1px solid #ddd",
-        }}
-      />
-    </div>
-  )}
-</div>
+              {previewImage && (
+                <div style={{ marginTop: "10px" }}>
+                  <img
+                    src={previewImage}
+                    alt="Profile Preview"
+                    style={{
+                      width: "120px",
+                      height: "120px",
+                      borderRadius: "50%",
+                      objectFit: "cover",
+                      border: "1px solid #ddd",
+                    }}
+                  />
+                </div>
+              )}
+            </div>
 
             <div className="creator-checks">
               <label className="creator-check">
@@ -283,7 +283,7 @@ navigate("/omnipod-creator-login", {
               <label htmlFor="confirmPassword"><span className="required">*</span>Confirm Password</label>
               <input type="password" name="confirmPassword" onChange={handleChange} className="creator-input" />
             </div>
-            
+
           </div>
         </section>
         <section className="creator-submit">
