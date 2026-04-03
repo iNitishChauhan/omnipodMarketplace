@@ -178,7 +178,7 @@ function AccountSettingsModal({ isOpen, onClose }) {
       formPayload.append("first_name", formData.firstName);
       formPayload.append("last_name", formData.lastName);
       formPayload.append("email", formData.email);
-      formPayload.append("phone", `${formData.phoneCode}${formData.phone}`);
+      formPayload.append("phone", `${formData.phoneCode}-${formData.phone}`);
       formPayload.append("product", selectedProducts.join(","));
       formPayload.append("agree1", Number(formData.agree1));
       formPayload.append("agree2", Number(formData.agree2));
@@ -351,7 +351,7 @@ function AccountSettingsModal({ isOpen, onClose }) {
                   name="phone"
                   className={`creator-input${errors.phone ? " account-settings-modal__input-error" : ""}`}
                   type="text"
-                  value={formData.phone}
+                  value={formData.phone.replace(/-/g, '')}
                   onChange={handleChange}
                 />
               </div>

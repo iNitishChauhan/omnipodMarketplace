@@ -91,7 +91,7 @@ function CreatorSignup() {
       first_name: formData.firstName,
       last_name: formData.lastName,
       email: formData.email,
-      phone: `${formData.phoneCode}${formData.phone}`,
+      phone: `${formData.phoneCode}-${formData.phone}`,
       product: formData.product,
       agree1: formData.agree1,
       agree2: formData.agree2,
