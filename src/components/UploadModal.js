@@ -24,26 +24,27 @@ function UploadModal({ isOpen, onClose }) {
 
   const [contentName, setContentName] = useState("");
   const [theme, setTheme] = useState("");
+  const [postCopy, setpostCopy] = useState("");
   const [apiError, setApiError] = useState("");
   const [apiLoading, setApiLoading] = useState(false);
-const [agreeGuidelines, setAgreeGuidelines] = useState(false);
-const [agreeDocument, setAgreeDocument] = useState(false);
+  const [agreeGuidelines, setAgreeGuidelines] = useState(false);
+  const [agreeDocument, setAgreeDocument] = useState(false);
 
   const getMediaDetail = async () => {
-  try {
-    let mid = localStorage.getItem("mid");
-    const res = await axios.get(`${API_URL}media/${mid}`);
-    setContentName(res.data.media.title);
-  } catch (err) {
-    console.log(err);
-  }
-};
+    try {
+      let mid = localStorage.getItem("mid");
+      const res = await axios.get(`${API_URL}media/${mid}`);
+      setContentName(res.data.media.title);
+    } catch (err) {
+      console.log(err);
+    }
+  };
 
-useEffect(() => {
-  if (isOpen) {
-    getMediaDetail();
-  }
-}, [isOpen]);
+  useEffect(() => {
+    if (isOpen) {
+      getMediaDetail();
+    }
+  }, [isOpen]);
 
   // ---------------- FILE HANDLING ----------------
   const handleFiles = (fileList) => {
@@ -69,7 +70,7 @@ useEffect(() => {
 
   // ---------------- PREVIEW ----------------
   useEffect(() => {
-    
+
     if (!selectedFile) {
       setPreviewUrl("");
       return;
@@ -107,16 +108,16 @@ useEffect(() => {
 
   // ---------------- API UPLOAD ----------------
   const handleSubmit = async () => {
-    
+
     if (!selectedFile || !contentName) {
       alert("File and title are required");
       return;
     }
- // ✅ NEW VALIDATION
-  if (!agreeGuidelines || !agreeDocument) {
-    alert("Please accept both agreements");
-    return;
-  }
+    // ✅ NEW VALIDATION
+    if (!agreeGuidelines || !agreeDocument) {
+      alert("Please accept both agreements");
+      return;
+    }
     try {
       setApiLoading(true);
       setApiError("");
@@ -132,12 +133,14 @@ useEffect(() => {
       }
 
       const formData = new FormData();
-      if(localStorage.getItem("mid")){
+      if (localStorage.getItem("mid")) {
         formData.append("mid", localStorage.getItem("mid"));
         localStorage.removeItem("mid")
       }
       formData.append("user_id", userId);
       formData.append("title", contentName);
+      formData.append("post_copy", postCopy);
+      formData.append("themes", theme);
       formData.append("file", selectedFile);
       formData.append("content", "");
       formData.append(
@@ -147,7 +150,7 @@ useEffect(() => {
       formData.append("status", "pending");
 
       const response = await axios.post(
-        API_URL+"media/upload",
+        API_URL + "media/upload",
         formData,
         {
           headers: {
@@ -164,8 +167,9 @@ useEffect(() => {
       setSelectedFile(null);
       setContentName("");
       setTheme("");
+      setpostCopy("");
       onClose();
-       // ✅ RELOAD PAGE AFTER UPLOAD
+      // ✅ RELOAD PAGE AFTER UPLOAD
       window.location.reload();
     } catch (error) {
       setApiError(error.response?.data?.message || "Upload failed");
@@ -250,24 +254,45 @@ useEffect(() => {
                 maxLength={100}
                 placeholder="Insert Content Name"
               />
-<div className="upload-modal__count">0/100</div>
+              <div className="upload-modal__count">0/100</div>
+              <label className="upload-modal__label">
+                Post Copy
+              </label>
+              <input
+                className="upload-modal__text"
+                type="text"
+                value={postCopy}
+                onChange={(e) => setpostCopy(e.target.value)}
+                maxLength={100}
+                placeholder="Post Copy"
+              />
+
               <select
                 className="upload-modal__select"
                 value={theme}
                 onChange={(e) => setTheme(e.target.value)}
               >
                 <option value="">Select Theme</option>
-                <option value="fitness">Fitness</option>
-                <option value="health">Health</option>
+                <option value="Pod Change">Pod Change</option>
+                <option value="Lifestyle">Lifestyle</option>
+                <option value="Work">Work</option>
+                <option value="Holiday">Holiday</option>
+                <option value="Travel">Travel</option>
+                <option value="Summer">Summer</option>
+                <option value="Winter">Winter</option>
+                <option value="Why I chose Omnipod">Why I chose Omnipod</option>
+                <option value="Unboxing">Unboxing</option>
+                <option value="WDD">WDD</option>
+                <option value="No theme">No theme</option>
               </select>
 
               <div className="upload-modal__checks">
                 <label className="upload-modal__check">
                   <input
-    type="checkbox"
-    checked={agreeGuidelines}
-    onChange={(e) => setAgreeGuidelines(e.target.checked)}
-  />
+                    type="checkbox"
+                    checked={agreeGuidelines}
+                    onChange={(e) => setAgreeGuidelines(e.target.checked)}
+                  />
                   <span> I have read the{" "}
                     <a href="#guidelines">Content Guidelines</a>
                   </span>
@@ -276,10 +301,10 @@ useEffect(() => {
                 <div className="upload-modal__check">
                   <label>
                     <input
-    type="checkbox"
-    checked={agreeDocument}
-    onChange={(e) => setAgreeDocument(e.target.checked)}
-  />
+                      type="checkbox"
+                      checked={agreeDocument}
+                      onChange={(e) => setAgreeDocument(e.target.checked)}
+                    />
                     <span>
                       Sign <a href="#agreement">document agreement</a>
                     </span>

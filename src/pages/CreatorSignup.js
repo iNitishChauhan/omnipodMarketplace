@@ -22,12 +22,14 @@ function CreatorSignup() {
     firstName: "",
     lastName: "",
     email: "",
+    country: "",
     phoneCode: "+44",
     phone: "",
     product: "",
     instagramHandle: "",
     tiktokHandle: "",
     youtubeHandle: "",
+    facebookHandle: "",
     agree1: false,
     agree2: false,
     agree3: false,
@@ -91,6 +93,7 @@ function CreatorSignup() {
       first_name: formData.firstName,
       last_name: formData.lastName,
       email: formData.email,
+      country: formData.country,
       phone: `${formData.phoneCode}-${formData.phone}`,
       product: formData.product,
       agree1: formData.agree1,
@@ -99,6 +102,7 @@ function CreatorSignup() {
       instagram: formData.instagramHandle,
       tiktok: formData.tiktokHandle,
       youtube: formData.youtubeHandle,
+      facebook: formData.facebookHandle,
       password: formData.password,
       role: 'podder',
     };
@@ -184,12 +188,26 @@ function CreatorSignup() {
 
               </div>
             </div>
-
+<div className="creator-form__row creator-form__row--2">
             <div className="creator-field">
               <label htmlFor="email"><span className="required">*</span>Email Address</label>
               <input name="email" value={formData.email} onChange={handleChange} className="creator-input" />
             </div>
+             <div className="creator-field">
+                <label htmlFor="country"><span className="required">*</span>Country</label>
 
+                <select className="creator-input" name="country" value={formData.country} onChange={handleChange}>
+                  <option value="">Select Country</option>
+                  <option value="UK">UK</option>
+                  <option value="Germany" disabled>Germany</option>
+                  <option value="Netherlands" disabled>Netherlands</option>
+                  <option value="Belgium" disabled>Belgium</option>
+                  <option value="Australia" disabled>Australia</option>
+                  <option value="Canada" disabled>Canada</option>
+                  <option value="Saudi Arabia" disabled>Saudi Arabia</option>
+                </select>
+              </div>
+</div>
             <div className="creator-form__row creator-form__row--2">
               <div className="creator-field">
                 <label htmlFor="phone">Phone Number <span className="creator-field__optional">(optional)</span></label>
@@ -222,6 +240,7 @@ function CreatorSignup() {
                   <input name="instagramHandle" className="creator-input" placeholder="Instagram Handle" onChange={handleChange} />
                   <input name="tiktokHandle" className="creator-input" placeholder="TikTok Handle" onChange={handleChange} />
                   <input name="youtubeHandle" className="creator-input" placeholder="YouTube Handle" onChange={handleChange} />
+                  <input name="facebookHandle" className="creator-input" placeholder="Facebook Handle" onChange={handleChange} />
                 </div>
               </div>
             </div>
