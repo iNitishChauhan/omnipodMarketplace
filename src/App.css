@@ -988,7 +988,7 @@ width: 76px;
 
 .upload-modal__select {
   width: auto;
-  margin: 0 0 16px 0;
+  margin: 10px 0 16px 0;
   border: 2px solid #f36a5b;
   border-radius: 24px;
   padding: 5px 15px;
