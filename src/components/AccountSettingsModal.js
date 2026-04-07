@@ -30,11 +30,13 @@ function AccountSettingsModal({ isOpen, onClose }) {
       firstName: user.first_name || "",
       lastName: user.last_name || "",
       email: user.email || "",
+      country: user.country || "",
       phoneCode: "+44",
       phone: user.phone ? user.phone.replace(/^\+\d+/, "") : "",
       instagramHandle: user.instagram || "",
       tiktokHandle: user.tiktok || "",
       youtubeHandle: user.youtube || "",
+      facebookHandle: user.facebook || "",
       agree1: user.agree1 || "",
       agree2: user.agree2 || "",
       agree3: user.agree3 || "",
@@ -57,6 +59,7 @@ function AccountSettingsModal({ isOpen, onClose }) {
     firstName: "",
     lastName: "",
     email: "",
+    country: "",
     phoneCode: "+44",
     phone: "",
     agree1: false,
@@ -65,6 +68,7 @@ function AccountSettingsModal({ isOpen, onClose }) {
     instagramHandle: "",
     tiktokHandle: "",
     youtubeHandle: "",
+    facebookHandle: "",
   });
   const [errors, setErrors] = useState({});
   const [selectedProducts, setSelectedProducts] = useState([]);
@@ -178,6 +182,7 @@ function AccountSettingsModal({ isOpen, onClose }) {
       formPayload.append("first_name", formData.firstName);
       formPayload.append("last_name", formData.lastName);
       formPayload.append("email", formData.email);
+      formPayload.append("country", formData.country);
       formPayload.append("phone", `${formData.phoneCode}-${formData.phone}`);
       formPayload.append("product", selectedProducts.join(","));
       formPayload.append("agree1", Number(formData.agree1));
@@ -186,6 +191,7 @@ function AccountSettingsModal({ isOpen, onClose }) {
       formPayload.append("instagram", formData.instagramHandle);
       formPayload.append("tiktok", formData.tiktokHandle);
       formPayload.append("youtube", formData.youtubeHandle);
+      formPayload.append("facebook", formData.facebookHandle);
 
       if (profileFile) {
         formPayload.append("profile_image", profileFile);
@@ -226,10 +232,12 @@ function AccountSettingsModal({ isOpen, onClose }) {
     if (formData.phone.trim() && !/^\d{6,15}$/.test(phoneSanitized)) {
       nextErrors.phone = "Enter a valid phone number.";
     }
+    if (!formData.country.trim()) nextErrors.country = "Country is required.";
     if (selectedProducts.length === 0) nextErrors.accountProduct = "Please select at least one product.";
     if (!formData.instagramHandle.trim()) nextErrors.instagramHandle = "Instagram handle is required.";
     if (!formData.tiktokHandle.trim()) nextErrors.tiktokHandle = "TikTok handle is required.";
     if (!formData.youtubeHandle.trim()) nextErrors.youtubeHandle = "YouTube handle is required.";
+    if (!formData.facebookHandle.trim()) nextErrors.facebookHandle = "Facebook handle is required.";
 
     setErrors(nextErrors);
     return Object.keys(nextErrors).length === 0;
@@ -312,7 +320,7 @@ function AccountSettingsModal({ isOpen, onClose }) {
               {errors.lastName && <small className="account-settings-modal__error">{errors.lastName}</small>}
             </div>
           </div>
-
+<div className="creator-form__row creator-form__row--2">
           <div className="creator-field">
             <label htmlFor="accountEmail">
               <span className="required">*</span>Email Address
@@ -328,6 +336,22 @@ function AccountSettingsModal({ isOpen, onClose }) {
             />
             {errors.email && <small className="account-settings-modal__error">{errors.email}</small>}
           </div>
+          
+          <div className="creator-field">
+                <label htmlFor="country"><span className="required">*</span>Country</label>
+
+                <select className="creator-input" name="country" value={formData.country} onChange={handleChange}>
+                  <option value="">Select Country</option>
+                  <option value="UK">UK</option>
+                  <option value="Germany" disabled>Germany</option>
+                  <option value="Netherlands" disabled>Netherlands</option>
+                  <option value="Belgium" disabled>Belgium</option>
+                  <option value="Australia" disabled>Australia</option>
+                  <option value="Canada" disabled>Canada</option>
+                  <option value="Saudi Arabia" disabled>Saudi Arabia</option>
+                </select>
+              </div>
+              </div>
 
           <div className="creator-form__row creator-form__row--2">
             <div className="creator-field">
@@ -470,6 +494,24 @@ function AccountSettingsModal({ isOpen, onClose }) {
               </div>
               {errors.youtubeHandle && (
                 <small className="account-settings-modal__error">{errors.youtubeHandle}</small>
+              )}
+              <div className="account-settings-modal__social-row">
+                <input readOnly
+                  className="creator-input account-settings-modal__platform"
+                  type="text"
+                  defaultValue="Facebook"
+                />
+                <input
+                  className={`creator-input${errors.facebookHandle ? " account-settings-modal__input-error" : ""}`}
+                  type="text"
+                  name="facebookHandle"
+                  placeholder="Handle"
+                  value={formData.facebookHandle}
+                  onChange={handleChange}
+                />
+              </div>
+              {errors.facebookHandle && (
+                <small className="account-settings-modal__error">{errors.facebookHandle}</small>
               )}
             </div>
           </div>
