@@ -208,7 +208,7 @@ function AccountSettingsModal({ isOpen, onClose }) {
       localStorage.setItem("user", JSON.stringify(res.data.user));
       //console.log("SUCCESS:", res.data);
       //navigate("/");
-
+console.log(formPayload);
 
     } catch (error) {
       console.log("ERROR FULL:", error);
