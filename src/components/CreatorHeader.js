@@ -3,6 +3,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import siteLogo from '../images/site-logo.png';
 import { useDispatch, useSelector } from "react-redux";
 import { logout } from "../store/auth/authActions";
+import NotificationBell from './NotificationBell';
 
 function CreatorHeader() {
   const dispatch = useDispatch();
@@ -40,6 +41,7 @@ const { isAuthenticated, user } = useSelector((state) => state.auth);
               </Link>
             </span>
 
+            <NotificationBell />
             <button onClick={logoutHandler} className="action-btn action-btn--primary" >
               Logout
             </button>

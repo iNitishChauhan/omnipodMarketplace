@@ -4,6 +4,7 @@ import siteLogo from '../images/site-logo.png';
 import { useDispatch, useSelector } from "react-redux";
 import { logout } from "../store/auth/authActions";
 import { useNavigate } from 'react-router-dom';
+import NotificationBell from './NotificationBell';
 
 function SignupHeader() {
     const dispatch = useDispatch();
@@ -43,6 +44,7 @@ const { isAuthenticated, user } = useSelector((state) => state.auth);
           {/* <a className="insulet-header__link" href="#creators">{user?.name || "User"}</a> */}
           </nav>
           <div className="header-right">
+            <NotificationBell />
             <button onClick={logoutHandler} className="action-btn action-btn--primary" >
               Logout
             </button>

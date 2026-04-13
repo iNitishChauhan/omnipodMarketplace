@@ -12,6 +12,7 @@
 .hero__logo{position:absolute;top:32px;left:0;width:100%;display:flex;justify-content:center;z-index:3}
 .hero__logo-img{height:120px;width:auto;filter:drop-shadow(0 14px 32px #0000002e)}
 .hero__actions{position:absolute;top:28px;right:28px;display:flex;gap:10px;z-index:4;flex-wrap:wrap}
+.header-right{display:inline-flex;align-items:center;gap:10px;position:relative}
 .header-right .user-name{margin-right:10px;}
 .header-right .user-name a{color:#fff; text-decoration:none}
 .action-btn{text-decoration:none;appearance:none;border:none;cursor:pointer;padding:10px 16px;border-radius:18px;font-weight:700;font-size:.95rem;background:#2a2a2ae6;color:#fff;transition:transform 120ms ease,box-shadow 120ms ease,background 120ms ease}
@@ -73,6 +74,34 @@
 .creator-check{display:flex;align-items:flex-start;gap:10px;font-size:.97rem;color:#1f1f1f}
 .creator-check input{margin-top:3px;width:18px;height:18px}
 .creator-policy{color:#c62828;text-decoration:underline}
+.notification-bell{position:relative;display:inline-flex}
+.notification-bell__button{position:relative;width:42px;height:42px;border-radius:50%;border:1px solid #ffffff99;background:#ffffff1f;color:#fff;display:inline-flex;align-items:center;justify-content:center;cursor:pointer}
+.notification-bell__button svg{width:22px;height:22px}
+.notification-bell__count{position:absolute;top:-5px;right:-4px;min-width:20px;height:20px;padding:0 5px;border-radius:999px;background:#111;color:#fff;font-size:.72rem;font-weight:700;display:inline-flex;align-items:center;justify-content:center;border:2px solid var(--orange)}
+.notification-bell__dropdown{position:absolute;top:calc(100% + 12px);right:0;width:320px;background:#fff;color:#222;border-radius:14px;box-shadow:0 20px 50px #00000030;z-index:50;overflow:hidden}
+.notification-bell__dropdown::before{content:"";position:absolute;top:-8px;right:18px;width:16px;height:16px;background:#fff;transform:rotate(45deg)}
+.notification-bell__header{position:relative;display:flex;align-items:center;justify-content:space-between;padding:16px 18px;border-bottom:1px solid #eee;background:#fff}
+.notification-bell__header strong{font-size:1rem}
+.notification-bell__header span{font-size:.82rem;color:var(--orange);font-weight:700}
+.notification-bell__list{max-height:260px;overflow-y:auto}
+.notification-bell__item{padding:14px 18px;border-bottom:1px solid #f1f1f1;background:#fff}
+.notification-bell__item strong{display:block;margin-bottom:4px;color:#111;font-size:.95rem}
+.notification-bell__item p{margin:0 0 6px;color:#555;font-size:.86rem;line-height:1.45}
+.notification-bell__item span{color:#888;font-size:.78rem}
+.notification-bell__view-all{display:block;padding:13px 18px;text-align:center;background:var(--orange);color:#fff;text-decoration:none;font-weight:700}
+.notifications-page{width:100%;float:left;background:#fff}
+.notifications-page__main{padding:48px 5% 76px}
+.notifications-page__inner{max-width:1100px;margin:0 auto}
+.notifications-page__hero{margin-bottom:28px;padding:34px 38px;border-radius:26px;background:#ffeeec}
+.notifications-page__hero p{margin:0 0 10px;color:var(--orange);font-weight:700;text-transform:uppercase;letter-spacing:.08em;font-size:.9rem}
+.notifications-page__hero h1{margin:0;color:#111;font-size:clamp(2.4rem,4vw,4.6rem);line-height:1}
+.notifications-page__list{display:flex;flex-direction:column;gap:14px}
+.notifications-page__item{display:flex;justify-content:space-between;gap:20px;padding:22px 24px;border:1px solid #eee;border-radius:18px;background:#fff;box-shadow:0 12px 28px #0000000d}
+.notifications-page__status{display:inline-flex;margin-bottom:8px;padding:5px 10px;border-radius:999px;background:#f7f3fc;color:var(--purple-strong);font-size:.78rem;font-weight:700}
+.notifications-page__item h2{margin:0 0 8px;color:#111;font-size:1.35rem}
+.notifications-page__item p{margin:0;color:#555;line-height:1.6}
+.notifications-page__item time{white-space:nowrap;color:#777;font-weight:700;font-size:.9rem}
+@media (max-width: 639px){.notification-bell__dropdown{right:-72px;width:min(300px,calc(100vw - 28px))}.notification-bell__dropdown::before{right:86px}.notifications-page__item{flex-direction:column}.notifications-page__item time{white-space:normal}}
 .policy-page{width:100%;float:left;background:#fff}
 .policy-page__main{padding:48px 5% 72px}
 .policy-page__inner{max-width:1280px;margin:0 auto}
