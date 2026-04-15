@@ -644,10 +644,51 @@ padding: 20px 0% 80px;
   color: #f36a5b;
 }
 
+.inspiration__filters {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 14px;
+  margin: 0 auto 34px;
+  max-width: 1100px;
+  text-align: left;
+}
+
+.inspiration__filters label {
+  color: #222;
+  font-size: 0.92rem;
+  font-weight: 700;
+}
+
+.inspiration__filters select {
+  width: 100%;
+  margin-top: 8px;
+  border: 2px solid #f2b4ad;
+  border-radius: 18px;
+  background: #fff;
+  color: #111;
+  padding: 12px 16px;
+  font-family: inherit;
+  font-size: 0.95rem;
+  font-weight: 700;
+  outline: none;
+}
+
+.inspiration__filters select:focus {
+  border-color: var(--orange);
+  box-shadow: 0 0 0 3px #f75e4b24;
+}
+
 .inspiration__grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
   gap: 26px;
+}
+
+.inspiration__empty {
+  grid-column: 1 / -1;
+  margin: 10px 0 20px;
+  color: #555;
+  font-weight: 700;
 }
 
 .inspiration-card {
@@ -1648,6 +1689,10 @@ width: 76px;
 }
 
 @media (max-width: 1023px) {
+  .inspiration__filters {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
   .profile-hero {
     grid-template-columns: 120px 1fr;
     gap: 18px;
@@ -1704,6 +1749,11 @@ width: 76px;
 }
 
 @media (max-width: 767px) {
+  .inspiration__filters {
+    grid-template-columns: 1fr;
+    margin-bottom: 26px;
+  }
+
   .profile_page {
     padding: 22px 5% 42px;
   }

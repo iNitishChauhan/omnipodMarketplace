@@ -8,6 +8,37 @@ import { useDispatch, useSelector } from "react-redux";
 import { fetchMedia } from "../store/media/mediaActions";
 import {Link, Navigate } from "react-router-dom";
 import { BASEURL } from '../components/URLS';
+
+const getMediaType = (item) => {
+  const mediaType = String(item?.media_type || item?.type || '').toLowerCase();
+  if (mediaType.includes('video')) return 'video';
+  if (mediaType.includes('image')) return 'image';
+  return /\.(mp4|webm|ogg)$/i.test(item?.file_url || '') ? 'video' : 'image';
+};
+
+const parseMediaDate = (item) => {
+  const rawDate = item?.created_at || item?.updated_at || item?.uploaded_at || item?.date_uploaded;
+  if (!rawDate) return Number(item?.id || 0);
+  const parsed = new Date(typeof rawDate === 'string' ? rawDate.replace(' ', 'T') : rawDate).getTime();
+  return Number.isNaN(parsed) ? Number(item?.id || 0) : parsed;
+};
+
+const splitOptionValues = (value) => {
+  if (Array.isArray(value)) {
+    return value.map((item) => String(item).trim()).filter(Boolean);
+  }
+  return String(value || '')
+    .split(',')
+    .map((item) => item.trim())
+    .filter(Boolean);
+};
+
+const getMediaCountry = (item) =>
+  String(item?.country || item?.user?.country || item?.creator?.country || '').trim();
+
+const getMediaThemes = (item) =>
+  splitOptionValues(item?.themes || item?.theme || item?.content_theme || item?.category);
+
 function Dashboard() {
   localStorage.removeItem("mid")
   const dispatch = useDispatch();
@@ -128,11 +159,34 @@ function Dashboard() {
     /* ---------------- PAGINATION STATE ---------------- */
   const ITEMS_PER_PAGE = 10;
   const [currentPage, setCurrentPage] = useState(1);
+  const [countryFilter, setCountryFilter] = useState('all');
+  const [themeFilter, setThemeFilter] = useState('all');
+  const [sortFilter, setSortFilter] = useState('latest');
+  const [typeFilter, setTypeFilter] = useState('all');
 
-  const totalPages = Math.ceil(media.length / ITEMS_PER_PAGE);
+  const safeMedia = Array.isArray(media) ? media : [];
+  const countryOptions = [...new Set(safeMedia.map(getMediaCountry).filter(Boolean))].sort();
+  const themeOptions = [...new Set(safeMedia.flatMap(getMediaThemes).filter(Boolean))].sort();
+  const filteredMedia = safeMedia
+    .filter((item) => {
+      const countryMatches = countryFilter === 'all' || getMediaCountry(item) === countryFilter;
+      const themeMatches = themeFilter === 'all' || getMediaThemes(item).includes(themeFilter);
+      const typeMatches = typeFilter === 'all' || getMediaType(item) === typeFilter;
+      return countryMatches && themeMatches && typeMatches;
+    })
+    .sort((a, b) => {
+      if (sortFilter === 'oldest') {
+        return parseMediaDate(a) - parseMediaDate(b);
+      }
+      if (sortFilter === 'title-az') {
+        return String(a?.title || '').localeCompare(String(b?.title || ''));
+      }
+      return parseMediaDate(b) - parseMediaDate(a);
+    });
+  const totalPages = Math.ceil(filteredMedia.length / ITEMS_PER_PAGE);
   const startIndex = (currentPage - 1) * ITEMS_PER_PAGE;
   const endIndex = startIndex + ITEMS_PER_PAGE;
-  const paginatedMedia = media.slice(startIndex, endIndex);
+  const paginatedMedia = filteredMedia.slice(startIndex, endIndex);
 
   const goToPrevPage = () => {
     if (currentPage > 1) setCurrentPage((prev) => prev - 1);
@@ -184,6 +238,10 @@ function Dashboard() {
     window.addEventListener('keydown', handleEscape);
     return () => window.removeEventListener('keydown', handleEscape);
   }, [mediaPreview]);
+
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [countryFilter, themeFilter, sortFilter, typeFilter]);
 
   if (!isAuthenticated) {
     return <Navigate to="/omnipod-creator-login" />;
@@ -319,17 +377,60 @@ function Dashboard() {
             <span>inspiration</span>
           </h2>
         </div>
+
+        <div className="inspiration__filters" aria-label="Inspiration filters">
+          <label>
+            Country
+            <select value={countryFilter} onChange={(event) => setCountryFilter(event.target.value)}>
+              <option value="all">All countries</option>
+              {countryOptions.map((country) => (
+                <option value={country} key={country}>{country}</option>
+              ))}
+            </select>
+          </label>
+
+          <label>
+            Theme
+            <select value={themeFilter} onChange={(event) => setThemeFilter(event.target.value)}>
+              <option value="all">All themes</option>
+              {themeOptions.map((theme) => (
+                <option value={theme} key={theme}>{theme}</option>
+              ))}
+            </select>
+          </label>
+
+          <label>
+            Sort by
+            <select value={sortFilter} onChange={(event) => setSortFilter(event.target.value)}>
+              <option value="latest">Latest first</option>
+              <option value="oldest">Oldest first</option>
+              <option value="title-az">Title A-Z</option>
+            </select>
+          </label>
+
+          <label>
+            Type
+            <select value={typeFilter} onChange={(event) => setTypeFilter(event.target.value)}>
+              <option value="all">All media</option>
+              <option value="image">Image</option>
+              <option value="video">Video</option>
+            </select>
+          </label>
+        </div>
         
          <div className="inspiration__grid">
 
       {loading && <p>Loading...</p>}
       {error && <p style={{ color: "red" }}>{error}</p>}
+      {!loading && !error && filteredMedia.length === 0 && (
+        <p className="inspiration__empty">No inspiration posts match these filters.</p>
+      )}
 
      {/*  <div className="grid"> */}
  {paginatedMedia.map((item) => {
   //console.log(item)
   // check if file is video
-  const isVideo = /\.(mp4|webm|ogg)$/i.test(item.file_url);
+  const isVideo = getMediaType(item) === 'video';
   return (
     <div className="inspiration-card" key={item.id || item.title}>
       <div className="inspiration-card__image">
@@ -369,7 +470,7 @@ function Dashboard() {
         )
         )}
         </span>
-        <span className="inspiration-card__name">{item.user.name}</span>
+        <span className="inspiration-card__name">{item?.user?.name || item?.title || 'Creator'}</span>
       </div>
     </div>
   );
@@ -381,7 +482,7 @@ function Dashboard() {
         
         </div>
          {/* ---------------- PAGINATION UI ---------------- */}
-        {media.length > ITEMS_PER_PAGE && (
+        {filteredMedia.length > ITEMS_PER_PAGE && (
           <div className="inspiration__footer">
             <div className="inspiration__pager">
               <button
