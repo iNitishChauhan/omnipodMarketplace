@@ -166,6 +166,7 @@ function Analytics() {
                     </tr>
                   </thead>
                   <tbody>
+              
                     {paginatedMedia.length > 0 ? (
                       paginatedMedia.map((item) => (
                         <tr key={item.id || item.title}>

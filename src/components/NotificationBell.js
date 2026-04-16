@@ -30,7 +30,7 @@ function NotificationBell() {
   const fetchNotifications = useCallback(() => {
     fetch(`${API_URL}notifications/${user.id}/unread`)
       .then(res => res.json())
-      .then(data => {console.log(data.data)
+      .then(data => {
         const list = data.data || [];
 
         setNotifications(list.slice(0, 5));

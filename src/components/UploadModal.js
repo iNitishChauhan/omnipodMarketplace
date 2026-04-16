@@ -29,7 +29,7 @@ function UploadModal({ isOpen, onClose }) {
   const [apiLoading, setApiLoading] = useState(false);
   const [agreeGuidelines, setAgreeGuidelines] = useState(false);
   const [agreeDocument, setAgreeDocument] = useState(false);
-
+const [fileError, setFileError] = useState("");
   const getMediaDetail = async () => {
     try {
       let mid = localStorage.getItem("mid");
@@ -47,10 +47,26 @@ function UploadModal({ isOpen, onClose }) {
   }, [isOpen]);
 
   // ---------------- FILE HANDLING ----------------
-  const handleFiles = (fileList) => {
-    const file = Array.from(fileList || [])[0];
-    if (file) setSelectedFile(file);
-  };
+const handleFiles = (fileList) => {
+  const file = Array.from(fileList || [])[0];
+
+  if (!file) return;
+
+  const allowedTypes = ["image/", "video/"];
+
+  const isValid = allowedTypes.some(type =>
+    file.type.startsWith(type)
+  );
+
+  if (!isValid) {
+    setFileError("Only image and video files are allowed!");
+    setSelectedFile(null);
+    return;
+  }
+
+  setFileError("");
+  setSelectedFile(file);
+};
 
   const handleInputChange = (e) => handleFiles(e.target.files);
   const handleSelectClick = () => fileInputRef.current?.click();
@@ -209,6 +225,11 @@ function UploadModal({ isOpen, onClose }) {
               <img src={uploadIcon1} alt="Upload photos" />
               <img src={uploadIcon2} alt="Upload videos" />
             </div>
+            {fileError && (
+  <p style={{ color: "red", marginTop: "10px" }}>
+    {fileError}
+  </p>
+)}
             <p className="upload-modal__hint">
               Drag photos and videos here
             </p>
