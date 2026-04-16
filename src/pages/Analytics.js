@@ -22,7 +22,7 @@ function Analytics() {
 
   return (
     <div className="analytics-page">
-      <CreatorHeader />
+      <CreatorHeader /> 
 
       <main className="analytics-page__main">
         <div className="analytics-page__inner">
