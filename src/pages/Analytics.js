@@ -23,6 +23,13 @@ const getMetricValue = (item, metric) => {
   return Number.isNaN(value) ? fallbackValues[metric] : value;
 };
 
+const getMediaDate = (item) => {
+  const rawDate = item?.created_at || item?.updated_at || item?.uploaded_at || item?.date_uploaded;
+  if (!rawDate) return Number(item?.id || 0);
+  const value = new Date(typeof rawDate === 'string' ? rawDate.replace(' ', 'T') : rawDate).getTime();
+  return Number.isNaN(value) ? Number(item?.id || 0) : value;
+};
+
 function Analytics() {
   const dispatch = useDispatch();
   const { user, isAuthenticated } = useSelector((state) => state.auth);
@@ -30,14 +37,17 @@ function Analytics() {
   const [pageSize, setPageSize] = useState('10');
   const [currentPage, setCurrentPage] = useState(1);
   const [sortMetric, setSortMetric] = useState('reach');
-  const [sortDirection, setSortDirection] = useState('desc');
+  const [sortOrder, setSortOrder] = useState('latest');
   const safeMedia = Array.isArray(media) ? media : [];
   const approvedMedia = safeMedia
     .filter((item) => ['published', 'approved'].includes(String(item?.status || '').toLowerCase()))
     .sort((a, b) => {
-      const valueA = getMetricValue(a, sortMetric);
-      const valueB = getMetricValue(b, sortMetric);
-      return sortDirection === 'asc' ? valueA - valueB : valueB - valueA;
+      const dateA = getMediaDate(a);
+      const dateB = getMediaDate(b);
+      if (dateA !== dateB) {
+        return sortOrder === 'old' ? dateA - dateB : dateB - dateA;
+      }
+      return getMetricValue(b, sortMetric) - getMetricValue(a, sortMetric);
     });
   const pageSizeNumber = pageSize === 'all' ? approvedMedia.length || 1 : Number(pageSize);
   const totalPages = pageSize === 'all' ? 1 : Math.max(1, Math.ceil(approvedMedia.length / pageSizeNumber));
@@ -53,19 +63,14 @@ function Analytics() {
 
   useEffect(() => {
     setCurrentPage(1);
-  }, [pageSize, sortMetric, sortDirection]);
+  }, [pageSize, sortMetric, sortOrder]);
 
   if (!isAuthenticated) {
     return <Navigate to="/omnipod-creator-login" />;
   }
 
   const handleMetricSort = (metric) => {
-    if (metric === sortMetric) {
-      setSortDirection((prev) => (prev === 'desc' ? 'asc' : 'desc'));
-      return;
-    }
     setSortMetric(metric);
-    setSortDirection('desc');
   };
 
   const goToPrevPage = () => {
@@ -78,7 +83,7 @@ function Analytics() {
 
   const renderSortLabel = (metric) => {
     if (metric !== sortMetric) return '';
-    return sortDirection === 'desc' ? ' ↓' : ' ↑';
+    return ' •';
   };
 
   return (
@@ -102,6 +107,7 @@ function Analytics() {
                   <label>
                     Show
                     <select value={pageSize} onChange={(event) => setPageSize(event.target.value)}>
+                      <option value="5">5 posts</option>
                       <option value="10">10 posts</option>
                       <option value="20">20 posts</option>
                       <option value="all">All posts</option>
@@ -121,9 +127,9 @@ function Analytics() {
 
                   <label>
                     Sort order
-                    <select value={sortDirection} onChange={(event) => setSortDirection(event.target.value)}>
-                      <option value="desc">High to low</option>
-                      <option value="asc">Low to high</option>
+                    <select value={sortOrder} onChange={(event) => setSortOrder(event.target.value)}>
+                      <option value="latest">Latest</option>
+                      <option value="old">Old</option>
                     </select>
                   </label>
                 </div>
