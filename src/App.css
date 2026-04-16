@@ -583,6 +583,9 @@ margin-top: 4rem;
 .analytics-table th{background:var(--orange);color:#fff;font-size:.95rem;text-transform:uppercase;letter-spacing:.04em}
 .analytics-table td:first-child{font-weight:700}
 .analytics-table tbody tr:hover{background:#fff7f5}
+.analytics-table__media{display:flex;align-items:center;gap:14px;min-width:260px}
+.analytics-table__media img,.analytics-table__media video{width:72px;height:72px;border-radius:12px;object-fit:cover;display:block;background:#111;flex:0 0 72px}
+.analytics-table__media span{line-height:1.35}
 .analytics-page__message{margin:0;padding:22px;color:#333;font-weight:700}
 .analytics-page__message--error{color:#c62828}
 

@@ -6,6 +6,11 @@ import CreatorHeader from '../components/CreatorHeader';
 import Footer from '../components/Footer';
 import { fetchMedia } from '../store/media/mediaActions';
 
+const isVideoMedia = (item) => {
+  const mediaType = String(item?.media_type || item?.type || '').toLowerCase();
+  return mediaType.includes('video') || /\.(mp4|webm|ogg)$/i.test(item?.file_url || '');
+};
+
 function Analytics() {
   const dispatch = useDispatch();
   const { isAuthenticated } = useSelector((state) => state.auth);
@@ -51,7 +56,16 @@ function Analytics() {
                   {safeMedia.length > 0 ? (
                     safeMedia.map((item) => (
                       <tr key={item.id || item.title}>
-                        <td>{item.title || 'Untitled media'}</td>
+                        <td>
+                          <div className="analytics-table__media">
+                            {isVideoMedia(item) ? (
+                              <video src={item.file_url} muted playsInline preload="metadata" />
+                            ) : (
+                              <img src={item.file_url} alt={item.title || 'Media thumbnail'} />
+                            )}
+                            <span>{item.title || 'Untitled media'}</span>
+                          </div>
+                        </td>
                         <td>{item.reach ?? 10}</td>
                         <td>{item.likes ?? 12}</td>
                         <td>{item.comments ?? 15}</td>
