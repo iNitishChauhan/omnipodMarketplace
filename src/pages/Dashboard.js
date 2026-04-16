@@ -360,7 +360,7 @@ function Dashboard() {
                 </div>
               </div>
 
-              <button className="analytics-card__btn" type="button">Find out more</button>
+              <Link className="analytics-card__btn" to="/analytics">Find out more</Link>
 
               <div className="analytics-card__avatar">
                 <img src={`${BASEURL}/${user?.profile_image}`} alt="Profile" />

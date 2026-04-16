@@ -4,6 +4,7 @@ import InsuletMember from './pages/InsuletMember';
 import OmnipodCreatorLogin from './pages/OmnipodCreatorLogin';
 import CreatorSignup from './pages/CreatorSignup';
 import Dashboard from './pages/Dashboard';
+import Analytics from './pages/Analytics';
 import CreatorProfile from './pages/CreatorProfile';
 import ContentGuidelines from './pages/ContentGuidelines';
 import SocialMediaPolicy from './pages/SocialMediaPolicy';
@@ -21,6 +22,7 @@ function App() {
         <Route path="/omnipod-creator-login" element={<OmnipodCreatorLogin />} />
         <Route path="/omnipod-creator-signup" element={<CreatorSignup />} />
         <Route path="/dashboard" element={<Dashboard />} />
+        <Route path="/analytics" element={<Analytics />} />
         <Route path="/profile" element={<CreatorProfile />} />
         <Route path="/content-guidelines" element={<ContentGuidelines />} />
         <Route path="/social-media-policy" element={<SocialMediaPolicy />} />
