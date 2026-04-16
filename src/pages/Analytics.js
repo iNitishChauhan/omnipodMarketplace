@@ -1,29 +1,85 @@
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { Navigate } from 'react-router-dom';
 import '../App.css';
 import CreatorHeader from '../components/CreatorHeader';
 import Footer from '../components/Footer';
-import { fetchMedia } from '../store/media/mediaActions';
+import { fetchUserMedia } from '../store/usermedia/mediaActions';
 
 const isVideoMedia = (item) => {
   const mediaType = String(item?.media_type || item?.type || '').toLowerCase();
   return mediaType.includes('video') || /\.(mp4|webm|ogg)$/i.test(item?.file_url || '');
 };
 
+const getMetricValue = (item, metric) => {
+  const fallbackValues = {
+    reach: 10,
+    likes: 12,
+    comments: 15,
+    reposts: 0,
+    shares: 0,
+  };
+  const value = Number(item?.[metric] ?? fallbackValues[metric]);
+  return Number.isNaN(value) ? fallbackValues[metric] : value;
+};
+
 function Analytics() {
   const dispatch = useDispatch();
-  const { isAuthenticated } = useSelector((state) => state.auth);
-  const { media, loading, error } = useSelector((state) => state.media);
+  const { user, isAuthenticated } = useSelector((state) => state.auth);
+  const { media, loading, error } = useSelector((state) => state.userMedia);
+  const [pageSize, setPageSize] = useState('10');
+  const [currentPage, setCurrentPage] = useState(1);
+  const [sortMetric, setSortMetric] = useState('reach');
+  const [sortDirection, setSortDirection] = useState('desc');
   const safeMedia = Array.isArray(media) ? media : [];
+  const approvedMedia = safeMedia
+    .filter((item) => ['published', 'approved'].includes(String(item?.status || '').toLowerCase()))
+    .sort((a, b) => {
+      const valueA = getMetricValue(a, sortMetric);
+      const valueB = getMetricValue(b, sortMetric);
+      return sortDirection === 'asc' ? valueA - valueB : valueB - valueA;
+    });
+  const pageSizeNumber = pageSize === 'all' ? approvedMedia.length || 1 : Number(pageSize);
+  const totalPages = pageSize === 'all' ? 1 : Math.max(1, Math.ceil(approvedMedia.length / pageSizeNumber));
+  const startIndex = pageSize === 'all' ? 0 : (currentPage - 1) * pageSizeNumber;
+  const paginatedMedia =
+    pageSize === 'all' ? approvedMedia : approvedMedia.slice(startIndex, startIndex + pageSizeNumber);
 
   useEffect(() => {
-    dispatch(fetchMedia());
-  }, [dispatch]);
+    if (user?.id) {
+      dispatch(fetchUserMedia(user.id));
+    }
+  }, [dispatch, user]);
+
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [pageSize, sortMetric, sortDirection]);
 
   if (!isAuthenticated) {
     return <Navigate to="/omnipod-creator-login" />;
   }
+
+  const handleMetricSort = (metric) => {
+    if (metric === sortMetric) {
+      setSortDirection((prev) => (prev === 'desc' ? 'asc' : 'desc'));
+      return;
+    }
+    setSortMetric(metric);
+    setSortDirection('desc');
+  };
+
+  const goToPrevPage = () => {
+    if (currentPage > 1) setCurrentPage((prev) => prev - 1);
+  };
+
+  const goToNextPage = () => {
+    if (currentPage < totalPages) setCurrentPage((prev) => prev + 1);
+  };
+
+  const renderSortLabel = (metric) => {
+    if (metric !== sortMetric) return '';
+    return sortDirection === 'desc' ? ' ↓' : ' ↑';
+  };
 
   return (
     <div className="analytics-page">
@@ -41,45 +97,111 @@ function Analytics() {
             {error && <p className="analytics-page__message analytics-page__message--error">{error}</p>}
 
             {!loading && !error && (
-              <table className="analytics-table">
-                <thead>
-                  <tr>
-                    <th>Title</th>
-                    <th>Reach</th>
-                    <th>Likes</th>
-                    <th>Comments</th>
-                    <th>Reposts</th>
-                    <th>Shares</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {safeMedia.length > 0 ? (
-                    safeMedia.map((item) => (
-                      <tr key={item.id || item.title}>
-                        <td>
-                          <div className="analytics-table__media">
-                            {isVideoMedia(item) ? (
-                              <video src={item.file_url} muted playsInline preload="metadata" />
-                            ) : (
-                              <img src={item.file_url} alt={item.title || 'Media thumbnail'} />
-                            )}
-                            <span>{item.title || 'Untitled media'}</span>
-                          </div>
-                        </td>
-                        <td>{item.reach ?? 10}</td>
-                        <td>{item.likes ?? 12}</td>
-                        <td>{item.comments ?? 15}</td>
-                        <td>{item.reposts ?? 0}</td>
-                        <td>{item.shares ?? 0}</td>
-                      </tr>
-                    ))
-                  ) : (
+              <>
+                <div className="analytics-page__controls">
+                  <label>
+                    Show
+                    <select value={pageSize} onChange={(event) => setPageSize(event.target.value)}>
+                      <option value="10">10 posts</option>
+                      <option value="20">20 posts</option>
+                      <option value="all">All posts</option>
+                    </select>
+                  </label>
+
+                  <label>
+                    Sort metric
+                    <select value={sortMetric} onChange={(event) => setSortMetric(event.target.value)}>
+                      <option value="reach">Reach</option>
+                      <option value="likes">Likes</option>
+                      <option value="comments">Comments</option>
+                      <option value="reposts">Reposts</option>
+                      <option value="shares">Shares</option>
+                    </select>
+                  </label>
+
+                  <label>
+                    Sort order
+                    <select value={sortDirection} onChange={(event) => setSortDirection(event.target.value)}>
+                      <option value="desc">High to low</option>
+                      <option value="asc">Low to high</option>
+                    </select>
+                  </label>
+                </div>
+
+                <table className="analytics-table">
+                  <thead>
                     <tr>
-                      <td colSpan="6">No media analytics available yet.</td>
+                      <th>Title</th>
+                      <th>
+                        <button type="button" onClick={() => handleMetricSort('reach')}>
+                          Reach{renderSortLabel('reach')}
+                        </button>
+                      </th>
+                      <th>
+                        <button type="button" onClick={() => handleMetricSort('likes')}>
+                          Likes{renderSortLabel('likes')}
+                        </button>
+                      </th>
+                      <th>
+                        <button type="button" onClick={() => handleMetricSort('comments')}>
+                          Comments{renderSortLabel('comments')}
+                        </button>
+                      </th>
+                      <th>
+                        <button type="button" onClick={() => handleMetricSort('reposts')}>
+                          Reposts{renderSortLabel('reposts')}
+                        </button>
+                      </th>
+                      <th>
+                        <button type="button" onClick={() => handleMetricSort('shares')}>
+                          Shares{renderSortLabel('shares')}
+                        </button>
+                      </th>
                     </tr>
-                  )}
-                </tbody>
-              </table>
+                  </thead>
+                  <tbody>
+                    {paginatedMedia.length > 0 ? (
+                      paginatedMedia.map((item) => (
+                        <tr key={item.id || item.title}>
+                          <td>
+                            <div className="analytics-table__media">
+                              {isVideoMedia(item) ? (
+                                <video src={item.file_url} muted playsInline preload="metadata" />
+                              ) : (
+                                <img src={item.file_url} alt={item.title || 'Media thumbnail'} />
+                              )}
+                              <span>{item.title || 'Untitled media'}</span>
+                            </div>
+                          </td>
+                          <td>{getMetricValue(item, 'reach')}</td>
+                          <td>{getMetricValue(item, 'likes')}</td>
+                          <td>{getMetricValue(item, 'comments')}</td>
+                          <td>{getMetricValue(item, 'reposts')}</td>
+                          <td>{getMetricValue(item, 'shares')}</td>
+                        </tr>
+                      ))
+                    ) : (
+                      <tr>
+                        <td colSpan="6">No approved media analytics available yet.</td>
+                      </tr>
+                    )}
+                  </tbody>
+                </table>
+
+                {approvedMedia.length > 0 && pageSize !== 'all' && (
+                  <div className="analytics-page__pager">
+                    <button type="button" onClick={goToPrevPage} disabled={currentPage === 1}>
+                      &lt;
+                    </button>
+                    <span>
+                      <strong>{currentPage}</strong> of {totalPages}
+                    </span>
+                    <button type="button" onClick={goToNextPage} disabled={currentPage === totalPages}>
+                      &gt;
+                    </button>
+                  </div>
+                )}
+              </>
             )}
           </section>
         </div>

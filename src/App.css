@@ -578,14 +578,23 @@ margin-top: 4rem;
 .analytics-page__hero p{margin:0 0 10px;color:var(--orange);font-weight:700;text-transform:uppercase;letter-spacing:.08em;font-size:.9rem}
 .analytics-page__hero h1{margin:0;color:#111;font-size:clamp(2.4rem,4vw,4.6rem);line-height:1}
 .analytics-table-wrap{overflow-x:auto;border-radius:18px;box-shadow:0 14px 34px #00000014;background:#fff}
+.analytics-page__controls{display:flex;gap:16px;flex-wrap:wrap;padding:18px 20px;border-bottom:1px solid #eee;background:#fff7f5}
+.analytics-page__controls label{display:flex;flex-direction:column;gap:8px;color:#222;font-size:.88rem;font-weight:700}
+.analytics-page__controls select{min-width:160px;border:2px solid #f2b4ad;border-radius:14px;background:#fff;color:#111;padding:10px 14px;font-family:inherit;font-size:.95rem;font-weight:700;outline:none}
+.analytics-page__controls select:focus{border-color:var(--orange);box-shadow:0 0 0 3px #f75e4b24}
 .analytics-table{width:100%;border-collapse:collapse;min-width:780px}
 .analytics-table th,.analytics-table td{padding:18px 20px;text-align:left;border-bottom:1px solid #eee;color:#222}
 .analytics-table th{background:var(--orange);color:#fff;font-size:.95rem;text-transform:uppercase;letter-spacing:.04em}
+.analytics-table th button{border:none;background:transparent;color:#fff;font:inherit;text-transform:inherit;letter-spacing:inherit;cursor:pointer;padding:0;text-align:left}
 .analytics-table td:first-child{font-weight:700}
 .analytics-table tbody tr:hover{background:#fff7f5}
 .analytics-table__media{display:flex;align-items:center;gap:14px;min-width:260px}
 .analytics-table__media img,.analytics-table__media video{width:72px;height:72px;border-radius:12px;object-fit:cover;display:block;background:#111;flex:0 0 72px}
 .analytics-table__media span{line-height:1.35}
+.analytics-page__pager{display:flex;align-items:center;justify-content:center;gap:12px;padding:20px;background:#fff}
+.analytics-page__pager button{border:none;background:#f6e5e3;border-radius:8px;width:34px;height:34px;cursor:pointer;font-weight:700;color:#222}
+.analytics-page__pager button:disabled{opacity:.45;cursor:not-allowed}
+.analytics-page__pager strong{background:#f7e8e6;padding:2px 10px;border-radius:6px;border:1px solid #bfbfbf;font-weight:400}
 .analytics-page__message{margin:0;padding:22px;color:#333;font-weight:700}
 .analytics-page__message--error{color:#c62828}
 
