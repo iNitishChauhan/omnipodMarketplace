@@ -176,6 +176,12 @@ function CreatorProfile() {
   const rejectedCount = media.filter(
     (item) => String(item?.status || '').toLowerCase() === 'rejected'
   ).length;
+   const rejected_by_marketingCount = media.filter(
+    (item) => String(item?.status || '').toLowerCase() === 'rejected_by_marketing'
+  ).length;
+   const rejected_by_legalCount = media.filter(
+    (item) => String(item?.status || '').toLowerCase() === 'rejected_by_legal'
+  ).length;
 
   return (
     <div className="home_page">
@@ -195,7 +201,9 @@ function CreatorProfile() {
               <div className="profile-hero__stats">
                 <p>{postCount} Posts</p>
                 <p>{pendingCount} Pending</p>
-                <p>{rejectedCount} Rejected</p>
+                <p>{rejectedCount} Rejected</p> 
+                <p>{rejected_by_marketingCount} Rejected By Marketing</p>
+                <p>{rejected_by_legalCount} Rejected By Legal</p>
               </div>
 
               <div className="profile-hero__filters">
@@ -205,6 +213,8 @@ function CreatorProfile() {
                   <option value="published">Approved</option>
                   <option value="draft">Pending</option>
                   <option value="rejected">Rejected</option>
+                  <option value="rejected_by_marketing">Rejected By Marketing</option>
+                  <option value="rejected_by_legal">Rejected By Legal</option>
                 </select>
 
                 <select value={dateFilter} onChange={(e) => setDateFilter(e.target.value)} defaultValue="date-uploaded" aria-label="Date Uploaded">
@@ -263,7 +273,7 @@ function CreatorProfile() {
                           </p>
                         )}
 
-                        {item.status === 'rejected' && (
+                        {(item.status === 'rejected' || item.status === 'rejected_by_marketing' || item.status === 'rejected_by_legal') && (
                           <button
                             type="button"
                             className="profile-card__status profile-card__status--revision profile-card__status-btn"
@@ -272,7 +282,6 @@ function CreatorProfile() {
                             <span>×</span> Needs Revision
                           </button>
                         )}
-
                         {item.status === 'published' && (
 
                           <button
@@ -284,7 +293,7 @@ function CreatorProfile() {
                           </button>
                         )}
 
-                        {item.status === 'rejected' && (
+                        {(item.status === 'rejected' || item.status === 'rejected_by_marketing' || item.status === 'rejected_by_legal') && (
                           <div className="profile-card__revision-actions">
                             <button
                               type="button"
@@ -332,7 +341,7 @@ function CreatorProfile() {
                           </p>
                         )}
 
-                        {item.status === 'rejected' && (
+                        {(item.status === 'rejected' || item.status === 'rejected_by_marketing' || item.status === 'rejected_by_legal') && (
                           <button
                             type="button"
                             className="profile-card__status profile-card__status--revision profile-card__status-btn"
@@ -352,7 +361,7 @@ function CreatorProfile() {
                           </button>
                         )}
 
-                        {item.status === 'rejected' && (
+                        {(item.status === 'rejected' || item.status === 'rejected_by_marketing' || item.status === 'rejected_by_legal') && (
                           <div className="profile-card__revision-actions">
                             <button
                               type="button"
