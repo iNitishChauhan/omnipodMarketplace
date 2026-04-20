@@ -32,7 +32,8 @@ function Notifications() {
   fetch(`${API_URL}notifications/${user.id}`)
     .then(res => res.json())
     .then(data => {
-      setNotifications(data.data?.data || []);
+      //console.log(data.data)
+      setNotifications(data?.data || []);
       setLoading(false);
     })
     .catch(err => {

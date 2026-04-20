@@ -59,8 +59,6 @@ function CreatorSignup() {
   };
 
   const handleSubmit = async (e) => {
-
-
     e.preventDefault();
     setMessage("");
 
@@ -188,12 +186,12 @@ function CreatorSignup() {
 
               </div>
             </div>
-<div className="creator-form__row creator-form__row--2">
-            <div className="creator-field">
-              <label htmlFor="email"><span className="required">*</span>Email Address</label>
-              <input name="email" value={formData.email} onChange={handleChange} className="creator-input" />
-            </div>
-             <div className="creator-field">
+            <div className="creator-form__row creator-form__row--2">
+              <div className="creator-field">
+                <label htmlFor="email"><span className="required">*</span>Email Address</label>
+                <input name="email" value={formData.email} onChange={handleChange} className="creator-input" />
+              </div>
+              <div className="creator-field">
                 <label htmlFor="country"><span className="required">*</span>Country</label>
 
                 <select className="creator-input" name="country" value={formData.country} onChange={handleChange}>
@@ -207,7 +205,7 @@ function CreatorSignup() {
                   <option value="Saudi Arabia" disabled>Saudi Arabia</option>
                 </select>
               </div>
-</div>
+            </div>
             <div className="creator-form__row creator-form__row--2">
               <div className="creator-field">
                 <label htmlFor="phone">Phone Number <span className="creator-field__optional">(optional)</span></label>
