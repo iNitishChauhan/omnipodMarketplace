@@ -33,8 +33,7 @@ const splitOptionValues = (value) => {
     .filter(Boolean);
 };
 
-const getMediaCountry = (item) =>
-  String(item?.country || item?.user?.country || item?.creator?.country || '').trim();
+//const getMediaCountry = (item) => String(item?.country || item?.user?.country || item?.creator?.country || '').trim();
 
 const getMediaThemes = (item) =>
   splitOptionValues(item?.themes || item?.theme || item?.content_theme || item?.category);
@@ -159,20 +158,20 @@ function Dashboard() {
     /* ---------------- PAGINATION STATE ---------------- */
   const ITEMS_PER_PAGE = 10;
   const [currentPage, setCurrentPage] = useState(1);
-  const [countryFilter, setCountryFilter] = useState('all');
+  //const [countryFilter, setCountryFilter] = useState('all');
   const [themeFilter, setThemeFilter] = useState('all');
   const [sortFilter, setSortFilter] = useState('latest');
   const [typeFilter, setTypeFilter] = useState('all');
 
   const safeMedia = Array.isArray(media) ? media : [];
-  const countryOptions = [...new Set(safeMedia.map(getMediaCountry).filter(Boolean))].sort();
+  //const countryOptions = [...new Set(safeMedia.map(getMediaCountry).filter(Boolean))].sort();
   const themeOptions = [...new Set(safeMedia.flatMap(getMediaThemes).filter(Boolean))].sort();
   const filteredMedia = safeMedia
     .filter((item) => {
-      const countryMatches = countryFilter === 'all' || getMediaCountry(item) === countryFilter;
+      //const countryMatches = countryFilter === 'all' || getMediaCountry(item) === countryFilter;
       const themeMatches = themeFilter === 'all' || getMediaThemes(item).includes(themeFilter);
       const typeMatches = typeFilter === 'all' || getMediaType(item) === typeFilter;
-      return countryMatches && themeMatches && typeMatches;
+      return themeMatches && typeMatches;
     })
     .sort((a, b) => {
       if (sortFilter === 'oldest') {
@@ -241,7 +240,7 @@ function Dashboard() {
 
   useEffect(() => {
     setCurrentPage(1);
-  }, [countryFilter, themeFilter, sortFilter, typeFilter]);
+  }, [themeFilter, sortFilter, typeFilter]);
 
   if (!isAuthenticated) {
     return <Navigate to="/omnipod-creator-login" />;
