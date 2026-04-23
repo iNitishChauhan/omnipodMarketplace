@@ -173,9 +173,9 @@ function CreatorProfile() {
   const pendingCount = media.filter(
     (item) => String(item?.status || '').toLowerCase() === 'pending'
   ).length;
-  const rejectedCount = media.filter(
+ /*  const rejectedCount = media.filter(
     (item) => String(item?.status || '').toLowerCase() === 'rejected'
-  ).length;
+  ).length; */
    const rejected_by_marketingCount = media.filter(
     (item) => String(item?.status || '').toLowerCase() === 'rejected_by_marketing'
   ).length;
@@ -201,7 +201,7 @@ function CreatorProfile() {
               <div className="profile-hero__stats">
                 <p>{postCount} Posts</p>
                 <p>{pendingCount} Pending</p>
-                <p>{rejectedCount} Rejected</p> 
+                {/* <p>{rejectedCount} Rejected</p>  */}
                 <p>{rejected_by_marketingCount} Rejected By Marketing</p>
                 <p>{rejected_by_legalCount} Rejected By Legal</p>
               </div>
