@@ -40,6 +40,7 @@ function AccountSettingsModal({ isOpen, onClose }) {
       agree1: user.agree1 || "",
       agree2: user.agree2 || "",
       agree3: user.agree3 || "",
+      agree4: user.agree4 || "", // add this
     });
 
     if (user.product) {
@@ -65,6 +66,7 @@ function AccountSettingsModal({ isOpen, onClose }) {
     agree1: false,
     agree2: false,
     agree3: false,
+    agree4: false,
     instagramHandle: "",
     tiktokHandle: "",
     youtubeHandle: "",
@@ -188,6 +190,7 @@ function AccountSettingsModal({ isOpen, onClose }) {
       formPayload.append("agree1", Number(formData.agree1));
       formPayload.append("agree2", Number(formData.agree2));
       formPayload.append("agree3", Number(formData.agree3));
+      formPayload.append("agree4", Number(formData.agree4));
       formPayload.append("instagram", formData.instagramHandle);
       formPayload.append("tiktok", formData.tiktokHandle);
       formPayload.append("youtube", formData.youtubeHandle);
@@ -527,7 +530,13 @@ console.log(formPayload);
             <label className="creator-check">
               <input type="checkbox" name="agree3" onChange={handleChange} checked={Number(formData.agree3)} />
               <span>
-                <span className="required">*</span>I agree to Insulet International&apos;s <a className="creator-policy" href="#policy">social media policy</a>
+                <span className="required">*</span>I agree to Insulet International&apos;s <a className="creator-policy" href="/social-media-policy">social media policy</a>
+              </span>
+            </label>
+            <label className="creator-check">
+              <input type="checkbox" name="agree4" onChange={handleChange} checked={Number(formData.agree4)} />
+              <span>
+                <span className="required">*</span>I agree to Insulet International's <a className="creator-policy" href="#policy">privacy policy</a>
               </span>
             </label>
           </div>

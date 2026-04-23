@@ -379,7 +379,8 @@ function Dashboard() {
         </div>
 
         <div className="inspiration__filters" aria-label="Inspiration filters">
-          <label>
+        
+{/* <label>
             Country
             <select value={countryFilter} onChange={(event) => setCountryFilter(event.target.value)}>
               <option value="all">All countries</option>
@@ -387,8 +388,7 @@ function Dashboard() {
                 <option value={country} key={country}>{country}</option>
               ))}
             </select>
-          </label>
-
+          </label> */}
           <label>
             Theme
             <select value={themeFilter} onChange={(event) => setThemeFilter(event.target.value)}>

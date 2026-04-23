@@ -33,6 +33,7 @@ function CreatorSignup() {
     agree1: false,
     agree2: false,
     agree3: false,
+     agree4: false, // New checkbox
     password: "",
     confirmPassword: "",
   };
@@ -82,7 +83,10 @@ function CreatorSignup() {
       return;
     }
     //console.log(formData.agree1)
-    if (!formData.agree1 || !formData.agree2 || !formData.agree3) {
+    if (!formData.agree1 ||
+  !formData.agree2 ||
+  !formData.agree3 ||
+  !formData.agree4) {
       setMessage("Please accept all agreements");
       return;
     }
@@ -97,6 +101,7 @@ function CreatorSignup() {
       agree1: formData.agree1,
       agree2: formData.agree2,
       agree3: formData.agree3,
+      agree4: formData.agree4, // New field
       instagram: formData.instagramHandle,
       tiktok: formData.tiktokHandle,
       youtube: formData.youtubeHandle,
@@ -286,6 +291,18 @@ function CreatorSignup() {
                   <span className="required">*</span>I agree to Insulet International&apos;s <Link className="creator-policy" to="/social-media-policy">social media policy</Link>
                 </span>
               </label>
+              <label className="creator-check">
+  <input
+    type="checkbox"
+    name="agree4"
+    checked={formData.agree4}
+    onChange={handleChange}
+  />
+  <span>
+    <span className="required">*</span>
+    I agree to Insulet International's <Link className="creator-policy" to="/social-media-policy">privacy policy</Link>.
+  </span>
+</label>
             </div>
 
           </div>
