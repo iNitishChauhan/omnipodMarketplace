@@ -300,7 +300,7 @@ function CreatorSignup() {
   />
   <span>
     <span className="required">*</span>
-    I agree to Insulet International's <Link className="creator-policy" to="/social-media-policy">privacy policy</Link>.
+    I agree to Insulet International's <Link className="creator-policy" to="/privacy-policy">privacy policy</Link>.
   </span>
 </label>
             </div>

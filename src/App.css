@@ -113,6 +113,36 @@
 .policy-card{padding:28px;border-radius:24px;background:#fff;border:1px solid #ece6f5;box-shadow:0 14px 30px #0000000d}
 .policy-card h2{margin:0 0 12px;font-size:1.4rem;color:#141414}
 .policy-card p{margin:0;color:#4c4c4c;font-size:1rem;line-height:1.75}
+.privacy-policy-page{width:100%;float:left;background:#fff}
+.privacy-policy-page__main{padding:48px 5% 80px}
+.privacy-policy-page__inner{max-width:1180px;margin:0 auto}
+.privacy-policy-hero{padding:38px 42px;border-radius:28px;background:#ffeeec;margin-bottom:30px}
+.privacy-policy-hero h1{margin:0 0 12px;color:#111;font-size:clamp(2.4rem,4vw,4.7rem);line-height:1}
+.privacy-policy-hero__version{margin:0;color:var(--orange);font-weight:800;font-size:1.1rem}
+.privacy-policy-copy{color:#292929;font-size:1rem;line-height:1.78}
+.privacy-policy-copy h2{margin:34px 0 12px;color:#111;font-size:1.8rem}
+.privacy-policy-copy h2[id]{scroll-margin-top:120px}
+.privacy-policy-copy h3{margin:24px 0 8px;color:#111;font-size:1.25rem}
+.privacy-policy-copy p{margin:0 0 16px}
+.privacy-policy-copy a{color:var(--orange);font-weight:700}
+.privacy-policy-copy ul,.privacy-policy-copy ol{margin:0 0 18px 24px;padding:0}
+.privacy-policy-copy li{margin-bottom:8px}
+.privacy-policy-nav{padding:22px 24px;border-radius:18px;background:#f7f3fc;margin:22px 0}
+.privacy-policy-nav button{appearance:none;border:0;background:transparent;color:var(--purple-strong);font:inherit;font-weight:800;text-align:left;padding:0;cursor:pointer}
+.privacy-policy-nav button:hover{text-decoration:underline}
+.privacy-policy-accordion{display:flex;flex-direction:column;gap:12px;margin:18px 0 28px}
+.privacy-policy-accordion__item{border:1px solid #eadff5;border-radius:16px;background:#fff;overflow:hidden}
+.privacy-policy-accordion__item summary{cursor:pointer;padding:16px 20px;font-weight:800;color:#111}
+.privacy-policy-accordion__item p{padding:0 20px 18px;margin:0;color:#4c4c4c}
+.privacy-policy-accordion__content{padding:0 20px 20px;color:#4c4c4c}
+.privacy-policy-accordion__content p{padding:0;margin:0 0 14px}
+.privacy-policy-accordion__content ol{margin:0 0 18px 22px;padding:0}
+.privacy-policy-accordion__content li{margin-bottom:6px}
+.privacy-policy-accordion__content button{appearance:none;border:0;background:transparent;color:var(--purple-strong);font:inherit;font-weight:800;text-align:left;padding:0;cursor:pointer}
+.privacy-policy-accordion__content button:hover{text-decoration:underline}
+.privacy-policy-accordion__version{color:var(--orange)!important;font-weight:800}
+.privacy-policy-accordion__section{padding-top:10px;border-top:1px solid #f0e8f8;margin-top:14px;scroll-margin-top:120px}
+.privacy-policy-accordion__section h3{margin:0 0 10px;color:#111;font-size:1.2rem}
 .creator-password{background:#f2f2f2;padding:40px 6% 52px;width:100%;float:left}
 .creator-password__inner{max-width:900px;margin:0 auto;display:flex;flex-direction:column;gap:22px}
 .creator-submit{padding:56px 6% 80px;width:100%;float:left;text-align:center}
@@ -210,21 +240,29 @@
 
 .profile-card__delete-btn {
   position: absolute;
-  top: 6px;
-  right: 6px;
-  width: 26px;
-  height: 26px;
+  left: 50%;
+  bottom: 72px;
+  transform: translateX(-50%);
+  z-index: 2;
+  min-width: 184px;
   border: none;
-  border-radius: 50%;
-  background: red;
+  border-radius: 24px;
+  background: var(--orange);
   color: #fff;
-  font-size: 16px;
+  font-family: inherit;
+  font-size: 1rem;
+  font-weight: 500;
+  padding: 8px 34px;
   cursor: pointer;
-  line-height: 26px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  white-space: nowrap;
 }
 
 .profile-card__delete-btn:hover {
-  background: darkred;
+  background: #e84234;
 }
 
 
