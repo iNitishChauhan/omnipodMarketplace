@@ -61,7 +61,7 @@ function CreatorProfile() {
   //console.log(media[0]);
   /* ---------------- PAGINATION STATE ---------------- */
 
-  const ITEMS_PER_PAGE = 8;
+  const ITEMS_PER_PAGE = 9;
   const [currentPage, setCurrentPage] = useState(1);
   const [statusFilter, setStatusFilter] = useState("all");
   const [dateFilter, setDateFilter] = useState("latest");
