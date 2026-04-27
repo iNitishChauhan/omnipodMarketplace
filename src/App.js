@@ -8,6 +8,7 @@ import Analytics from './pages/Analytics';
 import CreatorProfile from './pages/CreatorProfile';
 import ContentGuidelines from './pages/ContentGuidelines';
 import SocialMediaPolicy from './pages/SocialMediaPolicy';
+import PrivacyPolicy from './pages/PrivacyPolicy';
 import Notifications from './pages/Notifications';
 import ForgotPassword from './pages/ForgotPassword'
 import ResetPassword from './pages/ResetPassword'
@@ -26,6 +27,7 @@ function App() {
         <Route path="/profile" element={<CreatorProfile />} />
         <Route path="/content-guidelines" element={<ContentGuidelines />} />
         <Route path="/social-media-policy" element={<SocialMediaPolicy />} />
+        <Route path="/privacy-policy" element={<PrivacyPolicy />} />
         <Route path="/notifications" element={<Notifications />} />
         <Route path="/forgot-password" element={<ForgotPassword />} />
         <Route path="/reset-password/:token" element={<ResetPassword />} />

@@ -536,7 +536,7 @@ console.log(formPayload);
             <label className="creator-check">
               <input type="checkbox" name="agree4" onChange={handleChange} checked={Number(formData.agree4)} />
               <span>
-                <span className="required">*</span>I agree to Insulet International's <a className="creator-policy" href="#policy">privacy policy</a>
+                <span className="required">*</span>I agree to Insulet International's <a className="creator-policy" href="/policy-policy">privacy policy</a>
               </span>
             </label>
           </div>
