@@ -212,7 +212,7 @@ function CreatorProfile() {
                   <option value="all">All</option>
                   <option value="published">Approved</option>
                   <option value="draft">Pending</option>
-                  <option value="rejected">Rejected</option>
+                 {/*  <option value="rejected">Rejected</option> */}
                   <option value="rejected_by_marketing">Rejected By Marketing</option>
                   <option value="rejected_by_legal">Rejected By Legal</option>
                 </select>
