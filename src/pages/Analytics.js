@@ -40,15 +40,29 @@ function Analytics() {
   const [sortOrder, setSortOrder] = useState('latest');
   const safeMedia = Array.isArray(media) ? media : [];
   const approvedMedia = safeMedia
-    .filter((item) => ['published', 'approved'].includes(String(item?.status || '').toLowerCase()))
-    .sort((a, b) => {
-      const dateA = getMediaDate(a);
-      const dateB = getMediaDate(b);
-      if (dateA !== dateB) {
-        return sortOrder === 'old' ? dateA - dateB : dateB - dateA;
-      }
-      return getMetricValue(b, sortMetric) - getMetricValue(a, sortMetric);
-    });
+  .filter((item) =>
+    ['published', 'approved'].includes(
+      String(item?.status || '').toLowerCase()
+    )
+  )
+  .sort((a, b) => {
+    // First sort by selected metric (descending)
+    const metricDiff =
+      getMetricValue(b, sortMetric) -
+      getMetricValue(a, sortMetric);
+
+    // If metric values are same then sort by date
+    if (metricDiff !== 0) {
+      return metricDiff;
+    }
+
+    const dateA = getMediaDate(a);
+    const dateB = getMediaDate(b);
+
+    return sortOrder === 'old'
+      ? dateA - dateB
+      : dateB - dateA;
+  });
   const pageSizeNumber = pageSize === 'all' ? approvedMedia.length || 1 : Number(pageSize);
   const totalPages = pageSize === 'all' ? 1 : Math.max(1, Math.ceil(approvedMedia.length / pageSizeNumber));
   const startIndex = pageSize === 'all' ? 0 : (currentPage - 1) * pageSizeNumber;
