@@ -524,6 +524,7 @@
 .revision-modal__details{padding:24px 24px 30px}
 .revision-modal__details h3{font-size:2rem;margin-bottom:18px}
 .revision-modal__details p{font-size:1rem;margin-bottom:14px}
+.analytics-card,.dashboard__search{max-width:100%;}
 }
 @media (max-width: 767px) {
 .hero__left{padding:112px 24px 64px}
@@ -552,8 +553,8 @@
 .pp_section h3{margin:1rem 0}
 .pp_inner{margin-bottom:2rem}
 .cg_content1,.sp_bg,.pp_bg{padding:2rem}
-.dashboard{padding:32px 4% 60px}
-.dashboard__inner{padding:28px}
+.dashboard{padding:32px 4% 20px}
+.dashboard__inner{padding:15px}
 .dashboard__menu-item{font-size:1.05rem}
 .dashboard__icon{width:56px;height:56px}
 .analytics-card__avatar{right:-8px;bottom:-12px;width:96px;height:96px}
@@ -572,4 +573,12 @@
 .profile-card{min-height:340px}
 .revision-modal__btn{width:100%;margin:0 0 10px}
 .revision-modal__btn--solid{margin-top:0}
+.analytics-card__days{flex-flow: wrap;}
+.analytics-card{padding:10px;}
+.dashboard__headline h1,.analytics-card h2,.analytics-card h3{font-size: 24px;}
+.dashboard__menu{margin-top: 1rem;}
+.inspiration__header h2{margin: 0 0 20px; font-size: 24px;}
+.inspiration__grid{gap: 4%; grid-template-columns: repeat(auto-fit, minmax(48%, 2fr));}
+.inspiration-card{width: 100%;    height: 150px;}
+.dashboard__headline h1{text-align: center;}
 }
