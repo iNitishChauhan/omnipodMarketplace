@@ -1084,7 +1084,7 @@ width: 76px;
 }
 
 .upload-modal__form {
-  text-align: left;
+  text-align: left; margin-right:20px;
 }
 
 .upload-modal__user {
