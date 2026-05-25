@@ -10,38 +10,27 @@ function Notifications() {
   const [notifications, setNotifications] = useState([]);
   const [loading, setLoading] = useState(true);
 
-  // 👉 Replace this with logged-in user ID (dynamic later)
+  // ✅ Pagination states
+  const [currentPage, setCurrentPage] = useState(1);
+  const recordsPerPage = 15;
+
   const { user } = useSelector((state) => state.auth);
 
   // 🔥 Fetch Notifications
-  /*   const fetchNotifications = () => {
-      fetch(`${API_URL}notifications/${user.id}`)
-        .then(res => res.json())
-        .then(data => {
-          setNotifications(data.data.data || []);
-          setLoading(false);
-        })
-        .catch(err => {
-          console.error('Error fetching notifications:', err);
-          setLoading(false);
-        });
-    }; */
- const fetchNotifications = useCallback(() => {
-  if (!user?.id) return; // ✅ prevent error
+  const fetchNotifications = useCallback(() => {
+    if (!user?.id) return;
 
-  fetch(`${API_URL}notifications/${user.id}`)
-    .then(res => res.json())
-    .then(data => {
-      //console.log(data.data)
-      setNotifications(data?.data || []);
-      setLoading(false);
-    })
-    .catch(err => {
-      console.error('Error fetching notifications:', err);
-      setLoading(false);
-    });
-}, [user?.id]);
-
+    fetch(`${API_URL}notifications/${user.id}`)
+      .then(res => res.json())
+      .then(data => {
+        setNotifications(data?.data || []);
+        setLoading(false);
+      })
+      .catch(err => {
+        console.error('Error fetching notifications:', err);
+        setLoading(false);
+      });
+  }, [user?.id]);
 
   // 🚀 Auto Refresh
   useEffect(() => {
@@ -52,7 +41,9 @@ function Notifications() {
     }, 5000);
 
     return () => clearInterval(interval);
-  }, [fetchNotifications]); // ✅ no warning now 
+  }, [fetchNotifications]);
+
+  // ✅ Time Ago Function
   const timeAgo = (date) => {
     const seconds = Math.floor((new Date() - new Date(date)) / 1000);
 
@@ -73,13 +64,13 @@ function Notifications() {
     const years = Math.floor(seconds / 31536000);
     return `${years} yr ago`;
   };
+
   // ✅ Mark as Read
   const markAsRead = (id) => {
     fetch(`${API_URL}notifications/mark-read/${id}`, {
       method: 'POST'
     })
       .then(() => {
-        // Update UI instantly without reload
         setNotifications(prev =>
           prev.map(n =>
             n.id === id ? { ...n, is_read: true } : n
@@ -88,6 +79,17 @@ function Notifications() {
       })
       .catch(err => console.error(err));
   };
+
+  // ✅ Pagination Logic
+  const indexOfLastRecord = currentPage * recordsPerPage;
+  const indexOfFirstRecord = indexOfLastRecord - recordsPerPage;
+
+  const currentNotifications = notifications.slice(
+    indexOfFirstRecord,
+    indexOfLastRecord
+  );
+
+  const totalPages = Math.ceil(notifications.length / recordsPerPage);
 
   return (
     <div className="notifications-page">
@@ -101,7 +103,10 @@ function Notifications() {
             <h1>Notifications</h1>
           </section>
 
-          <section className="notifications-page__list" aria-label="All notifications">
+          <section
+            className="notifications-page__list"
+            aria-label="All notifications"
+          >
 
             {/* 🔄 Loading */}
             {loading && <p>Loading notifications...</p>}
@@ -111,8 +116,8 @@ function Notifications() {
               <p>No notifications found</p>
             )}
 
-            {/* ✅ Dynamic Notifications */}
-            {notifications.map((notification) => (
+            {/* ✅ Paginated Notifications */}
+            {currentNotifications.map((notification) => (
               <article
                 className={`notifications-page__item ${!notification.is_read ? 'unread' : ''}`}
                 key={notification.id}
@@ -132,6 +137,37 @@ function Notifications() {
                 </time>
               </article>
             ))}
+
+            {/* ✅ Pagination Buttons */}
+            {!loading && totalPages > 1 && (
+              <div className="pagination">
+
+                <button
+                  disabled={currentPage === 1}
+                  onClick={() => setCurrentPage(currentPage - 1)}
+                >
+                  Prev
+                </button>
+
+                {[...Array(totalPages)].map((_, index) => (
+                  <button
+                    key={index}
+                    className={currentPage === index + 1 ? 'active' : ''}
+                    onClick={() => setCurrentPage(index + 1)}
+                  >
+                    {index + 1}
+                  </button>
+                ))}
+
+                <button
+                  disabled={currentPage === totalPages}
+                  onClick={() => setCurrentPage(currentPage + 1)}
+                >
+                  Next
+                </button>
+
+              </div>
+            )}
 
           </section>
         </div>

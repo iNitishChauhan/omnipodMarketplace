@@ -473,12 +473,7 @@ function Dashboard() {
       </div>
     </div>
   );
-})}
-
- 
-   
-       
-        
+})}     
         </div>
          {/* ---------------- PAGINATION UI ---------------- */}
         {filteredMedia.length > ITEMS_PER_PAGE && (

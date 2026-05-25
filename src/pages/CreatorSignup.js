@@ -33,7 +33,7 @@ function CreatorSignup() {
     agree1: false,
     agree2: false,
     agree3: false,
-     agree4: false, // New checkbox
+    agree4: false, // New checkbox
     password: "",
     confirmPassword: "",
   };
@@ -84,9 +84,9 @@ function CreatorSignup() {
     }
     //console.log(formData.agree1)
     if (!formData.agree1 ||
-  !formData.agree2 ||
-  !formData.agree3 ||
-  !formData.agree4) {
+      !formData.agree2 ||
+      !formData.agree3 ||
+      !formData.agree4) {
       setMessage("Please accept all agreements");
       return;
     }
@@ -188,7 +188,6 @@ function CreatorSignup() {
               <div className="creator-field">
                 <label htmlFor="lastName"><span className="required">*</span>Last Name</label>
                 <input className="creator-input" name="lastName" value={formData.lastName} onChange={handleChange} />
-
               </div>
             </div>
             <div className="creator-form__row creator-form__row--2">
@@ -292,17 +291,17 @@ function CreatorSignup() {
                 </span>
               </label>
               <label className="creator-check">
-  <input
-    type="checkbox"
-    name="agree4"
-    checked={formData.agree4}
-    onChange={handleChange}
-  />
-  <span>
-    <span className="required">*</span>
-    I agree to Insulet International's <Link className="creator-policy" to="/privacy-policy">privacy policy</Link>.
-  </span>
-</label>
+                <input
+                  type="checkbox"
+                  name="agree4"
+                  checked={formData.agree4}
+                  onChange={handleChange}
+                />
+                <span>
+                  <span className="required">*</span>
+                  I agree to Insulet International's <Link className="creator-policy" to="/privacy-policy">privacy policy</Link>.
+                </span>
+              </label>
             </div>
 
           </div>
@@ -333,10 +332,6 @@ function CreatorSignup() {
           </div>
         </section>
       </form>
-
-
-
-
       <Footer />
     </div>
   );
