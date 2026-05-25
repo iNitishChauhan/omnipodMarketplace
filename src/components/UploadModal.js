@@ -312,12 +312,12 @@ function UploadModal({ isOpen, onClose }) {
                     onChange={(e) => setAgreeGuidelines(e.target.checked)}
                   />
                   <span> I have read the{" "}
-                    <a href="#guidelines">Content Guidelines</a>
+                    <a href="/content-guidelines" target="_blank">Content Guidelines</a>
                   </span>
                 </label>
 
                 <div className="upload-modal__check">
-                  <label>
+                  <label className="upload-modal__check">
                     <input
                       type="checkbox"
                       checked={agreeDocument}
@@ -327,7 +327,7 @@ function UploadModal({ isOpen, onClose }) {
                       Sign <a href="#agreement">document agreement</a>
                     </span>
                   </label>
-                  <img src={docuSignLogo} alt="DocuSign" />
+                  <img src={docuSignLogo} alt="DocuSign" width="100px" />
                 </div>
               </div>
 
