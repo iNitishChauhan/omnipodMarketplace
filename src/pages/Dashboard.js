@@ -403,7 +403,7 @@ function Dashboard() {
             <select value={sortFilter} onChange={(event) => setSortFilter(event.target.value)}>
               <option value="latest">Latest first</option>
               <option value="oldest">Oldest first</option>
-              <option value="title-az">Title A-Z</option>
+              
             </select>
           </label>
 
