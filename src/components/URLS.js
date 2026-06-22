@@ -1,7 +1,5 @@
-export const BASEURL = "https://omnipodmarketplace.minddigital.in";
-export const WEBSITE_URL = "https://omnipodmarketplace.minddigital.in";
-export const API_URL = "https://omnipodmarketplace.minddigital.in/api/";
+const backendUrl = (process.env.REACT_APP_BACKEND_URL || "https://omnipodmarketplace.minddigital.in").replace(/\/$/, "");
 
-/* export const BASEURL = "http://127.0.0.1:8000";
-export const WEBSITE_URL = "http://127.0.0.1:8000";
-export const API_URL = "http://127.0.0.1:8000/api/"; */
+export const BASEURL = backendUrl;
+export const WEBSITE_URL = backendUrl;
+export const API_URL = `${backendUrl}/api/`;

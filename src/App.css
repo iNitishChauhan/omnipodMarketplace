@@ -356,6 +356,13 @@
 .upload-modal__check{display:flex;align-items:flex-start;gap:10px;font-size:.95rem;color:#222}
 .upload-modal__check input{margin-top:3px;width:18px;height:18px}
 .upload-modal__check a{color:#f36a5b;text-decoration:underline}
+.upload-modal__docusign-check{align-items:center}
+.upload-modal__docusign-check span{display:flex;flex-wrap:wrap;align-items:center;gap:4px;flex:1}
+.upload-modal__docusign-check button{border:0;background:none;padding:0;color:#f36a5b;text-decoration:underline;font:inherit;cursor:pointer}
+.upload-modal__docusign-check button:disabled{cursor:default;color:#777}
+.upload-modal__docusign-check small{display:block;flex-basis:100%;color:#666;text-transform:capitalize}
+.docusign-callback{min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:32px;text-align:center;color:#202a44}
+.docusign-callback h1{color:#f36a5b}
 .upload-modal__docu{display:flex;align-items:center;gap:12px}
 .upload-modal__docu img{height:34px;border:2px solid #f36a5b;border-radius:14px;padding:6px 10px;background:#fff}
 .upload-modal__submit{background:#f36a5b;color:#fff;border:none;border-radius:10px;padding:12px 28px;font-weight:700;cursor:pointer}

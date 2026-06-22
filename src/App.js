@@ -12,6 +12,7 @@ import PrivacyPolicy from './pages/PrivacyPolicy';
 import Notifications from './pages/Notifications';
 import ForgotPassword from './pages/ForgotPassword'
 import ResetPassword from './pages/ResetPassword'
+import DocusignCallback from './pages/DocusignCallback';
 
 
 function App() {
@@ -31,6 +32,7 @@ function App() {
         <Route path="/notifications" element={<Notifications />} />
         <Route path="/forgot-password" element={<ForgotPassword />} />
         <Route path="/reset-password/:token" element={<ResetPassword />} />
+        <Route path="/docusign/callback" element={<DocusignCallback />} />
       </Routes>
     </Router>
   );
