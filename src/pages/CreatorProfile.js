@@ -1,6 +1,6 @@
-import { useState, useEffect } from 'react';
+import { useRef, useState, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { Navigate, useNavigate } from 'react-router-dom';
+import { Navigate, useNavigate, useSearchParams } from 'react-router-dom';
 import axios from 'axios';
 import UploadModal from '../components/UploadModal';
 
@@ -13,9 +13,12 @@ import { BASEURL, API_URL } from '../components/URLS';
 
 function CreatorProfile() {
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
   const dispatch = useDispatch();
   const { user, isAuthenticated } = useSelector((state) => state.auth);
   const { media, loading, error } = useSelector((state) => state.userMedia);
+  const highlightedMediaId = Number(searchParams.get('media_id')) || null;
+  const mediaRefs = useRef({});
   useEffect(() => {
     if (user?.id) {
       dispatch(fetchUserMedia(user.id));
@@ -143,9 +146,39 @@ function CreatorProfile() {
   const endIndex = startIndex + ITEMS_PER_PAGE;
   const paginatedMedia = filteredMedia.slice(startIndex, endIndex);
   useEffect(() => {
+    if (highlightedMediaId) return;
     setCurrentPage(1);
     //console.log("dateFilter:", dateFilter);
-  }, [statusFilter, dateFilter]);
+  }, [statusFilter, dateFilter, highlightedMediaId]);
+
+  useEffect(() => {
+    if (!highlightedMediaId || media.length === 0) return;
+
+    setStatusFilter("all");
+    setDateFilter("latest");
+
+    const sortedMedia = [...media].sort((a, b) => {
+      const dateA = parseDate(a.created_at).getTime();
+      const dateB = parseDate(b.created_at).getTime();
+      return dateB - dateA;
+    });
+
+    const mediaIndex = sortedMedia.findIndex((item) => Number(item.id) === highlightedMediaId);
+    if (mediaIndex >= 0) {
+      setCurrentPage(Math.floor(mediaIndex / ITEMS_PER_PAGE) + 1);
+    }
+  }, [highlightedMediaId, media]);
+
+  useEffect(() => {
+    if (!highlightedMediaId) return;
+
+    const target = mediaRefs.current[highlightedMediaId];
+    if (target) {
+      window.setTimeout(() => {
+        target.scrollIntoView({ behavior: "smooth", block: "center" });
+      }, 100);
+    }
+  }, [highlightedMediaId, currentPage, paginatedMedia]);
 
   if (!isAuthenticated) {
     return <Navigate to="/omnipod-creator-login" />;
@@ -237,7 +270,13 @@ function CreatorProfile() {
                 //console.log(item.status);
                 const isVideo = /\.(mp4|webm|ogg)$/i.test(item.file_url);
                 return (
-                  <article key={item.id} className={`profile-card profile-card--${item.status}`}>
+                  <article
+                    key={item.id}
+                    ref={(element) => {
+                      mediaRefs.current[item.id] = element;
+                    }}
+                    className={`profile-card profile-card--${item.status} ${Number(item.id) === highlightedMediaId ? 'profile-card--highlighted' : ''}`}
+                  >
 
                     {isVideo ? (
 

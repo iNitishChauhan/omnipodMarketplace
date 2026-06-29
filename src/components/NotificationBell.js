@@ -151,11 +151,31 @@ function NotificationBell() {
                 key={notification.id}
                 onClick={() => markAsRead(notification.id)}
               >
-                <strong>{notification.title}</strong>
-                <p>{notification.message}</p>
-                <span>
-                  {timeAgo(notification.created_at)}
-                </span>
+                {notification.media?.file_url && (
+                  <Link
+                    className="notification-bell__media-link"
+                    to={`/profile?media_id=${notification.media.id}`}
+                    onClick={(event) => {
+                      event.stopPropagation();
+                      markAsRead(notification.id);
+                      setIsOpen(false);
+                    }}
+                  >
+                    {notification.media.media_type === 'video' ? (
+                      <video src={notification.media.file_url} muted playsInline preload="metadata" />
+                    ) : (
+                      <img src={notification.media.file_url} alt={notification.media.title || 'Notification media'} />
+                    )}
+                  </Link>
+                )}
+
+                <div>
+                  <strong>{notification.title}</strong>
+                  <p>{notification.message}</p>
+                  <span>
+                    {timeAgo(notification.created_at)}
+                  </span>
+                </div>
               </div>
             ))}
           </div>

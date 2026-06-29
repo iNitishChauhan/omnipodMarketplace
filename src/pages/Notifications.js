@@ -2,6 +2,7 @@ import '../App.css';
 import CreatorHeader from '../components/CreatorHeader';
 import Footer from '../components/Footer';
 import { useEffect, useState, useCallback } from 'react';
+import { Link } from 'react-router-dom';
 import { API_URL } from '../components/URLS';
 import { useSelector } from "react-redux";
 
@@ -91,6 +92,39 @@ function Notifications() {
 
   const totalPages = Math.ceil(notifications.length / recordsPerPage);
 
+  const renderNotificationMedia = (notification) => {
+    if (!notification.media?.file_url) return null;
+
+    const isVideo = notification.media.media_type === 'video'
+      || /\.(mp4|webm|ogg|mov)$/i.test(notification.media.file_url);
+
+    return (
+      <Link
+        className="notifications-page__media-link"
+        to={`/profile?media_id=${notification.media.id}`}
+        onClick={(event) => {
+          event.stopPropagation();
+          markAsRead(notification.id);
+        }}
+        aria-label={`View ${notification.media.title || 'media'} on profile`}
+      >
+        {isVideo ? (
+          <video
+            src={notification.media.file_url}
+            muted
+            playsInline
+            preload="metadata"
+          />
+        ) : (
+          <img
+            src={notification.media.file_url}
+            alt={notification.media.title || 'Notification media'}
+          />
+        )}
+      </Link>
+    );
+  };
+
   return (
     <div className="notifications-page">
       <CreatorHeader />
@@ -123,13 +157,17 @@ function Notifications() {
                 key={notification.id}
                 onClick={() => markAsRead(notification.id)}
               >
-                <div>
-                  <span className="notifications-page__status">
-                    {notification.is_read ? 'Read' : 'New'}
-                  </span>
+                <div className="notifications-page__content">
+                  {renderNotificationMedia(notification)}
 
-                  <h2>{notification.title}</h2>
-                  <p>{notification.message}</p>
+                  <div>
+                    <span className="notifications-page__status">
+                      {notification.is_read ? 'Read' : 'New'}
+                    </span>
+
+                    <h2>{notification.title}</h2>
+                    <p>{notification.message}</p>
+                  </div>
                 </div>
 
                 <time>
