@@ -11,6 +11,7 @@
 # production
 /build
 /omnipod-admin/
+/Mockup/
 /output/
 /tmp/
 

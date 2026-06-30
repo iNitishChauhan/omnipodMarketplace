@@ -31,6 +31,7 @@ function UploadModal({ isOpen, onClose }) {
   const [agreementContentName, setAgreementContentName] = useState("");
   const [signingBusy, setSigningBusy] = useState(false);
   const [fileError, setFileError] = useState("");
+  const [validationErrors, setValidationErrors] = useState({});
   const getMediaDetail = async () => {
     try {
       let mid = localStorage.getItem("mid");
@@ -66,6 +67,7 @@ function UploadModal({ isOpen, onClose }) {
     }
 
     setFileError("");
+    setValidationErrors((errors) => ({ ...errors, file: "" }));
     setSelectedFile(file);
     if (agreementId) {
       setAgreementId(null);
@@ -153,7 +155,11 @@ function UploadModal({ isOpen, onClose }) {
 
   const startDocusignSigning = async () => {
     if (!selectedFile || !contentName.trim()) {
-      alert("Select a file and enter the content name before signing");
+      setValidationErrors((errors) => ({
+        ...errors,
+        file: selectedFile ? "" : "Please select an image or video.",
+        contentName: contentName.trim() ? "" : "Please enter the content name.",
+      }));
       return;
     }
 
@@ -216,12 +222,53 @@ function UploadModal({ isOpen, onClose }) {
   const handleContentNameChange = (event) => {
     const nextName = event.target.value;
     setContentName(nextName);
+    if (nextName.trim()) {
+      setValidationErrors((errors) => ({ ...errors, contentName: "" }));
+    }
     if (agreementId && nextName !== agreementContentName) {
       setAgreementId(null);
       setAgreementContentName("");
       setAgreementStatus("not_started");
       setAgreeDocument(false);
     }
+  };
+
+  const handlePostCopyChange = (event) => {
+    const nextPostCopy = event.target.value;
+    setpostCopy(nextPostCopy);
+    if (nextPostCopy.trim()) {
+      setValidationErrors((errors) => ({ ...errors, postCopy: "" }));
+    }
+  };
+
+  const handleThemeChange = (event) => {
+    const nextTheme = event.target.value;
+    setTheme(nextTheme);
+    if (nextTheme) {
+      setValidationErrors((errors) => ({ ...errors, theme: "" }));
+    }
+  };
+
+  const handleGuidelinesChange = (event) => {
+    const checked = event.target.checked;
+    setAgreeGuidelines(checked);
+    if (checked) {
+      setValidationErrors((errors) => ({ ...errors, agreeGuidelines: "" }));
+    }
+  };
+
+  const validateUploadForm = () => {
+    const errors = {};
+
+    if (!selectedFile) errors.file = "Please select an image or video.";
+    if (!contentName.trim()) errors.contentName = "Please enter the content name.";
+    if (!postCopy.trim()) errors.postCopy = "Please enter the post copy.";
+    if (!theme) errors.theme = "Please select a theme.";
+    if (!agreeGuidelines) errors.agreeGuidelines = "Please accept the content guidelines.";
+    if (!agreeDocument) errors.agreeDocument = "Please sign the document agreement.";
+
+    setValidationErrors(errors);
+    return Object.keys(errors).length === 0;
   };
 
   // ---------------- FAKE PROGRESS ----------------
@@ -253,13 +300,7 @@ function UploadModal({ isOpen, onClose }) {
   // ---------------- API UPLOAD ----------------
   const handleSubmit = async () => {
 
-    if (!selectedFile || !contentName) {
-      alert("File and title are required");
-      return;
-    }
-    // ✅ NEW VALIDATION
-    if (!agreeGuidelines || !agreeDocument) {
-      alert("Please accept both agreements");
+    if (!validateUploadForm()) {
       return;
     }
     try {
@@ -314,6 +355,7 @@ function UploadModal({ isOpen, onClose }) {
       setAgreementId(null);
       setAgreementStatus("not_started");
       setAgreementContentName("");
+      setValidationErrors({});
       onClose();
       // ✅ RELOAD PAGE AFTER UPLOAD
       window.location.reload();
@@ -359,8 +401,13 @@ function UploadModal({ isOpen, onClose }) {
               <img src={uploadIcon2} alt="Upload videos" />
             </div>
             {fileError && (
-              <p style={{ color: "red", marginTop: "10px" }}>
+              <p className="upload-modal__error">
                 {fileError}
+              </p>
+            )}
+            {validationErrors.file && (
+              <p className="upload-modal__error">
+                {validationErrors.file}
               </p>
             )}
             <p className="upload-modal__hint">
@@ -397,35 +444,42 @@ function UploadModal({ isOpen, onClose }) {
                 <strong>{user?.name || "Podder"}</strong>
               </div>
 
-              <label className="upload-modal__label">
-                Insert Content Name
+              <div class="modal-flex"><label className="upload-modal__label">
+                Insert Content Name <span className="upload-modal__required">*</span>
               </label>
               <input
-                className="upload-modal__text"
+                className={`upload-modal__text${validationErrors.contentName ? " has-error" : ""}`}
                 type="text"
                 value={contentName}
                 onChange={handleContentNameChange}
                 disabled={agreeDocument}
                 maxLength={100}
                 placeholder="Insert Content Name"
-              />
-              <div className="upload-modal__count">{contentName.length}/100</div>
+              /><div className="upload-modal__count">{contentName.length}/100</div>
+              </div>
+                {validationErrors.contentName && <p className="upload-modal__field-error">{validationErrors.contentName}</p>}
+                
+              
               <label className="upload-modal__label">
-                Post Copy
+                Post Copy <span className="upload-modal__required">*</span>
               </label>
               <input
-                className="upload-modal__text"
+                className={`upload-modal__text${validationErrors.postCopy ? " has-error" : ""}`}
                 type="text"
                 value={postCopy}
-                onChange={(e) => setpostCopy(e.target.value)}
+                onChange={handlePostCopyChange}
                 maxLength={100}
                 placeholder="Post Copy"
               />
+              {validationErrors.postCopy && <p className="upload-modal__field-error">{validationErrors.postCopy}</p>}
 
+              <div className="modal-flex2"><label className="upload-modal__label">
+                Theme <span className="upload-modal__required">*</span>
+              </label>
               <select
-                className="upload-modal__select"
+                className={`upload-modal__select${validationErrors.theme ? " has-error" : ""}`}
                 value={theme}
-                onChange={(e) => setTheme(e.target.value)}
+                onChange={handleThemeChange}
               >
                 <option value="">Select Theme</option>
                 <option value="Pod Change">Pod Change</option>
@@ -439,19 +493,22 @@ function UploadModal({ isOpen, onClose }) {
                 <option value="Unboxing">Unboxing</option>
                 <option value="WDD">WDD</option>
                 <option value="No theme">No theme</option>
-              </select>
+              </select></div>
+              {validationErrors.theme && <p className="upload-modal__field-error">{validationErrors.theme}</p>}
 
               <div className="upload-modal__checks">
                 <label className="upload-modal__check">
                   <input
                     type="checkbox"
                     checked={agreeGuidelines}
-                    onChange={(e) => setAgreeGuidelines(e.target.checked)}
+                    onChange={handleGuidelinesChange}
                   />
                   <span> I have read the{" "}
                     <a href="/content-guidelines" target="_blank">Content Guidelines</a>
+                    <span className="upload-modal__required">*</span>
                   </span>
                 </label>
+                {validationErrors.agreeGuidelines && <p className="upload-modal__field-error">{validationErrors.agreeGuidelines}</p>}
 
                 <div className="upload-modal__check upload-modal__docusign-check">
                   <input
@@ -466,20 +523,22 @@ function UploadModal({ isOpen, onClose }) {
                     <button type="button" onClick={startDocusignSigning} disabled={signingBusy || agreeDocument}>
                       document agreement
                     </button>
+                    <span className="upload-modal__required">*</span>
                     <small id="docusign-status">
                       {agreeDocument ? "Signed and verified" : signingBusy ? "Opening DocuSign..." : agreementStatus.replaceAll("_", " ")}
                     </small>
                   </span>
                   <img src={docuSignLogo} alt="DocuSign" width="100px" />
                 </div>
+                {validationErrors.agreeDocument && <p className="upload-modal__field-error">{validationErrors.agreeDocument}</p>}
               </div>
 
-              {apiError && <p style={{ color: "red" }}>{apiError}</p>}
+              {apiError && <p className="upload-modal__error">{apiError}</p>}
 
               <button
                 className="upload-modal__submit"
                 onClick={handleSubmit}
-                disabled={apiLoading || !agreeGuidelines || !agreeDocument}
+                disabled={apiLoading}
               >
                 {apiLoading ? "Submitting..." : "Submit"}
               </button>
