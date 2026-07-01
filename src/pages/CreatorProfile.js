@@ -71,6 +71,7 @@ function CreatorProfile() {
   const [showRevisionModal, setShowRevisionModal] = useState(false);
   const [activeRevisionItem, setActiveRevisionItem] = useState(null);
   const [showUploadModal, setShowUploadModal] = useState(false);
+  const [withdrawingMediaId, setWithdrawingMediaId] = useState(null);
   const closeUploadModal = () => setShowUploadModal(false);
 
   const openUploadModal = (mid) => {
@@ -112,6 +113,37 @@ function CreatorProfile() {
     } catch (error) {
       console.log(error);
       alert("Error deleting image");
+    }
+  };
+
+  const handleWithdrawMedia = async (id) => {
+    const confirmWithdraw = window.confirm(
+      "Are you sure you want to withdraw this media submission?"
+    );
+
+    if (!confirmWithdraw) return;
+
+    try {
+      const token = localStorage.getItem("token");
+      setWithdrawingMediaId(id);
+
+      await axios.post(
+        `${API_URL}media/${id}/withdraw`,
+        {},
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json",
+          },
+        }
+      );
+
+      dispatch(fetchUserMedia(user.id));
+    } catch (error) {
+      console.log(error);
+      alert(error.response?.data?.message || "Error withdrawing media");
+    } finally {
+      setWithdrawingMediaId(null);
     }
   };
 
@@ -244,7 +276,7 @@ function CreatorProfile() {
                   {/*   <option value="approval-status">Approval Status</option> */}
                   <option value="all">All</option>
                   <option value="published">Approved</option>
-                  <option value="draft">Pending</option>
+                  <option value="pending">Pending</option>
                  {/*  <option value="rejected">Rejected</option> */}
                   <option value="rejected_by_marketing">Rejected By Marketing</option>
                   <option value="rejected_by_legal">Rejected By Legal</option>
@@ -297,6 +329,17 @@ function CreatorProfile() {
                           <p className="profile-card__status profile-card__status--pending">
                             Pending
                           </p>
+                        )}
+
+                        {item.status === 'pending' && (
+                          <button
+                            type="button"
+                            className="profile-card__btn profile-card__btn--withdraw"
+                            onClick={() => handleWithdrawMedia(item.id)}
+                            disabled={withdrawingMediaId === item.id}
+                          >
+                            {withdrawingMediaId === item.id ? 'Withdrawing...' : 'Withdraw Media'}
+                          </button>
                         )}
 
                         {(item.status === 'rejected' || item.status === 'rejected_by_marketing' || item.status === 'rejected_by_legal') && (
@@ -366,6 +409,17 @@ function CreatorProfile() {
                           <p className="profile-card__status profile-card__status--pending">
                             Pending
                           </p>
+                        )}
+
+                        {item.status === 'pending' && (
+                          <button
+                            type="button"
+                            className="profile-card__btn profile-card__btn--withdraw"
+                            onClick={() => handleWithdrawMedia(item.id)}
+                            disabled={withdrawingMediaId === item.id}
+                          >
+                            {withdrawingMediaId === item.id ? 'Withdrawing...' : 'Withdraw Media'}
+                          </button>
                         )}
 
                         {(item.status === 'rejected' || item.status === 'rejected_by_marketing' || item.status === 'rejected_by_legal') && (
