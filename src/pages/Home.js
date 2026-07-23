@@ -151,7 +151,7 @@ function Home() {
 
         <section className="cta-panel">
           <h3>Insulet member?</h3>
-          <Link className="cta-pill" to="/insulet-member-login">
+          <Link className="cta-pill" target='_blank' to="https://omnipodmarketplace.minddigital.in/admin/login">
               Log In
           </Link>
         </section>
