@@ -7,10 +7,10 @@
 
 # testing
 /coverage
+/omnipod-admin
 
 # production
 /build
-/omnipod-admin/
 /Mockup/
 /output/
 /tmp/

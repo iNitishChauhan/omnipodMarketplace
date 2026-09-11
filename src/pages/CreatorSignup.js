@@ -175,7 +175,7 @@ function CreatorSignup() {
       <div className="hero_text signup_text">
         <h2>Sign up as an Omnipod <br /> Creator by <span>filling in the form <br />below</span></h2>
       </div>
-      <form className="creator-form__fields" onSubmit={handleSubmit}>
+      <form className="creator-form__fields" id="get-started" onSubmit={handleSubmit}>
         <section className="creator-form">
           <div className="creator-form__inner">
             <p className="creator-form__note"><span className="required">*</span>Indicates required field</p>

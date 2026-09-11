@@ -31,15 +31,7 @@ function Footer() {
           
         </div>
         <div className="footer__copy">
-          Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore
-          magna aliqua. Quis ipsum suspendisse ultrices gravida. Risus commodo viverra maecenas accumsan lacus vel
-          facilisis. Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore
-          et dolore magna aliqua. Quis ipsum suspendisse ultrices gravida. Risus commodo viverra maecenas accumsan lacus
-          vel facilisis. Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut
-          labore et dolore magna aliqua. Quis ipsum suspendisse ultrices gravida. Risus commodo viverra maecenas accumsan
-          lacus vel facilisis. Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt
-          ut labore et dolore magna aliqua. Quis ipsum suspendisse ultrices gravida. Risus commodo viverra maecenas
-          accumsan lacus vel facilisis.
+          ©2018-2026 Insulet Corporation. Omnipod, the Omnipod logos, DASH, the DASH logo, the Omnipod 5 logo, SmartAdjust, Omnipod DISPLAY, Omnipod VIEW, Omnipod DEMO, Podder, Simplify Life, Toby the Turtle, PodderCentral, the PodderCentral logo, Podder Talk, PodPals, Pod University, and OmnipodPromise are trademarks or registered trademarks of Insulet Corporation. All rights reserved.
         </div>
       </div>
     </footer>
