@@ -1,10 +1,9 @@
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useSelector } from "react-redux";
 import axios from "axios";
 import "../App.css";
 import uploadIcon1 from "../images/upload_icon1.png";
 import uploadIcon2 from "../images/upload_icon2.png";
-import docuSignLogo from "../images/docu_sign.png";
 import profileImage from "../images/creator-image.png";
 import { API_URL } from "./URLS";
 
@@ -29,7 +28,13 @@ function UploadModal({ isOpen, onClose }) {
   const [agreementId, setAgreementId] = useState(null);
   const [agreementStatus, setAgreementStatus] = useState("not_started");
   const [agreementContentName, setAgreementContentName] = useState("");
+  const [agreementPostCopy, setAgreementPostCopy] = useState("");
   const [signingBusy, setSigningBusy] = useState(false);
+  const [agreementModalOpen, setAgreementModalOpen] = useState(false);
+  const [isAdult, setIsAdult] = useState("");
+  const [guardianEmail, setGuardianEmail] = useState("");
+  const [consentAccepted, setConsentAccepted] = useState(false);
+  const [agreementErrors, setAgreementErrors] = useState({});
   const [fileError, setFileError] = useState("");
   const [validationErrors, setValidationErrors] = useState({});
   const getMediaDetail = async () => {
@@ -70,10 +75,7 @@ function UploadModal({ isOpen, onClose }) {
     setValidationErrors((errors) => ({ ...errors, file: "" }));
     setSelectedFile(file);
     if (agreementId) {
-      setAgreementId(null);
-      setAgreementContentName("");
-      setAgreementStatus("not_started");
-      setAgreeDocument(false);
+      resetAgreement();
     }
   };
 
@@ -110,50 +112,24 @@ function UploadModal({ isOpen, onClose }) {
     "Content-Type": "application/json",
   });
 
-  const checkAgreementStatus = useCallback(async (id) => {
-    try {
-      const response = await axios.get(`${API_URL}docusign/agreements/${id}`, {
-        headers: authHeaders(),
-      });
-      const agreement = response.data.agreement;
-      setAgreementStatus(agreement.status);
-      setAgreeDocument(agreement.signed);
-      return agreement;
-    } catch (error) {
-      setApiError(error.response?.data?.message || "Unable to verify the DocuSign agreement");
-      return null;
-    }
-  }, []);
+  const resetAgreement = () => {
+    setAgreementId(null);
+    setAgreementContentName("");
+    setAgreementPostCopy("");
+    setAgreementStatus("not_started");
+    setAgreeDocument(false);
+  };
 
-  useEffect(() => {
-    const handleDocusignMessage = (event) => {
-      if (event.origin !== window.location.origin || event.data?.type !== "docusign-callback") {
-        return;
-      }
-      if (Number(event.data.agreementId) !== Number(agreementId)) {
-        return;
-      }
+  const fileSha256 = async (file) => {
+    const fileBytes = await file.arrayBuffer();
+    const digest = await window.crypto.subtle.digest("SHA-256", fileBytes);
 
-      setAgreementStatus(event.data.status || "verifying");
-      setAgreeDocument(Boolean(event.data.signed));
-      checkAgreementStatus(agreementId);
-    };
+    return Array.from(new Uint8Array(digest))
+      .map((byte) => byte.toString(16).padStart(2, "0"))
+      .join("");
+  };
 
-    window.addEventListener("message", handleDocusignMessage);
-    return () => window.removeEventListener("message", handleDocusignMessage);
-  }, [agreementId, checkAgreementStatus]);
-
-  useEffect(() => {
-    const verifyOnFocus = () => {
-      if (agreementId && !agreeDocument) {
-        checkAgreementStatus(agreementId);
-      }
-    };
-    window.addEventListener("focus", verifyOnFocus);
-    return () => window.removeEventListener("focus", verifyOnFocus);
-  }, [agreementId, agreeDocument, checkAgreementStatus]);
-
-  const startDocusignSigning = async () => {
+  const openAgreementModal = () => {
     if (!selectedFile || !contentName.trim()) {
       setValidationErrors((errors) => ({
         ...errors,
@@ -163,15 +139,49 @@ function UploadModal({ isOpen, onClose }) {
       return;
     }
 
-    const token = localStorage.getItem("token");
-    if (!token || token === "undefined") {
-      setApiError("Please log in again before starting DocuSign");
+    if (!postCopy.trim()) {
+      setValidationErrors((errors) => ({
+        ...errors,
+        postCopy: "Please enter the post copy.",
+      }));
       return;
     }
 
-    const signingWindow = window.open("", "docusign-signing", "width=1100,height=760,resizable=yes,scrollbars=yes");
-    if (!signingWindow) {
-      setApiError("Allow popups for this site to open DocuSign");
+    const token = localStorage.getItem("token");
+    if (!token || token === "undefined") {
+      setApiError("Please log in again before signing the agreement.");
+      return;
+    }
+
+    setApiError("");
+    setAgreementModalOpen(true);
+  };
+
+  const validateAgreementForm = () => {
+    const errors = {};
+
+    if (!isAdult) {
+      errors.isAdult = "Please answer the age confirmation.";
+    }
+
+    if (isAdult === "no" && !guardianEmail.trim()) {
+      errors.guardianEmail = "Parent/legal guardian email is required.";
+    }
+
+    if (isAdult === "no" && guardianEmail.trim() && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(guardianEmail.trim())) {
+      errors.guardianEmail = "Please enter a valid guardian email.";
+    }
+
+    if (!consentAccepted) {
+      errors.consentAccepted = "Please accept the agreement consent.";
+    }
+
+    setAgreementErrors(errors);
+    return Object.keys(errors).length === 0;
+  };
+
+  const completeAgreement = async () => {
+    if (!validateAgreementForm()) {
       return;
     }
 
@@ -180,40 +190,31 @@ function UploadModal({ isOpen, onClose }) {
       setApiError("");
       setAgreementStatus("creating");
 
-      let response;
-      if (agreementId && agreementContentName === contentName) {
-        response = await axios.post(
-          `${API_URL}docusign/agreements/${agreementId}/recipient-view`,
-          {},
-          { headers: authHeaders() }
-        );
-      } else {
-        const fileBytes = await selectedFile.arrayBuffer();
-        const digest = await window.crypto.subtle.digest("SHA-256", fileBytes);
-        const fileSha256 = Array.from(new Uint8Array(digest))
-          .map((byte) => byte.toString(16).padStart(2, "0"))
-          .join("");
-        response = await axios.post(
-          `${API_URL}docusign/agreements`,
-          {
-            content_name: contentName.trim(),
-            file_name: selectedFile.name,
-            file_size: selectedFile.size,
-            file_sha256: fileSha256,
-          },
-          { headers: authHeaders() }
-        );
-        setAgreementId(response.data.agreement.id);
-        setAgreementContentName(contentName.trim());
-        setAgreementStatus(response.data.agreement.status);
-      }
+      const response = await axios.post(
+        `${API_URL}docusign/agreements`,
+        {
+          content_name: contentName.trim(),
+          file_name: selectedFile.name,
+          file_size: selectedFile.size,
+          file_sha256: await fileSha256(selectedFile),
+          post_copy: postCopy.trim(),
+          is_adult: isAdult === "yes",
+          guardian_email: isAdult === "no" ? guardianEmail.trim() : "",
+          consent_accepted: consentAccepted,
+        },
+        { headers: authHeaders() }
+      );
 
-      signingWindow.location.href = response.data.signing_url;
-      signingWindow.focus();
+      setAgreementId(response.data.agreement.id);
+      setAgreementContentName(contentName.trim());
+      setAgreementPostCopy(postCopy.trim());
+      setAgreementStatus(response.data.agreement.status);
+      setAgreeDocument(Boolean(response.data.agreement.signed));
+      setValidationErrors((errors) => ({ ...errors, agreeDocument: "" }));
+      setAgreementModalOpen(false);
     } catch (error) {
-      signingWindow.close();
       setAgreementStatus("error");
-      setApiError(error.response?.data?.message || "Unable to start DocuSign");
+      setApiError(error.response?.data?.message || "Unable to create agreement");
     } finally {
       setSigningBusy(false);
     }
@@ -226,10 +227,7 @@ function UploadModal({ isOpen, onClose }) {
       setValidationErrors((errors) => ({ ...errors, contentName: "" }));
     }
     if (agreementId && nextName !== agreementContentName) {
-      setAgreementId(null);
-      setAgreementContentName("");
-      setAgreementStatus("not_started");
-      setAgreeDocument(false);
+      resetAgreement();
     }
   };
 
@@ -238,6 +236,9 @@ function UploadModal({ isOpen, onClose }) {
     setpostCopy(nextPostCopy);
     if (nextPostCopy.trim()) {
       setValidationErrors((errors) => ({ ...errors, postCopy: "" }));
+    }
+    if (agreementId && nextPostCopy !== agreementPostCopy) {
+      resetAgreement();
     }
   };
 
@@ -265,7 +266,7 @@ function UploadModal({ isOpen, onClose }) {
     if (!postCopy.trim()) errors.postCopy = "Please enter the post copy.";
     if (!theme) errors.theme = "Please select a theme.";
     if (!agreeGuidelines) errors.agreeGuidelines = "Please accept the content guidelines.";
-    if (!agreeDocument) errors.agreeDocument = "Please sign the document agreement.";
+    if (!agreeDocument) errors.agreeDocument = "Please complete the document agreement.";
 
     setValidationErrors(errors);
     return Object.keys(errors).length === 0;
@@ -355,6 +356,7 @@ function UploadModal({ isOpen, onClose }) {
       setAgreementId(null);
       setAgreementStatus("not_started");
       setAgreementContentName("");
+      setAgreementPostCopy("");
       setValidationErrors({});
       onClose();
       // ✅ RELOAD PAGE AFTER UPLOAD
@@ -444,7 +446,7 @@ function UploadModal({ isOpen, onClose }) {
                 <strong>{user?.name || "Podder"}</strong>
               </div>
 
-              <div class="modal-flex"><label className="upload-modal__label">
+              <div className="modal-flex"><label className="upload-modal__label">
                 Insert Content Name <span className="upload-modal__required">*</span>
               </label>
               <input
@@ -514,21 +516,20 @@ function UploadModal({ isOpen, onClose }) {
                   <input
                     type="checkbox"
                     checked={agreeDocument}
-                    onChange={startDocusignSigning}
+                    onChange={openAgreementModal}
                     disabled={signingBusy || agreeDocument}
-                    aria-describedby="docusign-status"
+                    aria-describedby="agreement-status"
                   />
                   <span>
                     Sign{" "}
-                    <button type="button" onClick={startDocusignSigning} disabled={signingBusy || agreeDocument}>
+                    <button type="button" onClick={openAgreementModal} disabled={signingBusy || agreeDocument}>
                       document agreement
                     </button>
                     <span className="upload-modal__required">*</span>
-                    <small id="docusign-status">
-                      {agreeDocument ? "Signed and verified" : signingBusy ? "Opening DocuSign..." : agreementStatus.replaceAll("_", " ")}
+                    <small id="agreement-status">
+                      {agreeDocument ? "Agreement completed" : signingBusy ? "Creating agreement..." : agreementStatus.replaceAll("_", " ")}
                     </small>
                   </span>
-                  <img src={docuSignLogo} alt="DocuSign" width="100px" />
                 </div>
                 {validationErrors.agreeDocument && <p className="upload-modal__field-error">{validationErrors.agreeDocument}</p>}
               </div>
@@ -565,6 +566,118 @@ function UploadModal({ isOpen, onClose }) {
           </>
         )}
       </div>
+
+      {agreementModalOpen && (
+        <div className="agreement-modal" role="dialog" aria-modal="true" aria-labelledby="agreement-modal-title">
+          <div className="agreement-modal__panel">
+            <button
+              type="button"
+              className="agreement-modal__close"
+              onClick={() => setAgreementModalOpen(false)}
+              aria-label="Close agreement"
+              disabled={signingBusy}
+            >
+              x
+            </button>
+            <h4 id="agreement-modal-title">Content Permission Agreement</h4>
+            <p className="agreement-modal__intro">
+              Review and confirm the agreement details below. A completed PDF agreement will be generated for this upload.
+            </p>
+
+            <div className="agreement-modal__summary">
+              <p><strong>Full Name:</strong> {user?.name || "Podder"}</p>
+              <p><strong>Email:</strong> {user?.email || "-"}</p>
+              <p><strong>Content:</strong> {contentName}</p>
+              <p><strong>Quote:</strong> {postCopy}</p>
+              <p><strong>File:</strong> {selectedFile?.name}</p>
+            </div>
+
+            <div className="agreement-modal__field">
+              <span className="agreement-modal__label">
+                Is the person in the image/video 18 years of age or older?
+                <span className="upload-modal__required">*</span>
+              </span>
+              <label>
+                <input
+                  type="radio"
+                  name="is_adult"
+                  value="yes"
+                  checked={isAdult === "yes"}
+                  onChange={() => {
+                    setIsAdult("yes");
+                    setAgreementErrors((errors) => ({ ...errors, isAdult: "", guardianEmail: "" }));
+                  }}
+                />
+                Yes
+              </label>
+              <label>
+                <input
+                  type="radio"
+                  name="is_adult"
+                  value="no"
+                  checked={isAdult === "no"}
+                  onChange={() => {
+                    setIsAdult("no");
+                    setAgreementErrors((errors) => ({ ...errors, isAdult: "" }));
+                  }}
+                />
+                No
+              </label>
+              {agreementErrors.isAdult && <p className="upload-modal__field-error">{agreementErrors.isAdult}</p>}
+            </div>
+
+            {isAdult === "no" && (
+              <div className="agreement-modal__field">
+                <label className="agreement-modal__label" htmlFor="guardian-email">
+                  Parent/Legal Guardian Email
+                  <span className="upload-modal__required">*</span>
+                </label>
+                <input
+                  id="guardian-email"
+                  className={`agreement-modal__input${agreementErrors.guardianEmail ? " has-error" : ""}`}
+                  type="email"
+                  value={guardianEmail}
+                  onChange={(event) => {
+                    setGuardianEmail(event.target.value);
+                    setAgreementErrors((errors) => ({ ...errors, guardianEmail: "" }));
+                  }}
+                  placeholder="guardian@example.com"
+                />
+                {agreementErrors.guardianEmail && <p className="upload-modal__field-error">{agreementErrors.guardianEmail}</p>}
+              </div>
+            )}
+
+            <label className="agreement-modal__consent">
+              <input
+                type="checkbox"
+                checked={consentAccepted}
+                onChange={(event) => {
+                  setConsentAccepted(event.target.checked);
+                  setAgreementErrors((errors) => ({ ...errors, consentAccepted: "" }));
+                }}
+              />
+              <span>
+                I confirm that I am the original creator of this content, or have permission to submit it, and grant Insulet permission to use, edit, reproduce, and share this content across its social media and digital channels worldwide.
+                <span className="upload-modal__required">*</span>
+              </span>
+            </label>
+            {agreementErrors.consentAccepted && <p className="upload-modal__field-error">{agreementErrors.consentAccepted}</p>}
+
+            <p className="agreement-modal__signature">
+              Signature will be recorded as: <strong>{user?.name || "Podder"}</strong>
+            </p>
+
+            <div className="agreement-modal__actions">
+              <button type="button" onClick={() => setAgreementModalOpen(false)} disabled={signingBusy}>
+                Cancel
+              </button>
+              <button type="button" className="agreement-modal__submit" onClick={completeAgreement} disabled={signingBusy}>
+                {signingBusy ? "Creating PDF..." : "Accept & Generate PDF"}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
