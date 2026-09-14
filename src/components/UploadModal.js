@@ -9,6 +9,8 @@ import { API_URL } from "./URLS";
 
 function UploadModal({ isOpen, onClose }) {
   const fileInputRef = useRef(null);
+  const signatureCanvasRef = useRef(null);
+  const isDrawingSignature = useRef(false);
   // ✅ GET USER FROM REDUX
   const { user } = useSelector((state) => state.auth);
 
@@ -34,6 +36,11 @@ function UploadModal({ isOpen, onClose }) {
   const [isAdult, setIsAdult] = useState("");
   const [guardianEmail, setGuardianEmail] = useState("");
   const [consentAccepted, setConsentAccepted] = useState(false);
+  const [agreementStep, setAgreementStep] = useState(1);
+  const [signatureType, setSignatureType] = useState("typed");
+  const [typedSignature, setTypedSignature] = useState("");
+  const [signatureData, setSignatureData] = useState("");
+  const [signatureFileName, setSignatureFileName] = useState("");
   const [agreementErrors, setAgreementErrors] = useState({});
   const [fileError, setFileError] = useState("");
   const [validationErrors, setValidationErrors] = useState({});
@@ -154,6 +161,8 @@ function UploadModal({ isOpen, onClose }) {
     }
 
     setApiError("");
+    setAgreementStep(1);
+    setTypedSignature(user?.name || "");
     setAgreementModalOpen(true);
   };
 
@@ -180,8 +189,146 @@ function UploadModal({ isOpen, onClose }) {
     return Object.keys(errors).length === 0;
   };
 
+  const goToSignatureStep = () => {
+    if (validateAgreementForm()) {
+      setAgreementStep(2);
+    }
+  };
+
+  const resetSignature = (nextType) => {
+    setSignatureType(nextType);
+    setAgreementErrors((errors) => ({ ...errors, signature: "" }));
+    setSignatureData("");
+    setSignatureFileName("");
+    if (nextType === "typed") {
+      setTypedSignature(user?.name || "");
+    }
+    if (nextType === "draw") {
+      setTimeout(clearDrawnSignature, 0);
+    }
+  };
+
+  const getCanvasPoint = (event) => {
+    const canvas = signatureCanvasRef.current;
+    const rect = canvas.getBoundingClientRect();
+    return {
+      x: ((event.clientX - rect.left) / rect.width) * canvas.width,
+      y: ((event.clientY - rect.top) / rect.height) * canvas.height,
+    };
+  };
+
+  const imageToJpegDataUrl = (image, width, height) => {
+    const exportCanvas = document.createElement("canvas");
+    exportCanvas.width = width;
+    exportCanvas.height = height;
+    const context = exportCanvas.getContext("2d");
+    context.fillStyle = "#fff";
+    context.fillRect(0, 0, width, height);
+    context.drawImage(image, 0, 0, width, height);
+
+    return exportCanvas.toDataURL("image/jpeg", 0.92);
+  };
+
+  const drawnSignatureDataUrl = () => {
+    const canvas = signatureCanvasRef.current;
+
+    return imageToJpegDataUrl(canvas, canvas.width, canvas.height);
+  };
+
+  const startSignatureDraw = (event) => {
+    event.preventDefault();
+    const canvas = signatureCanvasRef.current;
+    if (!canvas) return;
+    const context = canvas.getContext("2d");
+    const point = getCanvasPoint(event);
+    isDrawingSignature.current = true;
+    context.lineWidth = 3;
+    context.lineCap = "round";
+    context.strokeStyle = "#111";
+    context.beginPath();
+    context.moveTo(point.x, point.y);
+  };
+
+  const drawSignature = (event) => {
+    if (!isDrawingSignature.current) return;
+    event.preventDefault();
+    const canvas = signatureCanvasRef.current;
+    const context = canvas.getContext("2d");
+    const point = getCanvasPoint(event);
+    context.lineTo(point.x, point.y);
+    context.stroke();
+    setSignatureData(drawnSignatureDataUrl());
+    setAgreementErrors((errors) => ({ ...errors, signature: "" }));
+  };
+
+  const stopSignatureDraw = () => {
+    isDrawingSignature.current = false;
+  };
+
+  const clearDrawnSignature = () => {
+    const canvas = signatureCanvasRef.current;
+    if (!canvas) return;
+    const context = canvas.getContext("2d");
+    context.clearRect(0, 0, canvas.width, canvas.height);
+    setSignatureData("");
+  };
+
+  const handleSignatureUpload = (event) => {
+    const file = event.target.files?.[0];
+    if (!file) return;
+
+    if (!["image/png", "image/jpeg"].includes(file.type)) {
+      setAgreementErrors((errors) => ({ ...errors, signature: "Please upload a PNG or JPG signature image." }));
+      setSignatureData("");
+      setSignatureFileName("");
+      return;
+    }
+
+    if (file.size > 2 * 1024 * 1024) {
+      setAgreementErrors((errors) => ({ ...errors, signature: "Signature image must be 2 MB or smaller." }));
+      setSignatureData("");
+      setSignatureFileName("");
+      return;
+    }
+
+    const reader = new FileReader();
+    reader.onload = () => {
+      const image = new Image();
+      image.onload = () => {
+        const scale = Math.min(1, 900 / image.width);
+        const width = Math.max(1, Math.round(image.width * scale));
+        const height = Math.max(1, Math.round(image.height * scale));
+        setSignatureData(imageToJpegDataUrl(image, width, height));
+        setSignatureFileName(file.name);
+        setAgreementErrors((errors) => ({ ...errors, signature: "" }));
+      };
+      image.onerror = () => {
+        setSignatureData("");
+        setSignatureFileName("");
+        setAgreementErrors((errors) => ({ ...errors, signature: "Unable to read the signature image." }));
+      };
+      image.src = String(reader.result || "");
+    };
+    reader.readAsDataURL(file);
+  };
+
+  const validateSignatureStep = () => {
+    const errors = {};
+
+    if (signatureType === "typed" && !typedSignature.trim()) {
+      errors.signature = "Please enter your signature name.";
+    }
+
+    if ((signatureType === "draw" || signatureType === "upload") && !signatureData) {
+      errors.signature = "Please provide your signature.";
+    }
+
+    setAgreementErrors(errors);
+    return Object.keys(errors).length === 0;
+  };
+
   const completeAgreement = async () => {
-    if (!validateAgreementForm()) {
+    if (!validateAgreementForm() || !validateSignatureStep()) {
       return;
     }
 
@@ -201,6 +348,9 @@ function UploadModal({ isOpen, onClose }) {
           is_adult: isAdult === "yes",
           guardian_email: isAdult === "no" ? guardianEmail.trim() : "",
           consent_accepted: consentAccepted,
+          signature_type: signatureType,
+          signature_name: signatureType === "typed" ? typedSignature.trim() : user?.name || "",
+          signature_data: signatureType === "typed" ? "" : signatureData,
         },
         { headers: authHeaders() }
       );
@@ -357,6 +507,11 @@ function UploadModal({ isOpen, onClose }) {
       setAgreementStatus("not_started");
       setAgreementContentName("");
       setAgreementPostCopy("");
+      setAgreementStep(1);
+      setSignatureType("typed");
+      setTypedSignature(user?.name || "");
+      setSignatureData("");
+      setSignatureFileName("");
       setValidationErrors({});
       onClose();
       // ✅ RELOAD PAGE AFTER UPLOAD
@@ -592,88 +747,173 @@ function UploadModal({ isOpen, onClose }) {
               <p><strong>File:</strong> {selectedFile?.name}</p>
             </div>
 
-            <div className="agreement-modal__field">
-              <span className="agreement-modal__label">
-                Is the person in the image/video 18 years of age or older?
-                <span className="upload-modal__required">*</span>
-              </span>
-              <label>
-                <input
-                  type="radio"
-                  name="is_adult"
-                  value="yes"
-                  checked={isAdult === "yes"}
-                  onChange={() => {
-                    setIsAdult("yes");
-                    setAgreementErrors((errors) => ({ ...errors, isAdult: "", guardianEmail: "" }));
-                  }}
-                />
-                Yes
-              </label>
-              <label>
-                <input
-                  type="radio"
-                  name="is_adult"
-                  value="no"
-                  checked={isAdult === "no"}
-                  onChange={() => {
-                    setIsAdult("no");
-                    setAgreementErrors((errors) => ({ ...errors, isAdult: "" }));
-                  }}
-                />
-                No
-              </label>
-              {agreementErrors.isAdult && <p className="upload-modal__field-error">{agreementErrors.isAdult}</p>}
+            <div className="agreement-modal__steps">
+              <span className={agreementStep === 1 ? "is-active" : ""}>1. Confirm</span>
+              <span className={agreementStep === 2 ? "is-active" : ""}>2. Signature</span>
             </div>
 
-            {isAdult === "no" && (
-              <div className="agreement-modal__field">
-                <label className="agreement-modal__label" htmlFor="guardian-email">
-                  Parent/Legal Guardian Email
-                  <span className="upload-modal__required">*</span>
+            {agreementStep === 1 && (
+              <>
+                <div className="agreement-modal__field">
+                  <span className="agreement-modal__label">
+                    Is the person in the image/video 18 years of age or older?
+                    <span className="upload-modal__required">*</span>
+                  </span>
+                  <label>
+                    <input
+                      type="radio"
+                      name="is_adult"
+                      value="yes"
+                      checked={isAdult === "yes"}
+                      onChange={() => {
+                        setIsAdult("yes");
+                        setAgreementErrors((errors) => ({ ...errors, isAdult: "", guardianEmail: "" }));
+                      }}
+                    />
+                    Yes
+                  </label>
+                  <label>
+                    <input
+                      type="radio"
+                      name="is_adult"
+                      value="no"
+                      checked={isAdult === "no"}
+                      onChange={() => {
+                        setIsAdult("no");
+                        setAgreementErrors((errors) => ({ ...errors, isAdult: "" }));
+                      }}
+                    />
+                    No
+                  </label>
+                  {agreementErrors.isAdult && <p className="upload-modal__field-error">{agreementErrors.isAdult}</p>}
+                </div>
+
+                {isAdult === "no" && (
+                  <div className="agreement-modal__field">
+                    <label className="agreement-modal__label" htmlFor="guardian-email">
+                      Parent/Legal Guardian Email
+                      <span className="upload-modal__required">*</span>
+                    </label>
+                    <input
+                      id="guardian-email"
+                      className={`agreement-modal__input${agreementErrors.guardianEmail ? " has-error" : ""}`}
+                      type="email"
+                      value={guardianEmail}
+                      onChange={(event) => {
+                        setGuardianEmail(event.target.value);
+                        setAgreementErrors((errors) => ({ ...errors, guardianEmail: "" }));
+                      }}
+                      placeholder="guardian@example.com"
+                    />
+                    {agreementErrors.guardianEmail && <p className="upload-modal__field-error">{agreementErrors.guardianEmail}</p>}
+                  </div>
+                )}
+
+                <label className="agreement-modal__consent">
+                  <input
+                    type="checkbox"
+                    checked={consentAccepted}
+                    onChange={(event) => {
+                      setConsentAccepted(event.target.checked);
+                      setAgreementErrors((errors) => ({ ...errors, consentAccepted: "" }));
+                    }}
+                  />
+                  <span>
+                    I confirm that I am the original creator of this content, or have permission to submit it, and grant Insulet permission to use, edit, reproduce, and share this content across its social media and digital channels worldwide.
+                    <span className="upload-modal__required">*</span>
+                  </span>
                 </label>
-                <input
-                  id="guardian-email"
-                  className={`agreement-modal__input${agreementErrors.guardianEmail ? " has-error" : ""}`}
-                  type="email"
-                  value={guardianEmail}
-                  onChange={(event) => {
-                    setGuardianEmail(event.target.value);
-                    setAgreementErrors((errors) => ({ ...errors, guardianEmail: "" }));
-                  }}
-                  placeholder="guardian@example.com"
-                />
-                {agreementErrors.guardianEmail && <p className="upload-modal__field-error">{agreementErrors.guardianEmail}</p>}
+                {agreementErrors.consentAccepted && <p className="upload-modal__field-error">{agreementErrors.consentAccepted}</p>}
+              </>
+            )}
+
+            {agreementStep === 2 && (
+              <div className="agreement-modal__signature-step">
+                <span className="agreement-modal__label">
+                  Choose signature method
+                  <span className="upload-modal__required">*</span>
+                </span>
+                <div className="agreement-modal__signature-options">
+                  <label>
+                    <input type="radio" checked={signatureType === "typed"} onChange={() => resetSignature("typed")} />
+                    Use my name
+                  </label>
+                  <label>
+                    <input type="radio" checked={signatureType === "draw"} onChange={() => resetSignature("draw")} />
+                    Draw signature
+                  </label>
+                  <label>
+                    <input type="radio" checked={signatureType === "upload"} onChange={() => resetSignature("upload")} />
+                    Upload signature
+                  </label>
+                </div>
+
+                {signatureType === "typed" && (
+                  <div className="agreement-modal__field">
+                    <label className="agreement-modal__label" htmlFor="typed-signature">Signature Name</label>
+                    <input
+                      id="typed-signature"
+                      className={`agreement-modal__input${agreementErrors.signature ? " has-error" : ""}`}
+                      type="text"
+                      value={typedSignature}
+                      onChange={(event) => {
+                        setTypedSignature(event.target.value);
+                        setAgreementErrors((errors) => ({ ...errors, signature: "" }));
+                      }}
+                    />
+                  </div>
+                )}
+
+                {signatureType === "draw" && (
+                  <div className="agreement-modal__field">
+                    <canvas
+                      ref={signatureCanvasRef}
+                      className="agreement-modal__canvas"
+                      width="520"
+                      height="160"
+                      onPointerDown={startSignatureDraw}
+                      onPointerMove={drawSignature}
+                      onPointerUp={stopSignatureDraw}
+                      onPointerLeave={stopSignatureDraw}
+                    />
+                    <button type="button" className="agreement-modal__clear" onClick={clearDrawnSignature}>
+                      Clear signature
+                    </button>
+                  </div>
+                )}
+
+                {signatureType === "upload" && (
+                  <div className="agreement-modal__field">
+                    <input type="file" accept="image/png,image/jpeg" onChange={handleSignatureUpload} />
+                    {signatureFileName && <small>Selected: {signatureFileName}</small>}
+                    {signatureData && <img className="agreement-modal__signature-preview" src={signatureData} alt="Signature preview" />}
+                  </div>
+                )}
+
+                {agreementErrors.signature && <p className="upload-modal__field-error">{agreementErrors.signature}</p>}
               </div>
             )}
 
-            <label className="agreement-modal__consent">
-              <input
-                type="checkbox"
-                checked={consentAccepted}
-                onChange={(event) => {
-                  setConsentAccepted(event.target.checked);
-                  setAgreementErrors((errors) => ({ ...errors, consentAccepted: "" }));
-                }}
-              />
-              <span>
-                I confirm that I am the original creator of this content, or have permission to submit it, and grant Insulet permission to use, edit, reproduce, and share this content across its social media and digital channels worldwide.
-                <span className="upload-modal__required">*</span>
-              </span>
-            </label>
-            {agreementErrors.consentAccepted && <p className="upload-modal__field-error">{agreementErrors.consentAccepted}</p>}
-
-            <p className="agreement-modal__signature">
-              Signature will be recorded as: <strong>{user?.name || "Podder"}</strong>
-            </p>
-
             <div className="agreement-modal__actions">
-              <button type="button" onClick={() => setAgreementModalOpen(false)} disabled={signingBusy}>
-                Cancel
-              </button>
-              <button type="button" className="agreement-modal__submit" onClick={completeAgreement} disabled={signingBusy}>
-                {signingBusy ? "Creating PDF..." : "Accept & Generate PDF"}
-              </button>
+              {agreementStep === 1 ? (
+                <>
+                  <button type="button" onClick={() => setAgreementModalOpen(false)} disabled={signingBusy}>
+                    Cancel
+                  </button>
+                  <button type="button" className="agreement-modal__submit" onClick={goToSignatureStep}>
+                    Continue
+                  </button>
+                </>
+              ) : (
+                <>
+                  <button type="button" onClick={() => setAgreementStep(1)} disabled={signingBusy}>
+                    Back
+                  </button>
+                  <button type="button" className="agreement-modal__submit" onClick={completeAgreement} disabled={signingBusy}>
+                    {signingBusy ? "Creating PDF..." : "Accept & Generate PDF"}
+                  </button>
+                </>
+              )}
             </div>
           </div>
         </div>

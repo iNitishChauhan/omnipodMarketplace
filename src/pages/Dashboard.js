@@ -38,6 +38,28 @@ const splitOptionValues = (value) => {
 const getMediaThemes = (item) =>
   splitOptionValues(item?.themes || item?.theme || item?.content_theme || item?.category);
 
+const getMetricValue = (item, metric) => {
+  const value = Number(item?.[metric] ?? 0);
+  return Number.isNaN(value) ? 0 : value;
+};
+
+const getEngagementTotal = (item) =>
+  ['likes', 'comments', 'saves', 'reposts', 'shares'].reduce(
+    (total, metric) => total + getMetricValue(item, metric),
+    0
+  );
+
+const isApprovedMedia = (item) =>
+  ['approved', 'published'].includes(String(item?.status || '').toLowerCase());
+
+const belongsToUser = (item, userId) => {
+  const ownerId = item?.user_id || item?.user?.id || item?.creator?.id;
+  return String(ownerId || '') === String(userId || '');
+};
+
+const formatMetric = (value) =>
+  new Intl.NumberFormat('en', { maximumFractionDigits: 0 }).format(value || 0);
+
 function Dashboard() {
   localStorage.removeItem("mid")
   const dispatch = useDispatch();
@@ -61,100 +83,6 @@ function Dashboard() {
       dispatch(fetchMedia());
   }, [dispatch]);
   
-  const analyticsDays = [
-    {
-      label: 'M',
-      rows: [
-        { time: '12a', value: 487, width: 62 },
-        { time: '3a', value: 561, width: 72 },
-        { time: '6a', value: 610, width: 78 },
-        { time: '9a', value: 657, width: 86 },
-        { time: '12p', value: 665, width: 90 },
-        { time: '3p', value: 403, width: 54 },
-        { time: '6p', value: 320, width: 40 },
-        { time: '9p', value: 351, width: 46 },
-      ],
-    },
-    {
-      label: 'Tu',
-      rows: [
-        { time: '12a', value: 421, width: 55 },
-        { time: '3a', value: 498, width: 66 },
-        { time: '6a', value: 579, width: 74 },
-        { time: '9a', value: 642, width: 84 },
-        { time: '12p', value: 690, width: 92 },
-        { time: '3p', value: 455, width: 58 },
-        { time: '6p', value: 338, width: 42 },
-        { time: '9p', value: 372, width: 48 },
-      ],
-    },
-    {
-      label: 'W',
-      rows: [
-        { time: '12a', value: 398, width: 52 },
-        { time: '3a', value: 470, width: 62 },
-        { time: '6a', value: 592, width: 76 },
-        { time: '9a', value: 625, width: 82 },
-        { time: '12p', value: 701, width: 94 },
-        { time: '3p', value: 432, width: 56 },
-        { time: '6p', value: 360, width: 45 },
-        { time: '9p', value: 385, width: 50 },
-      ],
-    },
-    {
-      label: 'Th',
-      rows: [
-        { time: '12a', value: 445, width: 58 },
-        { time: '3a', value: 512, width: 68 },
-        { time: '6a', value: 600, width: 77 },
-        { time: '9a', value: 670, width: 88 },
-        { time: '12p', value: 688, width: 91 },
-        { time: '3p', value: 420, width: 55 },
-        { time: '6p', value: 330, width: 41 },
-        { time: '9p', value: 362, width: 47 },
-      ],
-    },
-    {
-      label: 'F',
-      rows: [
-        { time: '12a', value: 462, width: 60 },
-        { time: '3a', value: 530, width: 70 },
-        { time: '6a', value: 615, width: 80 },
-        { time: '9a', value: 676, width: 89 },
-        { time: '12p', value: 710, width: 95 },
-        { time: '3p', value: 448, width: 58 },
-        { time: '6p', value: 350, width: 44 },
-        { time: '9p', value: 390, width: 51 },
-      ],
-    },
-    {
-      label: 'Sa',
-      rows: [
-        { time: '12a', value: 355, width: 48 },
-        { time: '3a', value: 402, width: 55 },
-        { time: '6a', value: 510, width: 68 },
-        { time: '9a', value: 590, width: 78 },
-        { time: '12p', value: 640, width: 86 },
-        { time: '3p', value: 382, width: 50 },
-        { time: '6p', value: 295, width: 38 },
-        { time: '9p', value: 330, width: 42 },
-      ],
-    },
-    {
-      label: 'Su',
-      rows: [
-        { time: '12a', value: 340, width: 46 },
-        { time: '3a', value: 390, width: 52 },
-        { time: '6a', value: 480, width: 64 },
-        { time: '9a', value: 560, width: 74 },
-        { time: '12p', value: 620, width: 82 },
-        { time: '3p', value: 370, width: 48 },
-        { time: '6p', value: 285, width: 36 },
-        { time: '9p', value: 310, width: 40 },
-      ],
-    },
-  ];
-
     /* ---------------- PAGINATION STATE ---------------- */
   const ITEMS_PER_PAGE = 10;
   const [currentPage, setCurrentPage] = useState(1);
@@ -164,6 +92,18 @@ function Dashboard() {
   const [typeFilter, setTypeFilter] = useState('all');
 
   const safeMedia = Array.isArray(media) ? media : [];
+  const analyticsMedia = safeMedia.filter((item) => belongsToUser(item, user?.id) && isApprovedMedia(item));
+  const totalReach = analyticsMedia.reduce((total, item) => total + getMetricValue(item, 'reach'), 0);
+  const totalEngagements = analyticsMedia.reduce((total, item) => total + getEngagementTotal(item), 0);
+  const engagementRate = totalReach > 0 ? ((totalEngagements / totalReach) * 100).toFixed(1) : '0.0';
+  const topMedia = analyticsMedia.reduce((top, item) => {
+    if (!top) return item;
+
+    const itemScore = getEngagementTotal(item) || getMetricValue(item, 'reach');
+    const topScore = getEngagementTotal(top) || getMetricValue(top, 'reach');
+
+    return itemScore > topScore ? item : top;
+  }, null);
   //const countryOptions = [...new Set(safeMedia.map(getMediaCountry).filter(Boolean))].sort();
   const themeOptions = [...new Set(safeMedia.flatMap(getMediaThemes).filter(Boolean))].sort();
   const filteredMedia = safeMedia
@@ -195,7 +135,6 @@ function Dashboard() {
     if (currentPage < totalPages) setCurrentPage((prev) => prev + 1);
   };
 
-  const [activeDayIndex, setActiveDayIndex] = useState(0);
   const [showUploadModal, setShowUploadModal] = useState(false);
   const [showAccountModal, setShowAccountModal] = useState(false);
   const [mediaPreview, setMediaPreview] = useState(null);
@@ -335,27 +274,33 @@ function Dashboard() {
               <h3>Overview</h3> 
 
               <div className="analytics-card__panel">
-                <div className="analytics-card__days">
-                  {analyticsDays.map((day, index) => (
-                    <button
-                      type="button"
-                      key={day.label}
-                      className={`analytics-card__day-btn ${index === activeDayIndex ? 'is-active' : ''}`}
-                      onClick={() => setActiveDayIndex(index)}
-                    >
-                      {day.label}
-                    </button>
-                  ))}
+                <div className="analytics-card__summary">
+                  <div className="analytics-card__metric">
+                    <span>Total Reach</span>
+                    <strong>{formatMetric(totalReach)}</strong>
+                  </div>
+                  <div className="analytics-card__metric">
+                    <span>Engagements</span>
+                    <strong>{formatMetric(totalEngagements)}</strong>
+                  </div>
+                  <div className="analytics-card__metric">
+                    <span>Approved Posts</span>
+                    <strong>{formatMetric(analyticsMedia.length)}</strong>
+                  </div>
+                  <div className="analytics-card__metric">
+                    <span>Engagement Rate</span>
+                    <strong>{engagementRate}%</strong>
+                  </div>
                 </div>
 
-                <div className="analytics-card__rows">
-                  {analyticsDays[activeDayIndex].rows.map((row) => (
-                    <div className="analytics-row" key={`${row.time}-${row.value}`}>
-                      <span>{row.time}</span>
-                      <span className="analytics-bar" style={{ width: `${row.width}%` }} />
-                      <span>{row.value}</span>
-                    </div>
-                  ))}
+                <div className="analytics-card__top">
+                  <span>Top Content</span>
+                  <strong>{topMedia?.title || 'No approved content yet'}</strong>
+                  {topMedia && (
+                    <small>
+                      {formatMetric(getMetricValue(topMedia, 'reach'))} reach - {formatMetric(getEngagementTotal(topMedia))} engagements
+                    </small>
+                  )}
                 </div>
               </div>
 
