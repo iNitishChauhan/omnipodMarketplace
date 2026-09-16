@@ -554,8 +554,8 @@ function UploadModal({ isOpen, onClose }) {
         {showInitial && (
           <>
             <div className="upload-modal__icons">
-              <img src={uploadIcon1} alt="Upload photos" />
-              <img src={uploadIcon2} alt="Upload videos" />
+              <img src={uploadIcon1} alt="Upload content icon" />
+              <img src={uploadIcon2} alt="Upload video content icon" />
             </div>
             {fileError && (
               <p className="upload-modal__error">
@@ -591,13 +591,13 @@ function UploadModal({ isOpen, onClose }) {
               {isVideo ? (
                 <video src={previewUrl} controls />
               ) : (
-                <img src={previewUrl} alt="Preview" />
+                <img src={previewUrl} alt="Selected upload preview" />
               )}
             </div>
 
             <div className="upload-modal__form">
               <div className="upload-modal__user">
-                <img src={profileImage} alt="User" />
+                <img src={profileImage} alt={`${user?.name || "Creator"} profile`} />
                 <strong>{user?.name || "Podder"}</strong>
               </div>
 

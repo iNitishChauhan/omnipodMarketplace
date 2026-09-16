@@ -6,7 +6,7 @@ function Footer() {
     <footer className="footer">
       <div className="footer__inner">
         <div className="footer__brand">
-          <div className="footer__logo"><img src={FooterLogo} alt="Omnipod logo" className="footer__logo" /></div>
+          <div className="footer__logo"><img src={FooterLogo} alt="Omnipod logo and Insulet trademark" className="footer__logo" /></div>
           <div className="footer__social">
             <a className="footer__social-btn" href="https://www.instagram.com/omnipod/" target="_blank" rel="noopener noreferrer">
               <svg width="20px" height="20px" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">

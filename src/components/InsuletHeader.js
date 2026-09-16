@@ -8,7 +8,7 @@ function InsuletHeader() {
       <div className="insulet-header__inner">
         <div className="insulet-header__brand">
           <Link to="/">
-            <img src={siteLogo} alt="Omnipod logo" className="insulet-header__logo" />
+            <img src={siteLogo} alt="Omnipod Creator Marketplace logo" className="insulet-header__logo" />
           </Link>
         </div>
         <nav className="insulet-header__nav">

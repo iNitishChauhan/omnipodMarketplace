@@ -52,7 +52,7 @@ function ContentGuidelines () {
                                 <li>Do not place Pod over a tattoo</li>
                             </ol>
                         </div>
-                        <div className="pp_image"><img src={sp_image} alt="Sensor placement"></img></div>
+                        <div className="pp_image"><img src={sp_image} alt="Omnipod Pod placement guide"></img></div>
                     </div>
                 </div>
             </div>
@@ -66,7 +66,7 @@ function ContentGuidelines () {
                             <li>Sensor should be placed in close proximity to the Pod</li>
                         </ol>
                         </div>
-                        <div className="pp_image"><img src={pp_image} alt="Sensor placement"></img></div>
+                        <div className="pp_image"><img src={pp_image} alt="Sensor placement guide near the Pod"></img></div>
                     </div>
                 </div>
             </div>

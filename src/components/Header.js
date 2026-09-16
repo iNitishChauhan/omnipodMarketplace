@@ -19,7 +19,7 @@ function Header() {
   return (
     <>
       <div className="hero__logo">
-        <img src={siteLogo} alt="Omnipod logo" className="hero__logo-img" />
+        <img src={siteLogo} alt="Omnipod Creator Marketplace logo" className="hero__logo-img" />
       </div>
 
       <div className="hero__actions">

@@ -22,7 +22,7 @@ const { isAuthenticated, user } = useSelector((state) => state.auth);
       <div className="insulet-header__inner">
         <div className="insulet-header__brand">
           <Link to="/">
-            <img src={siteLogo} alt="Omnipod logo" className="insulet-header__logo" />
+            <img src={siteLogo} alt="Omnipod Creator Marketplace logo" className="insulet-header__logo" />
           </Link>
         </div>
         <div className="hero__actions">

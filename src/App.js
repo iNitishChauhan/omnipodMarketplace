@@ -13,11 +13,13 @@ import Notifications from './pages/Notifications';
 import ForgotPassword from './pages/ForgotPassword'
 import ResetPassword from './pages/ResetPassword'
 import DocusignCallback from './pages/DocusignCallback';
+import SEOManager from './components/SEOManager';
 
 
 function App() {
   return (
     <Router>
+      <SEOManager />
       <Routes>
         <Route path="/" element={<Home />} />
         <Route path="/insulet-member-login" element={<InsuletMember />} />

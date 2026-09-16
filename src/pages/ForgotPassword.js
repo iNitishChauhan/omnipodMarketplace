@@ -58,7 +58,7 @@ function ForgotPassword() {
             </div>
 
             <div className="insulet-login__graphic">
-              <img src={creatorLoginImage} alt="Insulet maker of Omnipod" />
+              <img src={creatorLoginImage} alt="Omnipod password reset illustration" />
             </div>
           </div>
         </main>

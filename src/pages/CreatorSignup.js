@@ -262,7 +262,7 @@ function CreatorSignup() {
                 <div style={{ marginTop: "10px" }}>
                   <img
                     src={previewImage}
-                    alt="Profile Preview"
+                    alt="Selected creator profile preview"
                     style={{
                       width: "120px",
                       height: "120px",

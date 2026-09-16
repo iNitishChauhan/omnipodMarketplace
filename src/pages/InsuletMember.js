@@ -29,7 +29,7 @@ function InsuletMember() {
           </div>
 
           <div className="insulet-login__graphic">
-            <img src={insuletLoginImage} alt="Insulet maker of Omnipod" />
+            <img src={insuletLoginImage} alt="Insulet Omnipod member login illustration" />
           </div>
         </div>
       </main>

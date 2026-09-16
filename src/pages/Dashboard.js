@@ -307,7 +307,7 @@ function Dashboard() {
               <Link className="analytics-card__btn" to="/analytics">Find out more</Link>
 
               <div className="analytics-card__avatar">
-                <img src={`${BASEURL}/${user?.profile_image}`} alt="Profile" />
+                <img src={`${BASEURL}/${user?.profile_image}`} alt={`${user?.name || 'Creator'} profile`} />
               </div>
             </div>
           </div>
@@ -395,7 +395,7 @@ function Dashboard() {
           ) : (
             <img
               src={item.file_url}
-              alt={item.title}
+              alt={item.title || 'Creator marketplace media'}
             />
           )}
         </button>
@@ -409,7 +409,7 @@ function Dashboard() {
           item?.user?.profile_image && (
           <img
             src={item.user.profile_image}
-            alt={item.user.name}
+            alt={`${item.user.name || 'Creator'} profile`}
           />
         )
         )}
@@ -475,7 +475,7 @@ function Dashboard() {
               <img
                 className="dashboard-media-preview__media"
                 src={mediaPreview.url}
-                alt={mediaPreview.title}
+                alt={mediaPreview.title || 'Creator marketplace media preview'}
               />
             )}
           </div>

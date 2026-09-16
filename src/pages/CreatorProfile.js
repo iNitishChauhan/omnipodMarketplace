@@ -397,7 +397,7 @@ function CreatorProfile() {
 
                         <img
                           src={item.file_url}
-                          alt={item.title}
+                          alt={item.title || 'Creator submitted media'}
                         />
                         {item.status === 'published' && (
                           <p className="profile-card__status profile-card__status--approved">
@@ -514,7 +514,7 @@ function CreatorProfile() {
 
           <div className="revision-modal__content">
             <div className="revision-modal__media">
-              <img src={activeRevisionItem.file_url} alt={activeRevisionItem.title || 'Revision content'} />
+              <img src={activeRevisionItem.file_url} alt={activeRevisionItem.title || 'Media needing revision'} />
             </div>
 
             <div className="revision-modal__details">
@@ -558,7 +558,7 @@ function CreatorProfile() {
             <div className="revision-modal__media">
               <img
                 src={activeAnalyticsItem.file_url}
-                alt=""
+                alt={activeAnalyticsItem.title || 'Media analytics preview'}
               />
             </div>
             <div className="revision-modal__details">

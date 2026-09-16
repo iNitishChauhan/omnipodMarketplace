@@ -283,9 +283,9 @@ console.log(formPayload);
         <div className="account-settings-modal__profile">
           <img src={`${BASEURL}/${profilePreview
             ? profilePreview
-            : user?.profile_image
+              : user?.profile_image
               ? user.profile_image
-              : ''}`} alt="Profile" />
+              : ''}`} alt={`${user?.name || "Creator"} profile`} />
           <div className="account-settings-modal__profile-copy">
             <p>Update Profile Picture</p>
             <input type="file" accept="image/*" onChange={handleImageChange} />

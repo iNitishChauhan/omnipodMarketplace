@@ -102,7 +102,7 @@ const [message, setMessage] = useState(
           </div>
 
           <div className="insulet-login__graphic">
-            <img src={creatorLoginImage} alt="Insulet maker of Omnipod" />
+            <img src={creatorLoginImage} alt="Omnipod creator login illustration" />
           </div>
         </div>
       </main>
