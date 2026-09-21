@@ -1,0 +1,76 @@
+{
+  "siteUrl": "https://omnipodcreatormarketplace.com",
+  "siteName": "Omnipod Creator Marketplace",
+  "pages": {
+    "/": {
+      "title": "Omnipod Creator Marketplace",
+      "description": "A place for the Omnipod community to share lived experiences through authentic storytelling.",
+      "image": "header-bg2.jpg"
+    },
+    "/insulet-member-login": {
+      "title": "Insulet Member Login | Omnipod Creator Marketplace",
+      "description": "Insulet team members can access the Omnipod Creator Marketplace admin experience.",
+      "image": "site-logo.png"
+    },
+    "/omnipod-creator-login": {
+      "title": "Creator Login | Omnipod Creator Marketplace",
+      "description": "Log in to upload content, manage submissions, and track Creator Marketplace activity.",
+      "image": "insulet2.png"
+    },
+    "/omnipod-creator-signup": {
+      "title": "Creator Signup | Omnipod Creator Marketplace",
+      "description": "Join the Omnipod Creator Marketplace and share authentic content with the Omnipod community.",
+      "image": "signupbg.png"
+    },
+    "/dashboard": {
+      "title": "Creator Dashboard | Omnipod Creator Marketplace",
+      "description": "Upload content, review creator resources, and view marketplace activity from your creator dashboard.",
+      "image": "site-logo.png"
+    },
+    "/analytics": {
+      "title": "Analytics Overview | Omnipod Creator Marketplace",
+      "description": "Review performance metrics for approved Omnipod Creator Marketplace content.",
+      "image": "site-logo.png"
+    },
+    "/profile": {
+      "title": "Creator Profile | Omnipod Creator Marketplace",
+      "description": "Manage your submitted content, review approval status, and update your creator profile.",
+      "image": "site-logo.png"
+    },
+    "/content-guidelines": {
+      "title": "Content Guidelines | Omnipod Creator Marketplace",
+      "description": "Review Omnipod Creator Marketplace content guidelines before submitting photos or videos.",
+      "image": "cg-banner.jpg"
+    },
+    "/social-media-policy": {
+      "title": "Social Media Policy | Omnipod Creator Marketplace",
+      "description": "Read the social media policy for Omnipod Creator Marketplace content submissions.",
+      "image": "site-logo.png"
+    },
+    "/privacy-policy": {
+      "title": "Privacy Policy | Omnipod Creator Marketplace",
+      "description": "Read how Insulet processes personal data for Omnipod products, services, and creator marketplace activity.",
+      "image": "site-logo.png"
+    },
+    "/notifications": {
+      "title": "Notifications | Omnipod Creator Marketplace",
+      "description": "View updates about your Omnipod Creator Marketplace submissions and account activity.",
+      "image": "site-logo.png"
+    },
+    "/forgot-password": {
+      "title": "Forgot Password | Omnipod Creator Marketplace",
+      "description": "Request a password reset link for your Omnipod Creator Marketplace account.",
+      "image": "insulet2.png"
+    },
+    "/reset-password": {
+      "title": "Reset Password | Omnipod Creator Marketplace",
+      "description": "Reset your Omnipod Creator Marketplace account password.",
+      "image": "insulet2.png"
+    },
+    "/docusign/callback": {
+      "title": "Agreement Complete | Omnipod Creator Marketplace",
+      "description": "Your Omnipod Creator Marketplace content agreement status is being confirmed.",
+      "image": "site-logo.png"
+    }
+  }
+}
