@@ -37,7 +37,8 @@ function SEOManager() {
     const route = path.startsWith('/reset-password/') ? '/reset-password' : path;
     const meta = metadata.pages[route] || metadata.pages['/'];
     const canonicalUrl = new URL(metadata.pages[route] ? route : '/', metadata.siteUrl).href;
-    const imageUrl = new URL('/og/' + meta.image, metadata.siteUrl).href;
+    const imagePath = meta.image.startsWith('/') ? meta.image : '/og/' + meta.image;
+    const imageUrl = new URL(imagePath, metadata.siteUrl).href;
 
     document.title = meta.title;
     setCanonical(canonicalUrl);

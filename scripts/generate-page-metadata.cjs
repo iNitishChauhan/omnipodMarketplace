@@ -15,8 +15,9 @@ const escape = (value) => value.replace(/[&<>"']/g, (char) => ({
 const redirects = [];
 for (const [route, page] of Object.entries(metadata.pages)) {
   const url = new URL(route, metadata.siteUrl).href;
-  const image = new URL(`/og/${page.image}`, metadata.siteUrl).href;
-  if (!fs.existsSync(path.join(build, 'og', page.image))) {
+  const imagePath = page.image.startsWith('/') ? page.image : `/og/${page.image}`;
+  const image = new URL(imagePath, metadata.siteUrl).href;
+  if (!fs.existsSync(path.join(build, imagePath))) {
     throw new Error(`Missing OG image: ${page.image}`);
   }
   const tags = [
