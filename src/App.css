@@ -575,7 +575,7 @@
 .hero__grid{flex-direction:column}
 .hero__left{width:100%;text-align:center;padding:150px 64px 80px}
 .hero__right{width:100%;min-height:inherit}
-.hero__logo{justify-content:flex-start;left:30px}
+/* .hero__logo{justify-content:flex-start;left:30px} */
 .hero__logo-img,.insulet-header__logo{height:60px}
 .insulet-header{padding:20px 0}
 .hero_text h2,.pp_section h3{font-size:2.5rem}
